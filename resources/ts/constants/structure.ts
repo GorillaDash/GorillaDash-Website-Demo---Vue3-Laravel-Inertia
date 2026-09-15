@@ -37,7 +37,7 @@ export const STRUCTURE = {
   },
   networkStats: {
     module: 'Tribes + Reviews',
-    query: 'tribes(status: "active") · reviews',
+    query: 'tribes(status: "launch") · reviews',
     edit: 'Calculated live from tribes and reviews',
     scope: 'Organisation'
   },
@@ -67,7 +67,7 @@ export const STRUCTURE = {
   },
   tribeFinder: {
     module: 'Tribes',
-    query: 'tribes(name: "Juniper Table Cafes", status: "active")',
+    query: 'tribes(name: "Hungry Gorilla Cafes", status: "launch")',
     edit: 'Tribes › Directory',
     scope: 'Organisation'
   },

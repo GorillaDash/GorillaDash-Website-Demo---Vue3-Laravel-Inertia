@@ -55,10 +55,11 @@ query getTribe($slug: String!, $locale: String) {
   }
 }
 
-# The directory: every trading and Opening Soon tribe of one tribe type, with what
+# The directory: every trading and Opening Soon tribe of one tribe type (`tribes` calls
+# that status `launch`; the single `tribe` query calls it `active`), with what
 # the finder cards render (address, geo, phone, hours for the "open now" badge).
 query getTribes($tribeType: String, $order: [String]) {
-  tribes(name: $tribeType, orderBy: $order, status: "active") {
+  tribes(name: $tribeType, orderBy: $order, status: "launch") {
     name
     slug
     status
