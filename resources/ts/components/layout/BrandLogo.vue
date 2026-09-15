@@ -1,11 +1,15 @@
 <script setup lang="ts">
+import { useTranslate } from '@tolgee/vue'
 import LocaleLink from '@/components/core/LocaleLink.vue'
 
 /**
  * The Juniper Table wordmark: a juniper sprig and the name, drawn in currentColor
- * with the theme's display face, so it re-skins with the demo themes.
+ * with the theme's display face, so it re-skins with the demo themes. The caption
+ * underneath tells visitors the brand is a Gorilla Dash demonstration.
  */
 withDefaults(defineProps<{ class?: string }>(), { class: '' })
+
+const { t } = useTranslate()
 </script>
 
 <template>
@@ -33,8 +37,14 @@ withDefaults(defineProps<{ class?: string }>(), { class: '' })
         fill="none"
       />
     </svg>
-    <span class="heading-display text-lg leading-none whitespace-nowrap sm:text-2xl"
-      >Juniper Table</span
-    >
+    <span class="flex flex-col">
+      <span class="heading-display text-lg leading-none whitespace-nowrap sm:text-2xl"
+        >Juniper Table</span
+      >
+      <span
+        class="mt-1 font-sans text-[0.625rem] leading-none font-medium tracking-wide whitespace-nowrap normal-case opacity-70 sm:text-[0.6875rem]"
+        >{{ t('brand.caption', 'A Gorilla Dash demonstration website') }}</span
+      >
+    </span>
   </LocaleLink>
 </template>

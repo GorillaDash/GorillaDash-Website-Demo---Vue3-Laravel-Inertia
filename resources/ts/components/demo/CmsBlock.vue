@@ -39,11 +39,11 @@ const { structureView } = useDemoControls()
       ]"
     >
       <div
-        class="group pointer-events-auto flex max-w-full flex-col rounded-md bg-[#231a6e] px-2 py-1 text-left font-sans text-[0.6875rem] leading-snug font-normal tracking-normal text-white normal-case shadow-lg ring-1 ring-white/20"
+        class="group pointer-events-auto flex max-w-full flex-col rounded-md bg-[#2A1968] px-2 py-1 text-left font-sans text-[0.6875rem] leading-snug font-normal tracking-normal text-white normal-case shadow-lg ring-1 ring-white/20"
       >
         <div class="flex min-w-0 items-center gap-1.5 whitespace-nowrap">
           <span
-            class="shrink-0 rounded-sm bg-[#d81f26] px-1 text-[0.5625rem] font-semibold tracking-wide uppercase"
+            class="shrink-0 rounded-sm bg-[#BF161B] px-1 text-[0.5625rem] font-semibold tracking-wide uppercase"
             >{{ info.scope }}</span
           >
           <span class="shrink-0 font-semibold">{{ info.module }}</span>

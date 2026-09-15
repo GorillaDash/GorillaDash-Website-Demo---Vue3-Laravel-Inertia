@@ -168,7 +168,7 @@ html {
 
 /* Structure view: the demo's "how is this built" overlay (see CmsBlock.vue). */
 .structure-view [data-cms-block] {
-  outline: 2px dashed color-mix(in oklab, #d81f26 70%, transparent);
+  outline: 2px dashed color-mix(in oklab, #bf161b 70%, transparent);
   outline-offset: -2px;
 }
 
