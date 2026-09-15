@@ -1,0 +1,59 @@
+/** Internal type. DO NOT USE DIRECTLY. */
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** Internal type. DO NOT USE DIRECTLY. */
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+import type * as Types from '../graphql/__generated__/types';
+
+import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+export type GetFoodShoppingCartQueryVariables = Exact<{
+  sessionId: string;
+  tribeSlug: string | null | undefined;
+}>;
+
+
+export type GetFoodShoppingCartQuery = { foodShoppingCart: { session_id: string, foodShoppingCartItems: Array<{ id: number, quantity: number, unit_price: number, tax: number, sub_total: number, total: number, foodMenuItem: { id: number, name: string, default_price: number }, foodMenuListItem: { id: number, name: string | null, slug: string }, foodShoppingCartModifiers: Array<{ quantity: number, foodModifier: { id: number, label: string, price: number }, foodModifierGroup: { id: number, label: string | null } }> | null }> | null } | null };
+
+export type GetPickupTimesQueryVariables = Exact<{
+  slug: string;
+  date: string;
+}>;
+
+
+export type GetPickupTimesQuery = { foodTribeAvailableTime: { date: string | null, times: unknown } | null };
+
+export type AddFoodMenuItemToShoppingCartMutationVariables = Exact<{
+  tribeSlug: string | null | undefined;
+  sessionId: string;
+  foodItem: unknown;
+}>;
+
+
+export type AddFoodMenuItemToShoppingCartMutation = { addFoodMenuItemToShoppingCart: string | null };
+
+export type DeleteFoodMenuItemFromShoppingCartMutationVariables = Exact<{
+  tribeSlug: string | null | undefined;
+  sessionId: string;
+  cartItemId: number;
+}>;
+
+
+export type DeleteFoodMenuItemFromShoppingCartMutation = { deleteFoodMenuItemFromShoppingCart: string | null };
+
+export type SubmitFoodShoppingCartMutationVariables = Exact<{
+  tribeSlug: string;
+  sessionId: string;
+  customer: unknown;
+  deliveryDate: string;
+  deliveryTime: string | null | undefined;
+  comments: string | null | undefined;
+}>;
+
+
+export type SubmitFoodShoppingCartMutation = { submitFoodShoppingCart: Array<string | null> | null };
+
+
+export const GetFoodShoppingCartDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getFoodShoppingCart"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tribeSlug"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"foodShoppingCart"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"session_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}}},{"kind":"Argument","name":{"kind":"Name","value":"tribe_slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tribeSlug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"session_id"}},{"kind":"Field","name":{"kind":"Name","value":"foodShoppingCartItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"unit_price"}},{"kind":"Field","name":{"kind":"Name","value":"tax"}},{"kind":"Field","name":{"kind":"Name","value":"sub_total"}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"foodMenuItem"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"default_price"}}]}},{"kind":"Field","name":{"kind":"Name","value":"foodMenuListItem"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"foodShoppingCartModifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"foodModifier"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}},{"kind":"Field","name":{"kind":"Name","value":"foodModifierGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetFoodShoppingCartQuery, GetFoodShoppingCartQueryVariables>;
+export const GetPickupTimesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPickupTimes"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"date"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"foodTribeAvailableTime"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}},{"kind":"Argument","name":{"kind":"Name","value":"date"},"value":{"kind":"Variable","name":{"kind":"Name","value":"date"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"times"}}]}}]}}]} as unknown as DocumentNode<GetPickupTimesQuery, GetPickupTimesQueryVariables>;
+export const AddFoodMenuItemToShoppingCartDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"addFoodMenuItemToShoppingCart"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tribeSlug"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"foodItem"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JsonParser"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addFoodMenuItemToShoppingCart"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tribe_slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tribeSlug"}}},{"kind":"Argument","name":{"kind":"Name","value":"session_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}}},{"kind":"Argument","name":{"kind":"Name","value":"food_item"},"value":{"kind":"Variable","name":{"kind":"Name","value":"foodItem"}}}]}]}}]} as unknown as DocumentNode<AddFoodMenuItemToShoppingCartMutation, AddFoodMenuItemToShoppingCartMutationVariables>;
+export const DeleteFoodMenuItemFromShoppingCartDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteFoodMenuItemFromShoppingCart"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tribeSlug"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cartItemId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteFoodMenuItemFromShoppingCart"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tribe_slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tribeSlug"}}},{"kind":"Argument","name":{"kind":"Name","value":"session_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}}},{"kind":"Argument","name":{"kind":"Name","value":"cart_food_item_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cartItemId"}}}]}]}}]} as unknown as DocumentNode<DeleteFoodMenuItemFromShoppingCartMutation, DeleteFoodMenuItemFromShoppingCartMutationVariables>;
+export const SubmitFoodShoppingCartDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"submitFoodShoppingCart"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tribeSlug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"customer"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JsonParser"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"deliveryDate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"deliveryTime"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"comments"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"submitFoodShoppingCart"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tribe_slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tribeSlug"}}},{"kind":"Argument","name":{"kind":"Name","value":"session_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sessionId"}}},{"kind":"Argument","name":{"kind":"Name","value":"customer"},"value":{"kind":"Variable","name":{"kind":"Name","value":"customer"}}},{"kind":"Argument","name":{"kind":"Name","value":"delivery_option"},"value":{"kind":"StringValue","value":"pickup","block":false}},{"kind":"Argument","name":{"kind":"Name","value":"delivery_date"},"value":{"kind":"Variable","name":{"kind":"Name","value":"deliveryDate"}}},{"kind":"Argument","name":{"kind":"Name","value":"delivery_time"},"value":{"kind":"Variable","name":{"kind":"Name","value":"deliveryTime"}}},{"kind":"Argument","name":{"kind":"Name","value":"comments"},"value":{"kind":"Variable","name":{"kind":"Name","value":"comments"}}}]}]}}]} as unknown as DocumentNode<SubmitFoodShoppingCartMutation, SubmitFoodShoppingCartMutationVariables>;

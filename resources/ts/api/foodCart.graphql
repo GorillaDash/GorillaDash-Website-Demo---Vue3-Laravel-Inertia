@@ -1,0 +1,76 @@
+# The visitor's open cart for one tribe. `default_price` is selected on the menu item
+# because the unit price resolver falls back to it and Gorilla Dash only loads
+# requested columns.
+query getFoodShoppingCart($sessionId: String!, $tribeSlug: String) {
+  foodShoppingCart(session_id: $sessionId, tribe_slug: $tribeSlug) {
+    session_id
+    foodShoppingCartItems {
+      id
+      quantity
+      unit_price
+      tax
+      sub_total
+      total
+      foodMenuItem {
+        id
+        name
+        default_price
+      }
+      foodMenuListItem {
+        id
+        name
+        slug
+      }
+      foodShoppingCartModifiers {
+        quantity
+        foodModifier {
+          id
+          label
+          price
+        }
+        foodModifierGroup {
+          id
+          label
+        }
+      }
+    }
+  }
+}
+
+query getPickupTimes($slug: String!, $date: String!) {
+  foodTribeAvailableTime(slug: $slug, date: $date) {
+    date
+    times
+  }
+}
+
+mutation addFoodMenuItemToShoppingCart($tribeSlug: String, $sessionId: String!, $foodItem: JsonParser!) {
+  addFoodMenuItemToShoppingCart(tribe_slug: $tribeSlug, session_id: $sessionId, food_item: $foodItem)
+}
+
+mutation deleteFoodMenuItemFromShoppingCart($tribeSlug: String, $sessionId: String!, $cartItemId: Int!) {
+  deleteFoodMenuItemFromShoppingCart(
+    tribe_slug: $tribeSlug
+    session_id: $sessionId
+    cart_food_item_id: $cartItemId
+  )
+}
+
+mutation submitFoodShoppingCart(
+  $tribeSlug: String!
+  $sessionId: String!
+  $customer: JsonParser!
+  $deliveryDate: String!
+  $deliveryTime: String
+  $comments: String
+) {
+  submitFoodShoppingCart(
+    tribe_slug: $tribeSlug
+    session_id: $sessionId
+    customer: $customer
+    delivery_option: "pickup"
+    delivery_date: $deliveryDate
+    delivery_time: $deliveryTime
+    comments: $comments
+  )
+}

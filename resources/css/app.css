@@ -171,3 +171,19 @@ html {
   outline: 2px dashed color-mix(in oklab, #d81f26 70%, transparent);
   outline-offset: -2px;
 }
+
+/* Form fields. Tailwind v4 ships no forms plugin here, so inputs get one look. */
+@utility field {
+  width: 100%;
+  border: 1px solid var(--color-brand-tint-strong);
+  border-radius: 0.5rem;
+  background-color: #fff;
+  padding: 0.625rem 0.875rem;
+  color: var(--color-ink);
+
+  &:focus {
+    outline: 2px solid var(--color-brand-accent);
+    outline-offset: 1px;
+    border-color: var(--color-brand-accent);
+  }
+}
