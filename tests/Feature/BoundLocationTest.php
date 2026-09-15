@@ -112,7 +112,7 @@ test('a slug with no matching store 404s', function () {
     $this->get('/locations/does-not-exist')->assertNotFound();
 });
 
-test('the locations index leaves the cookie alone (the browser clears it)', function () {
+test('the locations index leaves the cookie alone', function () {
     fakeTribe('vestavia-hills-al');
 
     $response = $this->withUnencryptedCookie(BoundLocation::COOKIE, 'vestavia-hills-al')->get('/locations');

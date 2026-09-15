@@ -185,7 +185,7 @@ const steps = computed(() =>
       v-if="openingSoon.length"
       :info="{
         module: 'Tribes',
-        query: 'tribes(status: &quot;all&quot;) · status Opening Soon',
+        query: 'tribes(status: &quot;active&quot;) · status Opening Soon',
         edit: 'Tribes › Status',
         scope: 'Organisation'
       }"

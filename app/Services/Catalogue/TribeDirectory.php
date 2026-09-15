@@ -10,7 +10,7 @@ use GraphQL\Variable;
 /**
  * Answers one question for the `/locations/{slug}` route: is this a tribe the site
  * links to? The finder lists trading and Opening Soon tribes of the Juniper Table
- * tribe type, so the check reads that same list.
+ * tribe type (Gorilla Dash's `active` status filter), so the check reads that same list.
  *
  * A definitive miss (the list came back and the slug is not in it) is `false`; a
  * lookup that failed or answered nothing is `true`, so a Gorilla Dash outage never
@@ -41,7 +41,7 @@ class TribeDirectory
     {
         return (new Query('tribes'))
             ->setVariables([new Variable('tribeType', 'String')])
-            ->setArguments(['name' => new RawObject('$tribeType'), 'status' => 'all'])
+            ->setArguments(['name' => new RawObject('$tribeType'), 'status' => 'active'])
             ->setSelectionSet(['slug']);
     }
 }

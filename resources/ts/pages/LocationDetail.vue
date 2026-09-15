@@ -104,8 +104,13 @@ const jsonLd = computed<JsonLd | null>(() => {
   } as JsonLd
 })
 
+// Bind on mount as well as on change: after SSR the tribe arrives from the restored
+// Apollo cache during setup, so the watcher below never fires on a hard load.
 onMounted(() => {
   today.value = todayName(tribe.value?.timezone)
+  if (tribe.value?.status === 'Active') {
+    bindBoundLocation(tribe.value.slug)
+  }
 })
 
 watch(tribe, (value) => {
@@ -154,7 +159,7 @@ watch(tribe, (value) => {
     <!-- Hero -->
     <CmsBlock
       :info="STRUCTURE.tribeDetails"
-      :detail="`tribe(slug: &quot;${slug}&quot;, status: &quot;all&quot;)`"
+      :detail="`tribe(slug: &quot;${slug}&quot;, status: &quot;active&quot;)`"
       as="section"
       class="container grid gap-10 py-12 lg:grid-cols-2 lg:items-center lg:py-16"
     >

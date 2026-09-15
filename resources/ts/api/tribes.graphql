@@ -40,9 +40,10 @@ fragment TribeInfo on Tribe {
   }
 }
 
-# One tribe by slug, Opening Soon included so a pre-opening tribe still has a page.
+# One tribe by slug. `active` means trading or Opening Soon, so a pre-opening tribe
+# still has a page while a Testing or closed one does not.
 query getTribe($slug: String!, $locale: String) {
-  tribe(slug: $slug, locale: $locale, status: "all") {
+  tribe(slug: $slug, locale: $locale, status: "active") {
     ...TribeInfo
     teamMembers(active: true) {
       first_name
@@ -57,7 +58,7 @@ query getTribe($slug: String!, $locale: String) {
 # The directory: every trading and Opening Soon tribe of one tribe type, with what
 # the finder cards render (address, geo, phone, hours for the "open now" badge).
 query getTribes($tribeType: String, $order: [String]) {
-  tribes(name: $tribeType, orderBy: $order, status: "all") {
+  tribes(name: $tribeType, orderBy: $order, status: "active") {
     name
     slug
     status
