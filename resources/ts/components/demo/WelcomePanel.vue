@@ -12,17 +12,22 @@ import { useWelcomePanel } from '@/composables/useWelcomePanel'
  * is inert and Escape closes it. Closing plays the slide-out before the dialog is
  * actually closed. Colours are the Gorilla Dash house palette, not the demo theme,
  * because the panel speaks for Gorilla Dash rather than for the fictional brand.
+ *
+ * While it is closed, a tab with an arrow sits on the right edge of the screen so a
+ * visitor can slide it back open.
  */
 const GORILLA_DASH_LOGO = 'https://cdn.gorilladash.com/images/media/6109953/GorillaDash.png'
 const CLOSE_ANIMATION_MS = 220
 
 const { t } = useTranslate()
-const { open, init, close } = useWelcomePanel()
+const { open, init, show, close } = useWelcomePanel()
 
 const titleId = useId()
 const dialog = ref<HTMLDialogElement | null>(null)
 const closeButton = ref<HTMLButtonElement | null>(null)
 const closing = ref(false)
+// Held back past the first-visit auto-open, so the tab does not flash before the panel slides in.
+const tabReady = ref(false)
 
 const connections = [
   {
@@ -144,10 +149,52 @@ const onDialogClick = (event: MouseEvent): void => {
   }
 }
 
-onMounted(init)
+onMounted(() => {
+  init()
+  window.setTimeout(() => {
+    tabReady.value = true
+  }, 900)
+})
 </script>
 
 <template>
+  <Transition
+    enter-from-class="translate-x-full"
+    leave-to-class="translate-x-full"
+    enter-active-class="transition-transform duration-300 ease-out"
+    leave-active-class="transition-transform duration-150 ease-in"
+  >
+    <button
+      v-if="tabReady && !open && !closing"
+      type="button"
+      class="group fixed top-1/2 right-0 z-40 flex -translate-y-1/2 cursor-pointer flex-col items-center gap-2 rounded-l-2xl bg-[#2A1968] py-4 pr-2 pl-2.5 text-white shadow-xl ring-1 ring-white/10 transition-[padding] hover:pr-3.5"
+      :title="t('welcome.open', 'About this demo')"
+      :aria-label="t('welcome.open', 'About this demo')"
+      @click="show"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        class="size-5 transition-transform group-hover:-translate-x-0.5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M15 5l-7 7 7 7" />
+      </svg>
+      <span
+        class="rotate-180 text-[0.625rem] font-bold tracking-widest uppercase [writing-mode:vertical-rl]"
+        aria-hidden="true"
+        >{{ t('welcome.tab', 'About this demo') }}</span
+      >
+      <span
+        class="size-1.5 rounded-full bg-[#BF161B]"
+        aria-hidden="true"
+      />
+    </button>
+  </Transition>
   <dialog
     ref="dialog"
     :aria-labelledby="titleId"
