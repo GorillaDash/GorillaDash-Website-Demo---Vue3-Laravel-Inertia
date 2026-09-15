@@ -49,7 +49,7 @@ const pendingName = computed(
           : 'bg-white text-brand-primary ring-1 ring-brand-tint-strong'
       "
     >
-      <IconMapPin class="size-4 shrink-0 text-brand-accent" />
+      <IconMapPin class="size-4 shrink-0 text-brand-accent-ink" />
       <span class="whitespace-nowrap">{{ t('Ordering from', 'Ordering from') }}</span>
       <select
         v-model="selected"

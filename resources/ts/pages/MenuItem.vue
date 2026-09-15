@@ -231,7 +231,7 @@ const addToOrder = async () => {
       </div>
 
       <div>
-        <p class="text-sm font-semibold tracking-widest text-brand-accent uppercase">
+        <p class="text-sm font-semibold tracking-widest text-brand-accent-ink uppercase">
           {{ card?.sectionName }}
         </p>
         <h1 class="mt-2 heading-display text-4xl leading-tight text-brand-primary sm:text-5xl">
@@ -268,7 +268,7 @@ const addToOrder = async () => {
                     v-model="variantId"
                     type="radio"
                     :value="option.id"
-                    class="text-brand-accent focus:ring-brand-accent"
+                    class="text-brand-accent-ink focus:ring-brand-accent"
                   />
                   {{ (option.name ?? '').replace(`${card?.name} - `, '') }}
                 </span>

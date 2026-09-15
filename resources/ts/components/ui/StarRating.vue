@@ -10,7 +10,7 @@ const stars = computed(() =>
 
 <template>
   <span
-    class="inline-flex items-center gap-0.5 text-brand-accent"
+    class="inline-flex items-center gap-0.5 text-brand-accent-ink"
     :aria-label="`${rating.toFixed(1)} out of 5 stars`"
     role="img"
   >

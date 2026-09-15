@@ -41,7 +41,7 @@ const image = computed(() =>
     >
       <LocaleLink
         :href="pagePath('blog')"
-        class="text-sm font-semibold text-brand-accent hover:underline"
+        class="text-sm font-semibold text-brand-accent-ink hover:underline"
         >← {{ t('The journal', 'The journal') }}</LocaleLink
       >
       <h1 class="mt-6 heading-display text-4xl leading-tight text-brand-primary sm:text-5xl">

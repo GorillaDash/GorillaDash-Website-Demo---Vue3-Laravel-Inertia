@@ -67,8 +67,8 @@ const { locale, locales, currentLocale, isMultilingual, switchUrl } = useLocale(
           :href="switchUrl(option.code)"
           :hreflang="option.value"
           :aria-current="option.value === locale ? 'true' : undefined"
-          class="block px-4 py-1 font-display text-lg leading-7 tracking-wider whitespace-nowrap uppercase transition-colors hover:text-brand-accent"
-          :class="option.value === locale ? 'text-brand-accent' : 'text-brand-primary'"
+          class="block px-4 py-1 font-display text-lg leading-7 tracking-wider whitespace-nowrap uppercase transition-colors hover:text-brand-accent-ink"
+          :class="option.value === locale ? 'text-brand-accent-ink' : 'text-brand-primary'"
         >
           {{ option.label }}
         </a>

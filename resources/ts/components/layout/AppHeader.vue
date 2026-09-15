@@ -142,7 +142,7 @@ onBeforeUnmount(() => {
             :href="lockedStore && storeHref ? storeHref : pagePath('locations')"
             class="hidden items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium hover:bg-brand-tint md:inline-flex"
           >
-            <IconMapPin class="size-4 text-brand-accent" />
+            <IconMapPin class="size-4 text-brand-accent-ink" />
             <span v-if="lockedStore">{{ shortStoreName }}</span>
             <span v-else>{{ t('Find a cafe', 'Find a cafe') }}</span>
           </LocaleLink>

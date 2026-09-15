@@ -77,7 +77,7 @@ const href = computed(() => cmsRoute('locations.show', { slug: props.tribe.slug 
       </h3>
 
       <p class="flex gap-2 text-sm leading-relaxed text-muted">
-        <IconMapPin class="mt-0.5 size-4 shrink-0 text-brand-accent" />
+        <IconMapPin class="mt-0.5 size-4 shrink-0 text-brand-accent-ink" />
         <span>
           {{ [tribe.address_1, tribe.address_2].filter(Boolean).join(', ') }}<br />
           {{ tribe.locality }}, {{ tribe.state_abbreviated }} {{ tribe.postal_code }}

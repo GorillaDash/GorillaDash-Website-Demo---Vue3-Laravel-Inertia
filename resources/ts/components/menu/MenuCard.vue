@@ -28,7 +28,7 @@ const href = computed(() =>
       />
     </div>
     <div class="flex flex-1 flex-col gap-2 p-5">
-      <p class="text-xs font-semibold tracking-widest text-brand-accent uppercase">
+      <p class="text-xs font-semibold tracking-widest text-brand-accent-ink uppercase">
         {{ card.sectionName }}
       </p>
       <h3 class="heading-display text-lg leading-snug text-brand-primary">{{ card.name }}</h3>

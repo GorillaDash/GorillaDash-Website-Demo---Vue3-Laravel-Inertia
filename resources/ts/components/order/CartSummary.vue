@@ -59,7 +59,7 @@ const { lines, count, subTotal, tax, total, busy, remove } = useCart()
           <button
             v-if="editable"
             type="button"
-            class="mt-1 text-xs font-semibold text-brand-accent hover:underline disabled:opacity-50"
+            class="mt-1 text-xs font-semibold text-brand-accent-ink hover:underline disabled:opacity-50"
             :disabled="busy"
             @click="line.id && remove(line.id)"
           >

@@ -23,7 +23,7 @@ withDefaults(
       <p
         v-if="eyebrow"
         class="mb-3 text-sm font-semibold tracking-widest uppercase"
-        :class="inverted ? 'text-brand-tint-strong' : 'text-brand-accent'"
+        :class="inverted ? 'text-brand-tint-strong' : 'text-brand-accent-ink'"
       >
         {{ eyebrow }}
       </p>

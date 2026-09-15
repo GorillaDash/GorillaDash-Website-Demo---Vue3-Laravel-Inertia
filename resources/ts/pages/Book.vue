@@ -484,7 +484,7 @@ watch([trading, boundSlug], () => {
                 :aria-pressed="cafeSlug === option.tribe.slug"
                 @click="chooseCafe(option.tribe.slug)"
               >
-                <IconMapPin class="mt-1 size-5 shrink-0 text-brand-accent" />
+                <IconMapPin class="mt-1 size-5 shrink-0 text-brand-accent-ink" />
                 <span class="flex-1">
                   <span class="block font-semibold text-brand-primary">{{
                     option.tribe.name.replace(/^Hungry Gorilla\s+/i, '')
@@ -678,7 +678,7 @@ watch([trading, boundSlug], () => {
                 <dd class="flex-1 font-medium text-brand-primary">{{ row.value }}</dd>
                 <button
                   type="button"
-                  class="text-sm font-semibold text-brand-accent hover:underline"
+                  class="text-sm font-semibold text-brand-accent-ink hover:underline"
                   @click="step = row.step"
                 >
                   {{ t('Change', 'Change') }}

@@ -34,7 +34,7 @@ const category = computed(() => props.article.article_categories?.[0]?.name ?? '
       />
     </div>
     <div class="flex flex-col gap-2 pt-4">
-      <p class="text-xs font-semibold tracking-widest text-brand-accent uppercase">
+      <p class="text-xs font-semibold tracking-widest text-brand-accent-ink uppercase">
         {{ category }}<span v-if="category"> · </span>{{ formatDate(article.created_at) }}
       </p>
       <h3 class="heading-display text-xl leading-snug text-brand-primary group-hover:underline">

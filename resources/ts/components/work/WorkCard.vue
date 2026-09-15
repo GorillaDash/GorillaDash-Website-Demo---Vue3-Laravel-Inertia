@@ -36,7 +36,7 @@ const image = computed(() =>
       />
     </div>
     <div class="flex flex-col gap-1.5 pt-4">
-      <p class="text-xs font-semibold tracking-widest text-brand-accent uppercase">
+      <p class="text-xs font-semibold tracking-widest text-brand-accent-ink uppercase">
         {{ post.client_name }}
       </p>
       <h3 class="heading-display text-xl leading-snug text-brand-primary group-hover:underline">

@@ -91,7 +91,7 @@ const stats = computed(() => [
     >
       <div class="container grid items-center gap-12 py-14 lg:grid-cols-2 lg:py-20">
         <div>
-          <p class="mb-5 text-sm font-semibold tracking-widest text-brand-accent uppercase">
+          <p class="mb-5 text-sm font-semibold tracking-widest text-brand-accent-ink uppercase">
             {{ field('Hero Eyebrow') }}
           </p>
           <h1

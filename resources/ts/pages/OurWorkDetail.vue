@@ -50,10 +50,10 @@ const more = computed(() =>
     >
       <LocaleLink
         :href="pagePath('our-work')"
-        class="text-sm font-semibold text-brand-accent hover:underline"
+        class="text-sm font-semibold text-brand-accent-ink hover:underline"
         >← {{ t('All events', 'All events') }}</LocaleLink
       >
-      <p class="mt-6 text-sm font-semibold tracking-widest text-brand-accent uppercase">
+      <p class="mt-6 text-sm font-semibold tracking-widest text-brand-accent-ink uppercase">
         {{ post?.client_name }}
       </p>
       <h1 class="mt-2 heading-display text-4xl leading-tight text-brand-primary sm:text-5xl">

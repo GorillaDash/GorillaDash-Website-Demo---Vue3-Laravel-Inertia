@@ -172,7 +172,7 @@ const steps = computed(() =>
           :key="stepItem.number"
           class="relative border-t-4 border-brand-accent pt-5"
         >
-          <p class="text-sm font-semibold text-brand-accent">
+          <p class="text-sm font-semibold text-brand-accent-ink">
             {{ t('Step', 'Step') }} {{ stepItem.number }}
           </p>
           <h3 class="mt-1 heading-display text-2xl text-brand-primary">{{ stepItem.title }}</h3>
