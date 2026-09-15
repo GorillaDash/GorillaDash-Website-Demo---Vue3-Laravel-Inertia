@@ -2,10 +2,12 @@
 
 use App\Enums\Locale;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\OurWorkController;
 use App\Http\Controllers\RobotsController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WebsitePageController;
 use App\Http\Middleware\RedirectToDefaultLocale;
 use App\Services\WebsitePages;
@@ -132,6 +134,16 @@ $pages = function () use ($pagePattern, $locationsPattern, $menuPattern, $ourWor
 Route::get('robots.txt', RobotsController::class)
     ->middleware('edge-cache:3600')
     ->name('robots');
+
+// sitemap.xml and llms.txt list every public page from Gorilla Dash. Same placement
+// as robots.txt: ahead of the `{page}` route and outside any locale prefix.
+Route::get('sitemap.xml', SitemapController::class)
+    ->middleware('edge-cache:3600')
+    ->name('sitemap');
+
+Route::get('llms.txt', LlmsTxtController::class)
+    ->middleware('edge-cache:3600')
+    ->name('llms');
 
 // The canonical, locale-free routes, registered on EVERY deployment. Their URIs are
 // what Wayfinder bakes into the frontend bundle at build time, and one image serves
