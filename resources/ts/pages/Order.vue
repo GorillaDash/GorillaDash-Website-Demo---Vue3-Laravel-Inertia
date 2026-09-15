@@ -14,6 +14,7 @@ import { usePagePaths } from '@/composables/usePagePaths'
 import { APOLLO_CLIENT } from '@/composables/useQuery'
 import { useTribes } from '@/composables/useTribes'
 import { formatPrice, formatTime } from '@/lib/format'
+import { toUsE164 } from '@/lib/phone'
 import { WEEK_DAYS, weekHours } from '@/services/tribeHoursService'
 import { getValueByName } from '@/services/websiteContentValue'
 import { useWebsitePageService } from '@/services/websitePageService'
@@ -121,8 +122,8 @@ const placeOrder = async () => {
     error.value = t.value('order.chooseTime', 'Choose a pickup time')
     return
   }
-  const digits = form.phone.replace(/\D/g, '').replace(/^1(?=\d{10}$)/, '')
-  if (digits.length !== 10) {
+  const phone = toUsE164(form.phone)
+  if (!phone) {
     error.value = t.value('order.phone', 'Enter a 10 digit US phone number')
     return
   }
@@ -135,7 +136,7 @@ const placeOrder = async () => {
   }
 
   try {
-    await checkout({ ...form, phone: `+1${digits}`, date: date.value, time: time.value })
+    await checkout({ ...form, phone, date: date.value, time: time.value })
     placed.value = summary
   } catch {
     error.value = t.value('order.failed', 'We could not place your order. Please try again')
