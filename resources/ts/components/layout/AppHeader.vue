@@ -140,7 +140,7 @@ onBeforeUnmount(() => {
         <div class="flex items-center gap-2">
           <LocaleLink
             :href="lockedStore && storeHref ? storeHref : pagePath('locations')"
-            class="hidden items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium hover:bg-brand-tint md:inline-flex"
+            class="hidden items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium hover:bg-brand-tint md:inline-flex lg:hidden xl:inline-flex"
           >
             <IconMapPin class="size-4 text-brand-accent-ink" />
             <span v-if="lockedStore">{{ shortStoreName }}</span>
