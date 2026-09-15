@@ -16,7 +16,7 @@ withDefaults(defineProps<{ class?: string }>(), { class: '' })
   >
     <svg
       viewBox="0 0 40 40"
-      class="size-9 shrink-0"
+      class="size-8 shrink-0 sm:size-9"
       aria-hidden="true"
     >
       <circle
@@ -33,7 +33,7 @@ withDefaults(defineProps<{ class?: string }>(), { class: '' })
         fill="none"
       />
     </svg>
-    <span class="heading-display text-xl leading-none whitespace-nowrap sm:text-2xl"
+    <span class="heading-display text-lg leading-none whitespace-nowrap sm:text-2xl"
       >Juniper Table</span
     >
   </LocaleLink>

@@ -79,12 +79,13 @@ onBeforeUnmount(() => {
     <header
       class="border-b border-brand-tint-strong bg-surface/95 text-brand-primary backdrop-blur"
     >
-      <div class="container flex h-18 items-center justify-between gap-6">
+      <div class="container flex h-18 items-center justify-between gap-3 sm:gap-6">
         <BrandLogo />
 
         <CmsBlock
           :info="STRUCTURE.mainMenu"
           as="nav"
+          label-position="below"
           class="hidden flex-1 justify-center lg:flex"
           :aria-label="t('Primary', 'Primary')"
         >
@@ -159,13 +160,14 @@ onBeforeUnmount(() => {
             >
           </LocaleLink>
 
-          <AppButton
-            :href="pagePath('menu')"
-            size="sm"
-            class="hidden sm:inline-flex"
-          >
-            {{ t('Order online', 'Order online') }}
-          </AppButton>
+          <span class="hidden sm:inline-flex">
+            <AppButton
+              :href="pagePath('menu')"
+              size="sm"
+            >
+              {{ t('Order online', 'Order online') }}
+            </AppButton>
+          </span>
 
           <button
             type="button"

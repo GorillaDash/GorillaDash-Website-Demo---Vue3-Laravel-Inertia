@@ -4,18 +4,19 @@ import type { StructureInfo } from '@/constants/structure'
 
 /**
  * Wraps one section of a page. Invisible normally; with Structure view on it draws a
- * dashed outline and a label naming the Gorilla Dash module, the GraphQL query and
- * where the content is edited. `detail` overrides the query line for a block whose
- * arguments are only known at runtime (a tribe slug, say).
+ * dashed outline and a one-line label naming the scope, the Gorilla Dash module and
+ * the GraphQL query. Hovering the label adds where the content is edited. `detail`
+ * overrides the query line for a block whose arguments are only known at runtime.
  */
 withDefaults(
   defineProps<{
     info: StructureInfo
     detail?: string
     as?: string
-    labelPosition?: 'top' | 'bottom'
+    labelPosition?: 'top' | 'below'
+    labelAlign?: 'start' | 'end'
   }>(),
-  { detail: undefined, as: 'div', labelPosition: 'top' }
+  { detail: undefined, as: 'div', labelPosition: 'top', labelAlign: 'start' }
 )
 
 const { structureView } = useDemoControls()
@@ -31,24 +32,24 @@ const { structureView } = useDemoControls()
 
     <div
       v-if="structureView"
-      class="pointer-events-none absolute left-3 z-40 max-w-[calc(100%-1.5rem)]"
-      :class="labelPosition === 'top' ? 'top-3' : 'bottom-3'"
+      class="pointer-events-none absolute z-40 flex max-w-[calc(100%-1rem)]"
+      :class="[
+        labelPosition === 'top' ? 'top-1.5' : 'top-full mt-1',
+        labelAlign === 'start' ? 'left-2' : 'right-2 justify-end'
+      ]"
     >
       <div
-        class="pointer-events-auto inline-flex flex-col gap-1 rounded-lg bg-[#231a6e] px-3 py-2 text-left font-sans text-xs leading-snug text-white normal-case shadow-lg ring-1 ring-white/20"
+        class="group pointer-events-auto flex max-w-full flex-col rounded-md bg-[#231a6e] px-2 py-1 text-left font-sans text-[0.6875rem] leading-snug font-normal tracking-normal text-white normal-case shadow-lg ring-1 ring-white/20"
       >
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex min-w-0 items-center gap-1.5 whitespace-nowrap">
           <span
-            class="rounded bg-[#d81f26] px-1.5 py-0.5 text-[0.625rem] font-semibold tracking-wide uppercase"
+            class="shrink-0 rounded-sm bg-[#d81f26] px-1 text-[0.5625rem] font-semibold tracking-wide uppercase"
+            >{{ info.scope }}</span
           >
-            {{ info.scope }}
-          </span>
-          <span class="font-semibold">{{ info.module }}</span>
+          <span class="shrink-0 font-semibold">{{ info.module }}</span>
+          <code class="truncate font-mono text-white/80">{{ detail ?? info.query }}</code>
         </div>
-        <code class="font-mono text-[0.6875rem] break-all text-white/85">{{
-          detail ?? info.query
-        }}</code>
-        <span class="text-white/70">Edit in {{ info.edit }}</span>
+        <span class="hidden pt-0.5 text-white/70 group-hover:block">Edit in {{ info.edit }}</span>
       </div>
     </div>
   </component>

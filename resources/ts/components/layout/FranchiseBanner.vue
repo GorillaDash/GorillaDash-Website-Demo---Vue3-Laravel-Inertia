@@ -13,10 +13,11 @@ const { pagePath } = usePagePaths()
 <template>
   <CmsBlock
     :info="STRUCTURE.franchiseBanner"
+    label-align="end"
     class="bg-brand-primary text-white"
   >
     <div class="container flex min-h-10 items-center justify-center gap-3 py-2 text-center text-sm">
-      <span class="text-white/85">{{
+      <span class="hidden text-white/85 sm:inline">{{
         value('Banner Text') || 'Own a Juniper Table in your city.'
       }}</span>
       <LocaleLink

@@ -44,11 +44,23 @@ query getPickupTimes($slug: String!, $date: String!) {
   }
 }
 
-mutation addFoodMenuItemToShoppingCart($tribeSlug: String, $sessionId: String!, $foodItem: JsonParser!) {
-  addFoodMenuItemToShoppingCart(tribe_slug: $tribeSlug, session_id: $sessionId, food_item: $foodItem)
+mutation addFoodMenuItemToShoppingCart(
+  $tribeSlug: String
+  $sessionId: String!
+  $foodItem: JsonParser!
+) {
+  addFoodMenuItemToShoppingCart(
+    tribe_slug: $tribeSlug
+    session_id: $sessionId
+    food_item: $foodItem
+  )
 }
 
-mutation deleteFoodMenuItemFromShoppingCart($tribeSlug: String, $sessionId: String!, $cartItemId: Int!) {
+mutation deleteFoodMenuItemFromShoppingCart(
+  $tribeSlug: String
+  $sessionId: String!
+  $cartItemId: Int!
+) {
   deleteFoodMenuItemFromShoppingCart(
     tribe_slug: $tribeSlug
     session_id: $sessionId

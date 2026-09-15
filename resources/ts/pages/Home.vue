@@ -124,30 +124,28 @@ const stats = computed(() => [
         </div>
 
         <div class="relative">
-          <div class="grid grid-cols-5 gap-4">
+          <div class="grid aspect-5/4 grid-cols-5 grid-rows-2 gap-3 sm:gap-4">
             <SmartImage
               :src="photo('heroBoard', 1100)"
               alt="A grazing board with cheeses, cured meats and fruit"
               eager
-              class="col-span-3 aspect-4/5 w-full rounded-card"
+              class="col-span-3 row-span-2 size-full rounded-card"
             />
-            <div class="col-span-2 grid grid-rows-2 gap-4">
-              <SmartImage
-                :src="photo('latteLeaf', 600)"
-                alt="A latte with leaf art"
-                eager
-                class="size-full rounded-card"
-              />
-              <SmartImage
-                :src="photo('bowlSalad', 600)"
-                alt="A grain bowl with vegetables"
-                class="size-full rounded-card"
-              />
-            </div>
+            <SmartImage
+              :src="photo('latteLeaf', 600)"
+              alt="A latte with leaf art"
+              eager
+              class="col-span-2 size-full rounded-card"
+            />
+            <SmartImage
+              :src="photo('bowlSalad', 600)"
+              alt="A grain bowl with vegetables"
+              class="col-span-2 size-full rounded-card"
+            />
           </div>
 
           <div
-            class="absolute -bottom-6 left-6 flex items-center gap-3 rounded-2xl bg-white px-5 py-4 shadow-xl ring-1 ring-brand-tint-strong"
+            class="absolute -bottom-6 left-4 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-xl ring-1 ring-brand-tint-strong sm:left-6 sm:px-5 sm:py-4"
           >
             <StarRating
               :rating="averageRating || 5"
