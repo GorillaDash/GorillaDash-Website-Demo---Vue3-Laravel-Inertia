@@ -3,6 +3,7 @@ import { TolgeeProvider } from '@tolgee/vue'
 import { computed, onMounted } from 'vue'
 import DemoToolbar from '@/components/demo/DemoToolbar.vue'
 import DevicePreview from '@/components/demo/DevicePreview.vue'
+import WelcomePanel from '@/components/demo/WelcomePanel.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import { useDemoControls } from '@/composables/useDemoControls'
@@ -39,5 +40,6 @@ onMounted(init)
       <AppFooter />
     </div>
     <DemoToolbar v-if="!embedded" />
+    <WelcomePanel v-if="!embedded" />
   </TolgeeProvider>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { DEMO_DEVICES, DEMO_THEMES, useDemoControls } from '@/composables/useDemoControls'
+import { useWelcomePanel } from '@/composables/useWelcomePanel'
 
 /**
  * The floating control a presenter uses at the stand: switch Structure view on and
@@ -16,6 +17,7 @@ const GORILLA_DASH_LOGO = 'https://cdn.gorilladash.com/images/media/6109953/Gori
 
 const { structureView, theme, device, init, toggleStructureView, setTheme, setDevice } =
   useDemoControls()
+const { show: showWelcome } = useWelcomePanel()
 
 onMounted(init)
 </script>
@@ -47,6 +49,36 @@ onMounted(init)
     </a>
 
     <div class="flex items-center gap-3 bg-[#2A1968] py-2 pr-3 pl-2 text-white">
+      <button
+        type="button"
+        class="flex size-7 cursor-pointer items-center justify-center rounded-full text-white/80 hover:bg-white/15 hover:text-white"
+        title="About this demo"
+        @click="showWelcome"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          class="size-5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="9"
+          />
+          <path d="M12 11v5M12 8h.01" />
+        </svg>
+        <span class="sr-only">About this demo</span>
+      </button>
+
+      <span
+        class="h-5 w-px bg-white/20"
+        aria-hidden="true"
+      />
+
       <div
         class="items-center gap-0.5 rounded-full bg-white/10 p-0.5"
         :class="device === 'desktop' ? 'hidden md:flex' : 'flex'"

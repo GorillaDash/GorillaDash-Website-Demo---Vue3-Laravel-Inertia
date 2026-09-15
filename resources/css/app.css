@@ -61,6 +61,7 @@
   --color-brand-accent: #bf161b; /* primary call-to-action */
   --color-brand-accent-600: #9c1116; /* CTA hover/active */
   --color-brand-on-accent: #ffffff; /* text on the accent colour */
+  --color-brand-accent-ink: #bf161b; /* the accent as text on light surfaces: 4.5:1 or better */
   --color-brand-secondary: #6e62b0; /* supporting colour: badges, icons */
   --color-brand-tint: #f1f0f7; /* light wash behind sections */
   --color-brand-tint-strong: #dcdce3; /* borders and rules on the wash */
@@ -116,6 +117,7 @@
 }
 
 [data-theme='cafe'] {
+  --color-brand-accent-ink: #a3482a;
   --color-brand-primary: #1f3a32;
   --color-brand-primary-700: #2c4f44;
   --color-brand-accent: #c65d3b;
@@ -133,6 +135,7 @@
 }
 
 [data-theme='trade'] {
+  --color-brand-accent-ink: #8a5d00;
   --color-brand-primary: #0f1b2d;
   --color-brand-primary-700: #1f3047;
   --color-brand-accent: #f2a900;
@@ -152,6 +155,7 @@
 }
 
 [data-theme='retail'] {
+  --color-brand-accent-ink: #c02a4d;
   --color-brand-primary: #2b1b3f;
   --color-brand-primary-700: #3d2a55;
   --color-brand-accent: #e4476a;
@@ -234,4 +238,64 @@ html {
 .article-body ol {
   list-style: decimal;
   padding-left: 1.5rem;
+}
+
+/* The demo's welcome panel (WelcomePanel.vue): a native modal <dialog> pinned to the
+   right edge that slides in, and slides out again before it is closed. */
+.welcome-panel {
+  margin: 0 0 0 auto;
+  width: min(28rem, 100%);
+  max-width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  border: 0;
+  overflow: hidden;
+}
+
+.welcome-panel[open] {
+  animation: welcome-panel-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.welcome-panel::backdrop {
+  background: rgb(26 18 72 / 0.45);
+  animation: welcome-backdrop-in 320ms ease-out;
+}
+
+.welcome-panel.is-closing {
+  animation: welcome-panel-out 220ms ease-in forwards;
+}
+
+.welcome-panel.is-closing::backdrop {
+  animation: welcome-backdrop-out 220ms ease-in forwards;
+}
+
+@keyframes welcome-panel-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes welcome-panel-out {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes welcome-backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes welcome-backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-panel,
+  .welcome-panel::backdrop {
+    animation: none !important;
+  }
 }
