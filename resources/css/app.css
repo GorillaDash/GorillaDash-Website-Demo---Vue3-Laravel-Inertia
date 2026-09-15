@@ -52,31 +52,31 @@
 }
 
 @theme {
-  /* Brand palette — PLACEHOLDER greys. Replace all seven with the client's
-     colours; nothing else needs to change, because the components only ever
-     name the ROLE. That is the point of these names: `brand-primary` survives a
-     rebrand, `brand-navy` does not. Each becomes a Tailwind utility, so
-     `bg-brand-primary` / `text-brand-accent` / `border-brand-tint` all work. */
-  --color-brand-primary: #1e293b; /* dominant surface — header, footer */
-  --color-brand-primary-700: #334155; /* hover/divider on that surface */
-  --color-brand-accent: #0284c7; /* primary call-to-action */
-  --color-brand-accent-600: #0369a1; /* CTA hover/active */
-  --color-brand-secondary: #475569; /* secondary surface — cards, banners */
-  --color-brand-tint: #e2e8f0; /* light wash behind sections */
-  --color-brand-tint-strong: #cbd5e1; /* accent borders, submenu rules */
+  /* Brand roles. Components only ever name the ROLE, never a colour, so the
+     demo's theme switcher can re-skin every page by redefining these variables
+     under [data-theme] below. The default is the Juniper Table cafe look. */
+  --color-brand-primary: #1f3a32; /* dominant dark surface: header bar, footer, bands */
+  --color-brand-primary-700: #2c4f44; /* hover/divider on that surface */
+  --color-brand-accent: #c65d3b; /* primary call-to-action */
+  --color-brand-accent-600: #a94a2c; /* CTA hover/active */
+  --color-brand-on-accent: #ffffff; /* text on the accent colour */
+  --color-brand-secondary: #7e9c82; /* supporting colour: badges, icons */
+  --color-brand-tint: #f4eee3; /* light wash behind sections */
+  --color-brand-tint-strong: #e6dcc8; /* borders and rules on the wash */
+  --color-surface: #fbf8f2; /* page background */
+  --color-ink: #1f2421; /* body text */
+  --color-muted: #5e6560; /* secondary text */
 
-  /* Map marker — functional, not brand. Leave unless the design restyles pins. */
+  /* Map marker — functional, not brand. */
   --color-map-pin: #d55341;
   --color-map-pin-border: #b32e23;
 
-  /* Type slots the components already reference. They point at system stacks so
-     the starter renders with no webfont beyond --font-sans; swap in the client's
-     faces here (and register them in vite.config.ts `fonts`, each with a
-     metric-matched fallback above, or the swap costs CLS). */
-  --font-display: ui-sans-serif, system-ui, sans-serif; /* headings, nav */
-  --font-condensed: ui-sans-serif, system-ui, sans-serif; /* big uppercase headings */
-  --font-serif: ui-serif, Georgia, 'Times New Roman', serif; /* editorial copy */
-  --font-script: cursive; /* script accent */
+  --font-display: Fraunces, 'Fraunces fallback', Georgia, 'Times New Roman', serif; /* headings */
+  --font-condensed: Oswald, 'Arial Narrow', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: Fraunces, Georgia, 'Times New Roman', serif;
+  --font-script: cursive;
+
+  --radius-card: 1.25rem;
 
   /* Full desktop canvas width (1920px). Extends the built-in scale (7xl = 80rem);
      drives max-w-8xl / w-8xl / min-w-8xl and caps the `container` below. */
@@ -100,4 +100,74 @@
   @media (width >= 64rem) {
     padding-inline: 2rem;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Demo themes. The trade-show demo re-skins the same pages and the same Gorilla
+   Dash data live, so a prospect can picture their own brand. Only tokens change;
+   no component knows which theme is active.
+   ───────────────────────────────────────────────────────────────────────────── */
+:root {
+  --display-transform: none;
+  --display-tracking: -0.015em;
+  --display-weight: 600;
+}
+
+[data-theme='trade'] {
+  --color-brand-primary: #0f1b2d;
+  --color-brand-primary-700: #1f3047;
+  --color-brand-accent: #f2a900;
+  --color-brand-accent-600: #d99700;
+  --color-brand-on-accent: #0f1b2d;
+  --color-brand-secondary: #3d5a80;
+  --color-brand-tint: #eef1f5;
+  --color-brand-tint-strong: #d5dce6;
+  --color-surface: #f7f8fa;
+  --color-ink: #111827;
+  --color-muted: #4b5563;
+  --font-display: Oswald, 'Arial Narrow', ui-sans-serif, system-ui, sans-serif;
+  --radius-card: 0.375rem;
+  --display-transform: uppercase;
+  --display-tracking: 0.02em;
+  --display-weight: 600;
+}
+
+[data-theme='retail'] {
+  --color-brand-primary: #2b1b3f;
+  --color-brand-primary-700: #3d2a55;
+  --color-brand-accent: #e4476a;
+  --color-brand-accent-600: #c93556;
+  --color-brand-on-accent: #ffffff;
+  --color-brand-secondary: #8a6fb0;
+  --color-brand-tint: #f7f1fa;
+  --color-brand-tint-strong: #e8dcf0;
+  --color-surface: #ffffff;
+  --color-ink: #1c1426;
+  --color-muted: #5f566b;
+  --font-display:
+    'Instrument Sans', 'Instrument Sans fallback', ui-sans-serif, system-ui, sans-serif;
+  --radius-card: 1.75rem;
+  --display-transform: none;
+  --display-tracking: -0.035em;
+  --display-weight: 600;
+}
+
+/* Every heading on the site uses this, so a theme can change the face, case and
+   tracking in one place. */
+@utility heading-display {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+  text-transform: var(--display-transform);
+}
+
+html {
+  background-color: var(--color-surface);
+  scroll-behavior: smooth;
+}
+
+/* Structure view: the demo's "how is this built" overlay (see CmsBlock.vue). */
+.structure-view [data-cms-block] {
+  outline: 2px dashed color-mix(in oklab, #d81f26 70%, transparent);
+  outline-offset: -2px;
 }

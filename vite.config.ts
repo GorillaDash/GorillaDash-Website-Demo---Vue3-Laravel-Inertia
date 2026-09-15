@@ -3,7 +3,7 @@ import { wayfinder } from '@laravel/vite-plugin-wayfinder'
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import laravel from 'laravel-vite-plugin'
-import { fontsource } from 'laravel-vite-plugin/fonts'
+import { fontsource, google } from 'laravel-vite-plugin/fonts'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv } from 'vite'
@@ -52,7 +52,11 @@ export default defineConfig(({ mode }) => {
           fontsource('Instrument Sans', {
             weights: [400, 500, 600],
             preload: [{ weight: 400 }]
-          })
+          }),
+          // Display faces for the demo's three themes: Fraunces (cafe, the default),
+          // Oswald (trade). Only the cafe heading weight is preloaded.
+          google('Fraunces', { weights: [500, 600], preload: [{ weight: 600 }] }),
+          fontsource('Oswald', { weights: [500, 600], preload: false })
           // Add the client's display/script faces alongside it — one fontsource()
           // per registry family, and give each a metric-matched fallback in
           // app.css or the swap costs CLS. Preload at most the ONE weight that
