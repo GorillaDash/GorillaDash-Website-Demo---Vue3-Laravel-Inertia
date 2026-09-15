@@ -10,6 +10,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import SmartImage from '@/components/ui/SmartImage.vue'
 import { useBoundLocation } from '@/composables/useBoundLocation'
 import { useCart } from '@/composables/useCart'
+import { useTribes } from '@/composables/useTribes'
 import { usePagePaths } from '@/composables/usePagePaths'
 import type { StructureInfo } from '@/constants/structure'
 import { formatPrice } from '@/lib/format'
@@ -73,6 +74,14 @@ watch(
   { immediate: true }
 )
 
+// Each size carries its own option groups, so a change of size clears the options
+// chosen for the old one rather than sending them with the new size.
+watch(variantId, () => {
+  for (const groupId of Object.keys(choices)) {
+    delete choices[Number(groupId)]
+  }
+})
+
 const isSingleChoice = (group: { maximum_selection: number | null }) =>
   (group.maximum_selection ?? 0) === 1
 
@@ -106,7 +115,22 @@ const unitPrice = computed(() => {
 })
 
 const { slug: boundSlug } = useBoundLocation()
-const { cafeSlug, busy, count, init, add } = useCart()
+const { cafeSlug, busy, count, loaded, init, add, clearCafe } = useCart()
+const { trading } = useTribes()
+
+// A cafe from the URL or an old visit that no longer takes orders is forgotten, as long
+// as nothing is in the cart for it.
+watch([trading, loaded], () => {
+  if (
+    trading.value.length &&
+    loaded.value &&
+    cafeSlug.value &&
+    count.value === 0 &&
+    !trading.value.some((tribe) => tribe.slug === cafeSlug.value)
+  ) {
+    clearCafe()
+  }
+})
 
 onMounted(() => {
   const requested = new URLSearchParams(window.location.search).get('cafe')
@@ -145,8 +169,8 @@ const addToOrder = async () => {
       listItemId: card.value.id,
       menuItemId: variant.value.id,
       quantity: quantity.value,
-      modifiers: Object.entries(choices).flatMap(([groupId, ids]) =>
-        ids.map((modifierId) => ({ groupId: Number(groupId), modifierId }))
+      modifiers: groups.value.flatMap((group) =>
+        (choices[group.id] ?? []).map((modifierId) => ({ groupId: group.id, modifierId }))
       )
     })
     added.value = true
