@@ -86,7 +86,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', measure))
       >
         <iframe
           :src="src"
-          title="Juniper Table website preview"
+          title="Hungry Gorilla website preview"
           class="block size-full bg-white"
           :class="device === 'mobile' ? 'rounded-[2.5rem]' : 'rounded-[1.75rem]'"
         />

@@ -26,7 +26,7 @@ withDefaults(defineProps<{ review: ReviewResult; showTribe?: boolean }>(), { sho
         <span
           v-if="showTribe && review.tribe?.name"
           class="text-muted"
-          >{{ review.tribe.name.replace(/^Juniper Table\s+/i, '') }}</span
+          >{{ review.tribe.name.replace(/^Hungry Gorilla\s+/i, '') }}</span
         >
       </span>
     </figcaption>

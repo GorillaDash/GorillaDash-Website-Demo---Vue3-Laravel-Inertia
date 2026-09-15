@@ -25,7 +25,7 @@ const { t } = useTranslate()
 const { cmsRoute, pagePath } = usePagePaths()
 
 const openingSoon = computed(() => props.tribe.status === 'Opening Soon')
-const shortName = computed(() => props.tribe.name.replace(/^Juniper Table\s+/i, ''))
+const shortName = computed(() => props.tribe.name.replace(/^Hungry Gorilla\s+/i, ''))
 const href = computed(() => cmsRoute('locations.show', { slug: props.tribe.slug }))
 </script>
 

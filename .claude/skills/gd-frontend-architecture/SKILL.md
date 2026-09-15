@@ -1,7 +1,7 @@
 ---
 name: gd-frontend-architecture
 description: >-
-  GD's house frontend architecture for Inertia v3 + Vue 3 apps (the Juniper Table
+  GD's house frontend architecture for Inertia v3 + Vue 3 apps (the Hungry Gorilla
   / GorillaDash codebase). Prefer this over generic Vue/Inertia skills for any
   work inside a GD Inertia app's resources/ts/ — it encodes GD-specific
   conventions those don't know. Use it when: rendering or optimizing a static
@@ -454,7 +454,7 @@ scan test (`tests/Unit/TranslateUsageTest.php` there) rather than a comment.
   default): `t('Log In', 'Log In')`, `t('Order Now', 'Order Now')`.
 - **A sentence with variable(s) → namespaced key + ICU params**:
   `t('menu.hero.slide', 'Show slide {num}: {title}', { num, title })`,
-  `t('footer.copyright', '© {year} Juniper Table. All rights reserved.', { year: String(year) })`.
+  `t('footer.copyright', '© {year} Hungry Gorilla. All rights reserved.', { year: String(year) })`.
 - **Strip trailing punctuation** (`...` `:` `!` `.`) from the key, append it as a
   literal: `t('Locating', 'Locating') + '...'`, `{{ t('Location', 'Location') }}:`,
   `t('No locations match your search', '…') + '.'`.

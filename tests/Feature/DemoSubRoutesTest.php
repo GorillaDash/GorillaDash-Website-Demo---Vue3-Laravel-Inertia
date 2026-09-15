@@ -3,7 +3,7 @@
 use Inertia\Testing\AssertableInertia;
 
 /*
- * The Juniper Table demo's open sub-route parameters: a tribe slug, a menu section and
+ * The Hungry Gorilla demo's open sub-route parameters: a tribe slug, a menu section and
  * item, an Our Work post and a journal article. Each is checked against Gorilla Dash
  * before the page renders (App\Services\Catalogue\*), with the two failure modes kept
  * apart: a definitive miss 404s, a lookup that fails lets the page through, so a

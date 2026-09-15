@@ -125,7 +125,7 @@ assert.deepEqual(matchCmsRoute('/stores/x?utm=1#top', 'en'), {
 assert.deepEqual(matchCmsRoute('/stores/', 'en'), { name: 'page', params: { page: 'locations' } })
 
 // Not ours: absolute, mailto, hash-only.
-assert.equal(matchCmsRoute('https://juniper-table-usa.example.com/stores', 'en'), null)
+assert.equal(matchCmsRoute('https://hungry-gorilla-usa.example.com/stores', 'en'), null)
 assert.equal(matchCmsRoute('mailto:hi@example.com', 'en'), null)
 assert.equal(matchCmsRoute('#anchor', 'en'), null)
 

@@ -1,7 +1,7 @@
 /**
  * Placeholder photography for the demo brand.
  *
- * The Juniper Table organisation in Gorilla Dash carries no media yet, so every image
+ * The Hungry Gorilla organisation in Gorilla Dash carries no media yet, so every image
  * slot falls back to a free Unsplash photo (Unsplash License) chosen for that slot.
  * When a record gains real media in Gorilla Dash, pass its URL as the first argument
  * to `imageOr()` and the placeholder is ignored.

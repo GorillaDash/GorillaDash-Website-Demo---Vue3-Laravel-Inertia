@@ -161,7 +161,7 @@ const send = async () => {
               :key="option.slug"
               :value="option.slug"
             >
-              {{ option.name.replace(/^Juniper Table\s+/i, '')
+              {{ option.name.replace(/^Hungry Gorilla\s+/i, '')
               }}{{ option.status === 'Opening Soon' ? ' (opening soon)' : '' }}
             </option>
           </select>

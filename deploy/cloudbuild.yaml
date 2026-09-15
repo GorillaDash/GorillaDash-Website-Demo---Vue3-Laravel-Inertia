@@ -16,14 +16,14 @@
 
 substitutions:
   _REGION: us-west1
-  _REPO: juniper-table
+  _REPO: hungry-gorilla
   _TAG: latest
 
 steps:
   # 1) Build + cache the shared builder stage (the slow part).
   - id: builder
     name: gcr.io/cloud-builders/docker
-    env: ["DOCKER_BUILDKIT=1"]
+    env: ['DOCKER_BUILDKIT=1']
     args:
       - build
       - --file=deploy/Dockerfile
@@ -40,7 +40,7 @@ steps:
   - id: web
     waitFor: ['builder']
     name: gcr.io/cloud-builders/docker
-    env: ["DOCKER_BUILDKIT=1"]
+    env: ['DOCKER_BUILDKIT=1']
     args:
       - build
       - --file=deploy/Dockerfile
@@ -56,7 +56,7 @@ steps:
   - id: ssr
     waitFor: ['builder']
     name: gcr.io/cloud-builders/docker
-    env: ["DOCKER_BUILDKIT=1"]
+    env: ['DOCKER_BUILDKIT=1']
     args:
       - build
       - --file=deploy/Dockerfile

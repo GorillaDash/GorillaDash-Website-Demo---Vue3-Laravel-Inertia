@@ -48,7 +48,7 @@ A trade-show visitor gives the site about ten seconds, so every page leads with 
 
 ## 2. The fictional brand
 
-**Working name: Juniper Table**, a seasonal café and catering franchise. The name is a placeholder.
+**Working name: Hungry Gorilla**, a seasonal café and catering franchise. The name is a placeholder.
 Before anything is printed, check it against USPTO and a web search, then rename it with
 `bin/new-client.sh` and the brand constant in the seeding command.
 
@@ -60,7 +60,7 @@ list at once:
 | Online ordering     | Breakfast, bowls, sandwiches and coffee for pickup, plus catering boards ordered ahead    |
 | Our Work            | Events the tribes have catered: weddings, office lunches, launches                        |
 | Appointment stepper | Book a catering consultation or a tasting                                                 |
-| Franchise sales     | Investment range, territories open, steps to own a Juniper Table                          |
+| Franchise sales     | Investment range, territories open, steps to own a Hungry Gorilla                         |
 | Tribe pages         | Ten tribes: eight open and two marked Opening Soon, so the franchise page can show growth |
 
 Prospects who are not in food (sign, print, auto and services brands) still recognise the structure.
@@ -110,7 +110,7 @@ operation that feeds the page.
 | `/locations/{tribe}`               | Tribe page: hero, open-now badge, order and book buttons, about and map, weekly hours, menu, the tribe's Our Work, team and reviews as sections with an in-page menu. Opening Soon tribes show a catering enquiry instead of ordering. | `tribe(slug)`, `ourWorks(tribe_slug)`, `reviews(tribe_slug)`, `foodMenu`                            | Tribes, Our Work, Team, Reviews, Food    |
 | `/our-work` and `/our-work/{slug}` | National Our Work                                                                                                                                                                                                                      | `organisationOurWorks`, `organisationOurWork`                                                       | Our Work                                 |
 | `/blog`, `/blog/{slug}`            | Blog index by category, and article pages                                                                                                                                                                                              | `articlesPagination`, `articleCategories`, `article`                                                | Articles                                 |
-| `/franchise`                       | **Franchise sales page**: why Juniper Table, investment table, support, Opening Soon tribes, territories available, FAQ, enquiry form                                                                                                  | `websitePage`, `tribes(status: "opening soon")`, `websiteFaq`, `submitEnquiry("franchise-enquiry")` | Website, Tribes, FAQ, Enquiries          |
+| `/franchise`                       | **Franchise sales page**: why Hungry Gorilla, investment table, support, Opening Soon tribes, territories available, FAQ, enquiry form                                                                                                 | `websitePage`, `tribes(status: "opening soon")`, `websiteFaq`, `submitEnquiry("franchise-enquiry")` | Website, Tribes, FAQ, Enquiries          |
 | `/contact`                         | Contact form sent to the chosen tribe                                                                                                                                                                                                  | `submitEnquiry("contact-us")`                                                                       | Enquiries                                |
 | `/faq`                             | Frequently asked questions                                                                                                                                                                                                             | `websiteFaq`                                                                                        | Website FAQ                              |
 
@@ -152,7 +152,7 @@ What `website-demo:seed` writes today:
 | Area               | Records                                                                                                                                                                                                                                                                |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Organisation       | Created through `OrganisationService`, so roles, applications and theme initialise as for a real customer. Report emails and billing reminders are switched off so the demo never mails anyone.                                                                        |
-| Website            | "Juniper Table Website", with its OAuth client (client credentials grant) and all tribes connected                                                                                                                                                                     |
+| Website            | "Hungry Gorilla Website", with its OAuth client (client credentials grant) and all tribes connected                                                                                                                                                                    |
 | Tribes             | 10 tribes with a tribe type: address, coordinates, phone, email, weekly hours in each tribe's own timezone, social links, intro copy. 8 are Active and 2 are Opening Soon. Enquiry notification emails are switched off, because the example.com inboxes would bounce. |
 | Appointment types  | Catering Consultation, Tasting Session, Event Walkthrough                                                                                                                                                                                                              |
 | Enquiry forms      | Contact Us, Catering Quote, Franchise Enquiry (with fields)                                                                                                                                                                                                            |
@@ -226,7 +226,7 @@ Estimates are working days for one developer with agent help. They are an estima
 ## 8. Open questions and known gaps
 
 1. **Design.** Do you agree with "fully designed + Structure view + theme switcher" (section 3)?
-2. **Brand name.** Keep "Juniper Table" once it has been checked, or choose another?
+2. **Brand name.** Keep "Hungry Gorilla" once it has been checked, or choose another?
 3. **Payments.** Checkout needs a Stripe **test-mode** payment provider on each Active demo tribe, or the checkout has to be limited to "pay at pickup". The keys have to be entered by you in Gorilla Dash under each tribe's store payment settings. The command does not set them.
 4. **Franchise leads.** The Franchise Development module has no website API. The franchise page therefore submits the "Franchise Enquiry" enquiry form. Routing those enquiries into the Franchise Development pipeline would be a separate Gorilla Dash feature.
 5. **Appointment slots.** Confirmed during testing: `appointmentAvailableTime` built slots in UTC, so a slot booked at a Denver tribe still showed as free. The fix is on the branch `fix/appointment-slots-tribe-timezone` and needs its own pull request, because it changes the query for every client website that books appointments.

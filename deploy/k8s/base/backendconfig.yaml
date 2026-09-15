@@ -1,7 +1,7 @@
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
-  name: juniper-table-backendconfig
+  name: hungry-gorilla-backendconfig
 spec:
   # The GCE L7 load balancer health-checks the web pods at /up (HTTP 200 when
   # the app has booted), independent of the kubelet readiness probe.

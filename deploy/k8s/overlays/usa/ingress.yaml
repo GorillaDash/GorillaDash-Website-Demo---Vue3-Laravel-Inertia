@@ -9,7 +9,7 @@
 # Ready. That is the shape this trap takes on a first go-live, so spec.tls is shipped
 # here rather than described as an option.
 #
-# The certificate is a Cloudflare Origin CA one, held in juniper-table-origin-tls. Copy the
+# The certificate is a Cloudflare Origin CA one, held in hungry-gorilla-origin-tls. Copy the
 # zone's shared *.gorilladashstaging.com certificate from a namespace that already has
 # it (`make origin-tls-copy COUNTRY=usa FROM_NS=<ns> FROM_SECRET=<name>`) rather than
 # issuing one per client: an Origin CA certificate is trusted on the origin leg only
@@ -27,23 +27,23 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: juniper-table
+  name: hungry-gorilla
   annotations:
     kubernetes.io/ingress.class: 'gce'
-    kubernetes.io/ingress.global-static-ip-name: 'juniper-table-usa-ip'
+    kubernetes.io/ingress.global-static-ip-name: 'hungry-gorilla-usa-ip'
 spec:
   rules:
-    - host: juniper-table-usa.gorilladashstaging.com
+    - host: hungry-gorilla-usa.gorilladashstaging.com
       http:
         paths:
           - path: /*
             pathType: ImplementationSpecific
             backend:
               service:
-                name: juniper-table
+                name: hungry-gorilla
                 port:
                   number: 80
   tls:
     - hosts:
-        - juniper-table-usa.gorilladashstaging.com
-      secretName: juniper-table-origin-tls
+        - hungry-gorilla-usa.gorilladashstaging.com
+      secretName: hungry-gorilla-origin-tls

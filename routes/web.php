@@ -92,7 +92,7 @@ $pages = function () use ($pagePattern, $locationsPattern, $menuPattern, $ourWor
         ->middleware('page:locations')
         ->name('locations.show');
 
-    // Juniper Table demo sub-routes. Each matches only its own page's baked slugs. The
+    // Hungry Gorilla demo sub-routes. Each matches only its own page's baked slugs. The
     // two-segment ones also need a distinct parameter NAME: Laravel keys its route
     // collection by method + URI string, so a second `{page}/{slug}` would silently
     // replace locations.show instead of sitting beside it.

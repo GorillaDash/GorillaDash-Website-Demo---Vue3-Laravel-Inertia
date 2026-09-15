@@ -18,7 +18,7 @@ const { pagePath } = usePagePaths()
   >
     <div class="container flex min-h-10 items-center justify-center gap-3 py-2 text-center text-sm">
       <span class="hidden text-white/85 sm:inline">{{
-        value('Banner Text') || 'Own a Juniper Table in your city.'
+        value('Banner Text') || 'Own a Hungry Gorilla in your city.'
       }}</span>
       <LocaleLink
         :href="pagePath('franchise')"

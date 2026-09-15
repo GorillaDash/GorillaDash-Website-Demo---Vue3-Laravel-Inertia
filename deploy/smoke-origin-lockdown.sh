@@ -19,7 +19,7 @@ PROJECT_ID="${PROJECT_ID:-gorilla-dash-178800}"
 : "${COUNTRY:?Set COUNTRY (e.g. usa, au)}"
 REGION="${REGION:-us-west1}"
 CLUSTER="${CLUSTER:-gorilladash-cluster}"
-NAMESPACE="${NAMESPACE:-juniper-table-${COUNTRY}}"
+NAMESPACE="${NAMESPACE:-hungry-gorilla-${COUNTRY}}"
 RETRIES="${RETRIES:-30}" # 30 * 10s = up to 5 min for LB propagation
 SLEEP="${SLEEP:-10}"
 
@@ -40,7 +40,7 @@ fi
 
 # ORIGIN_IP: the Ingress LB VIP, unless overridden.
 if [ -z "${ORIGIN_IP:-}" ]; then
-  ORIGIN_IP="$(kubectl -n "${NAMESPACE}" get ingress juniper-table \
+  ORIGIN_IP="$(kubectl -n "${NAMESPACE}" get ingress hungry-gorilla \
     -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || true)"
 fi
 [ -n "${ORIGIN_IP}" ] || { echo "!! Could not determine ORIGIN_IP (LB not ready? set ORIGIN_IP=...)"; exit 1; }

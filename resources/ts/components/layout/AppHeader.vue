@@ -41,8 +41,8 @@ const toNavLink = (item: WebsiteMenuItemType): NavLink => ({
 
 const primaryNav = computed<NavLink[]>(() => data.value?.children.map(toNavLink) ?? [])
 
-/** "Juniper Table Austin South Congress" → "Austin South Congress". */
-const shortStoreName = computed(() => (storeName.value ?? '').replace(/^Juniper Table\s+/i, ''))
+/** "Hungry Gorilla Austin South Congress" → "Austin South Congress". */
+const shortStoreName = computed(() => (storeName.value ?? '').replace(/^Hungry Gorilla\s+/i, ''))
 
 const mobileOpen = ref(false)
 const openSubmenu = ref<string | null>(null)

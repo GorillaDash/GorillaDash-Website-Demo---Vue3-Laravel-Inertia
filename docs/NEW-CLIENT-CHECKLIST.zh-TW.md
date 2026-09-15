@@ -18,7 +18,7 @@
       `deploy/Dockerfile` 內從 `.env.example` 把它 inline 進 bundle;k8s `config.env`
       裡的那份只是備忘紀錄。
 - [ ] `package.json` → `static:upload` 指向同一個 GCS prefix。順手 grep 一次有沒有
-      別的 prefix 殘留:`bin/new-client.sh` 只會改寫 `juniperTable_`。
+      別的 prefix 殘留:`bin/new-client.sh` 只會改寫 `hungryGorilla_`。
 - [ ] 依客戶設計替換占位 UI 元件(`resources/ts/components/{home,menu,location}`)。
       連結一律走 `<LocaleLink>` + `usePagePaths()`(見 `gd-locale-links` skill)。
 - [ ] 要加 API route 嗎(通常第一個是聯絡表單)?先裝 response 層再寫 controller。

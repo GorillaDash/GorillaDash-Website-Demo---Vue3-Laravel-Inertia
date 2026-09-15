@@ -244,7 +244,7 @@ const confirm = async () => {
         comments: details.notes || null,
         data: JSON.stringify({
           guests: details.guests || null,
-          booked_from: 'Juniper Table website'
+          booked_from: 'Hungry Gorilla website'
         })
       }
     })
@@ -279,9 +279,9 @@ const downloadCalendar = () => {
   const ics = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Juniper Table//Website Demo//EN',
+    'PRODID:-//Hungry Gorilla//Website Demo//EN',
     'BEGIN:VEVENT',
-    `UID:${day}${time.value.replace(':', '')}-${cafe.value.slug}@junipertable.example.com`,
+    `UID:${day}${time.value.replace(':', '')}-${cafe.value.slug}@hungrygorilla.example.com`,
     `DTSTAMP:${stamp}`,
     `DTSTART;TZID=${zone}:${day}T${time.value.replace(':', '')}00`,
     `DTEND;TZID=${zone}:${day}T${endTime}`,
@@ -294,7 +294,7 @@ const downloadCalendar = () => {
   const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }))
   const link = document.createElement('a')
   link.href = url
-  link.download = 'juniper-table-booking.ics'
+  link.download = 'hungry-gorilla-booking.ics'
   link.click()
   URL.revokeObjectURL(url)
 }
@@ -487,7 +487,7 @@ watch([trading, boundSlug], () => {
                 <IconMapPin class="mt-1 size-5 shrink-0 text-brand-accent" />
                 <span class="flex-1">
                   <span class="block font-semibold text-brand-primary">{{
-                    option.tribe.name.replace(/^Juniper Table\s+/i, '')
+                    option.tribe.name.replace(/^Hungry Gorilla\s+/i, '')
                   }}</span>
                   <span class="block text-sm text-muted"
                     >{{ option.tribe.locality }}, {{ option.tribe.state_abbreviated }}</span

@@ -64,7 +64,7 @@ const metaDescription = computed(
     description ||
     t.value(
       'seo.defaultDescription',
-      'Juniper Table — find a location near you, see what we offer and get in touch.'
+      'Hungry Gorilla — find a location near you, see what we offer and get in touch.'
     )
 )
 

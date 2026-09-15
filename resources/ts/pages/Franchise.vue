@@ -103,7 +103,7 @@ const steps = computed(() =>
         <div class="grid grid-cols-2 gap-4">
           <SmartImage
             :src="photo('ownerSmile', 800)"
-            alt="A Juniper Table owner in his cafe"
+            alt="A Hungry Gorilla owner in his cafe"
             eager
             class="aspect-3/4 w-full rounded-card"
           />
@@ -185,7 +185,7 @@ const steps = computed(() =>
       v-if="openingSoon.length"
       :info="{
         module: 'Tribes',
-        query: 'tribes(status: &quot;active&quot;) · status Opening Soon',
+        query: 'tribes(status: &quot;launch&quot;) · status Opening Soon',
         edit: 'Tribes › Status',
         scope: 'Organisation'
       }"

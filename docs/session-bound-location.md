@@ -138,7 +138,7 @@ http.host eq "<host>" and (
 
 The gate is the **presence of the `<app-slug>-session` cookie** — Laravel's standard
 framework session cookie (`config/session.php` → `Str::slug(APP_NAME).'-session'`, e.g.
-`juniper-table-diner-usa-session`; `SESSION_DRIVER=database`). It is **not** a custom
+`hungry-gorilla-diner-usa-session`; `SESSION_DRIVER=database`). It is **not** a custom
 cookie, and the edge **cannot see** the `bound_location` value inside the session — only
 whether the cookie exists.
 

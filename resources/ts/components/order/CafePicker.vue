@@ -35,7 +35,7 @@ const pendingName = computed(
   () =>
     trading.value
       .find((tribe) => tribe.slug === pendingSlug.value)
-      ?.name.replace(/^Juniper Table\s+/i, '') ?? ''
+      ?.name.replace(/^Hungry Gorilla\s+/i, '') ?? ''
 )
 </script>
 
@@ -68,7 +68,7 @@ const pendingName = computed(
           :key="tribe.slug"
           :value="tribe.slug"
         >
-          {{ tribe.name.replace(/^Juniper Table\s+/i, '') }}
+          {{ tribe.name.replace(/^Hungry Gorilla\s+/i, '') }}
         </option>
       </select>
     </label>

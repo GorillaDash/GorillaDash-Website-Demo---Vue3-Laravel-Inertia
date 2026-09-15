@@ -34,9 +34,9 @@ permissions:
 
 env:
   PROJECT_ID: gorilla-dash-178800
-  # Post-refresh lockdown check targets (juniper-table-usa; the policy is project-global).
-  DOMAIN: juniper-table-usa.gorilladashstaging.com
-  STATIC_IP_NAME: juniper-table-usa-ip
+  # Post-refresh lockdown check targets (hungry-gorilla-usa; the policy is project-global).
+  DOMAIN: hungry-gorilla-usa.gorilladashstaging.com
+  STATIC_IP_NAME: hungry-gorilla-usa-ip
 
 jobs:
   refresh:

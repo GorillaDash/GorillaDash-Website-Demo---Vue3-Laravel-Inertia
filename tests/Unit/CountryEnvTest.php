@@ -24,7 +24,7 @@ afterEach(function () {
 function writeOverlay(string $root, string $country, array $extra = []): void
 {
     $identity = [
-        'APP_NAME' => "'Juniper Table ".strtoupper($country)."'",
+        'APP_NAME' => "'Hungry Gorilla ".strtoupper($country)."'",
         'APP_TIMEZONE' => 'America/New_York',
         'APP_LOCALE' => 'en',
         'APP_LOCALES' => 'en-US',
@@ -47,7 +47,7 @@ function writeOverlay(string $root, string $country, array $extra = []): void
         'LOG_CHANNEL' => 'stderr',
         'SESSION_SECURE_COOKIE' => 'true',
         'INERTIA_SSR_ENABLED' => 'true',
-        'DB_DATABASE' => 'juniper_table_usa_k8s',
+        'DB_DATABASE' => 'hungry_gorilla_usa_k8s',
         'CLOUD_SQL_INSTANCE' => 'project:region:instance',
     ];
 
@@ -73,8 +73,8 @@ function writeLayers(string $root, string $country, array $shared = [], array $l
     ];
 
     $local = [
-        'APP_URL' => "http://juniper-table-{$country}.test",
-        'DB_DATABASE' => "juniperTable_{$country}",
+        'APP_URL' => "http://hungry-gorilla-{$country}.test",
+        'DB_DATABASE' => "hungryGorilla_{$country}",
         ...$local,
     ];
 
@@ -115,8 +115,8 @@ it('keeps every deployment-only key out of the composed env', function () {
         ->toHaveKey('APP_DEBUG', 'true')
         ->toHaveKey('SESSION_SECURE_COOKIE', 'false')
         ->toHaveKey('INERTIA_SSR_ENABLED', 'false')
-        ->toHaveKey('APP_URL', 'http://juniper-table-usa.test')
-        ->toHaveKey('DB_DATABASE', 'juniperTable_usa')
+        ->toHaveKey('APP_URL', 'http://hungry-gorilla-usa.test')
+        ->toHaveKey('DB_DATABASE', 'hungryGorilla_usa')
         ->not->toHaveKey('CLOUD_SQL_INSTANCE')
         ->not->toHaveKey('APP_FORCE_HTTPS')
         ->not->toHaveKey('LOG_CHANNEL');
@@ -183,7 +183,7 @@ it('writes values verbatim so quoting and ${VAR} references survive', function (
     $body = (new CountryEnv($this->root))->compose('usa')['body'];
 
     expect($body)
-        ->toContain("APP_NAME='Juniper Table USA'")
+        ->toContain("APP_NAME='Hungry Gorilla USA'")
         ->toContain('MAIL_FROM_NAME="${APP_NAME}"');
 });
 

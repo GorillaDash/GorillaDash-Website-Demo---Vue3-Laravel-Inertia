@@ -4,8 +4,8 @@ import type { GetTribesQuery } from '@/api/tribes.generated'
 
 export type TribeSummary = GetTribesQuery['tribes'][number]
 
-/** The Gorilla Dash tribe type every Juniper Table cafe belongs to. */
-export const TRIBE_TYPE = 'Juniper Table Cafes'
+/** The Gorilla Dash tribe type every Hungry Gorilla cafe belongs to. */
+export const TRIBE_TYPE = 'Hungry Gorilla Cafes'
 
 export function useTribes() {
   const { result, loading } = getTribes({ tribeType: TRIBE_TYPE, order: ['tribe_sort_order'] })

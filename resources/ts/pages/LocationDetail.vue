@@ -34,7 +34,7 @@ const { result, loading } = getTribe(() => props.slug)
 const tribe = computed(() => result.value?.tribe ?? null)
 
 const openingSoon = computed(() => tribe.value?.status === 'Opening Soon')
-const shortName = computed(() => (tribe.value?.name ?? '').replace(/^Juniper Table\s+/i, ''))
+const shortName = computed(() => (tribe.value?.name ?? '').replace(/^Hungry Gorilla\s+/i, ''))
 const hours = computed(() => weekHours(tribe.value?.opening_hours_array))
 const today = ref<string | null>(null)
 

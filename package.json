@@ -6,7 +6,7 @@
   "scripts": {
     "build": "vite build",
     "build:ssr": "vite build && vite build --ssr",
-    "static:upload": "gcloud storage rsync --recursive public/static gs://gorilladash-static-files/static/clients/juniperTable_",
+    "static:upload": "gcloud storage rsync --recursive public/static gs://gorilladash-static-files/static/clients/hungryGorilla_",
     "dev": "vite",
     "format": "prettier --write resources/",
     "format:check": "prettier --check resources/",

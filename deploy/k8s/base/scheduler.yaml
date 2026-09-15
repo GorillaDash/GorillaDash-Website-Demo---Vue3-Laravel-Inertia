@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: juniper-table-scheduler
+  name: hungry-gorilla-scheduler
   labels:
-    app: juniper-table
+    app: hungry-gorilla
     role: scheduler
 spec:
   # Exactly ONE scheduler — never run two, or every cron task fires twice.
@@ -12,15 +12,15 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: juniper-table
+      app: hungry-gorilla
       role: scheduler
   template:
     metadata:
       labels:
-        app: juniper-table
+        app: hungry-gorilla
         role: scheduler
     spec:
-      serviceAccountName: juniper-table
+      serviceAccountName: hungry-gorilla
       terminationGracePeriodSeconds: 60
       initContainers:
         # Cloud SQL Auth Proxy as a native sidecar — ready before schedule:work.
@@ -28,16 +28,16 @@ spec:
           image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.1
           restartPolicy: Always
           args:
-            - "--structured-logs"
-            - "--port=3306"
-            - "--health-check"
-            - "--http-address=0.0.0.0"
-            - "$(CLOUD_SQL_INSTANCE)"
+            - '--structured-logs'
+            - '--port=3306'
+            - '--health-check'
+            - '--http-address=0.0.0.0'
+            - '$(CLOUD_SQL_INSTANCE)'
           env:
             - name: CLOUD_SQL_INSTANCE
               valueFrom:
                 configMapKeyRef:
-                  name: juniper-table-config
+                  name: hungry-gorilla-config
                   key: CLOUD_SQL_INSTANCE
           startupProbe:
             httpGet:
@@ -49,11 +49,11 @@ spec:
             runAsNonRoot: true
           resources:
             requests:
-              cpu: "50m"
-              memory: "64Mi"
+              cpu: '50m'
+              memory: '64Mi'
             limits:
-              cpu: "250m"
-              memory: "128Mi"
+              cpu: '250m'
+              memory: '128Mi'
       containers:
         - name: scheduler
           image: app-web # same image as web (has PHP + artisan); kustomize sets the tag
@@ -61,16 +61,16 @@ spec:
           # `schedule:run` every minute — the container-friendly way to run the
           # Laravel scheduler (no per-minute pod churn). Define tasks in
           # routes/console.php via Schedule::command(...).
-          command: ["php", "artisan", "schedule:work"]
+          command: ['php', 'artisan', 'schedule:work']
           envFrom:
             - configMapRef:
-                name: juniper-table-config
+                name: hungry-gorilla-config
             - secretRef:
-                name: juniper-table-secret
+                name: hungry-gorilla-secret
           resources:
             requests:
-              cpu: "50m"
-              memory: "128Mi"
+              cpu: '50m'
+              memory: '128Mi'
             limits:
-              cpu: "500m"
-              memory: "256Mi"
+              cpu: '500m'
+              memory: '256Mi'

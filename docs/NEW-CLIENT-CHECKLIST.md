@@ -21,7 +21,7 @@ Tolgee, GCP, Cloudflare), so tick them off explicitly.
       `.env.example` inside `deploy/Dockerfile`; the k8s `config.env` copy is only
       a record.
 - [ ] `package.json` → `static:upload` targets the same GCS prefix. Grep once for
-      any other prefix left behind: `bin/new-client.sh` only rewrites `juniperTable_`.
+      any other prefix left behind: `bin/new-client.sh` only rewrites `hungryGorilla_`.
 - [ ] Replace placeholder UI copy/components (`resources/ts/components/{home,menu,location}`)
       per the client's design. Keep links on `<LocaleLink>` + `usePagePaths()`
       (see the `gd-locale-links` skill).

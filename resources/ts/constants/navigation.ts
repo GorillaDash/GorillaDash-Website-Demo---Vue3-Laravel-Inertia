@@ -51,7 +51,7 @@ export const footerColumns: FooterColumn[] = [
 /** Bottom-bar legal links (all external). */
 export const legalLinks: NavLink[] = [
   { label: 'GDPR', href: 'https://unitedfranchisegroup.com/trust/gdpr/', external: true },
-  { label: 'In The News', href: 'https://www.juniper-table-usa.example.com/news', external: true },
+  { label: 'In The News', href: 'https://www.hungry-gorilla-usa.example.com/news', external: true },
   { label: 'Terms of Service', href: 'https://policies.google.com/terms', external: true }
 ]
 

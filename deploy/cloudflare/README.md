@@ -5,18 +5,18 @@ and is what keeps SSR off the critical path for most visitors. The origin's half
 contract is `App\Http\Middleware\EdgeCacheGuestPage` + `App\Http\EdgeCacheGrant`; this
 directory is the edge's half.
 
-| Piece        | Where                                                        |
-| ------------ | ------------------------------------------------------------ |
-| Origin grant | `Cloudflare-CDN-Cache-Control` / `Cache-Tag`                  |
-| Edge logic   | Cache Rules (`http_request_cache_settings`)                   |
-| Deployed by  | `apply-rules.sh` (deploy step 5c, and the merge workflow)     |
+| Piece        | Where                                                            |
+| ------------ | ---------------------------------------------------------------- |
+| Origin grant | `Cloudflare-CDN-Cache-Control` / `Cache-Tag`                     |
+| Edge logic   | Cache Rules (`http_request_cache_settings`)                      |
+| Deployed by  | `apply-rules.sh` (deploy step 5c, and the merge workflow)        |
 | Purge        | `POST .../purge_cache` `{"tags":["html"]}` (hard, no soft purge) |
-| Cache state  | `cf-cache-status: HIT`                                        |
+| Cache state  | `cf-cache-status: HIT`                                           |
 
 ## Deploying
 
 ```bash
-CLOUDFLARE_API_TOKEN=... ./deploy/cloudflare/apply-rules.sh juniper-table-usa.gorilladashstaging.com
+CLOUDFLARE_API_TOKEN=... ./deploy/cloudflare/apply-rules.sh hungry-gorilla-usa.gorilladashstaging.com
 CLOUDFLARE_API_TOKEN=... ./deploy/cloudflare/apply-rules.sh --dry-run <host>   # show, don't write
 ./deploy/cloudflare/verify-rules.sh <host>                                     # probes only, no token
 ```

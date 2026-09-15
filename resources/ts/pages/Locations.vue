@@ -196,7 +196,7 @@ const useMyLocation = () => {
               {{
                 t(
                   'locations.empty',
-                  'Try another city, or bring Juniper Table to your neighborhood.'
+                  'Try another city, or bring Hungry Gorilla to your neighborhood.'
                 )
               }}
             </p>

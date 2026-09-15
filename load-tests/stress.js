@@ -1,7 +1,7 @@
 import http from 'k6/http'
 import { check, sleep } from 'k6'
 
-const BASE = __ENV.BASE_URL || 'https://juniper-table-usa.gorilladashstaging.com'
+const BASE = __ENV.BASE_URL || 'https://hungry-gorilla-usa.gorilladashstaging.com'
 
 // Stress test: keep pushing the VU count up to find the breaking point
 // (where RPS plateaus or p95 latency / error rate spikes).

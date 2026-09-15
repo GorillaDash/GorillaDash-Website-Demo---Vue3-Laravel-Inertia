@@ -1,17 +1,17 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: juniper-table-migrate
+  name: hungry-gorilla-migrate
 spec:
   backoffLimit: 3
   ttlSecondsAfterFinished: 600
   template:
     metadata:
       labels:
-        app: juniper-table
+        app: hungry-gorilla
         role: migrate
     spec:
-      serviceAccountName: juniper-table
+      serviceAccountName: hungry-gorilla
       restartPolicy: Never
       initContainers:
         # Native sidecar (restartPolicy: Always): the Cloud SQL proxy runs
@@ -21,16 +21,16 @@ spec:
           image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.1
           restartPolicy: Always
           args:
-            - "--structured-logs"
-            - "--port=3306"
-            - "--health-check"
-            - "--http-address=0.0.0.0"
-            - "$(CLOUD_SQL_INSTANCE)"
+            - '--structured-logs'
+            - '--port=3306'
+            - '--health-check'
+            - '--http-address=0.0.0.0'
+            - '$(CLOUD_SQL_INSTANCE)'
           env:
             - name: CLOUD_SQL_INSTANCE
               valueFrom:
                 configMapKeyRef:
-                  name: juniper-table-config
+                  name: hungry-gorilla-config
                   key: CLOUD_SQL_INSTANCE
           startupProbe:
             httpGet:
@@ -42,24 +42,24 @@ spec:
             runAsNonRoot: true
           resources:
             requests:
-              cpu: "50m"
-              memory: "64Mi"
+              cpu: '50m'
+              memory: '64Mi'
             limits:
-              cpu: "250m"
-              memory: "128Mi"
+              cpu: '250m'
+              memory: '128Mi'
       containers:
         - name: migrate
           image: app-web # same web image; deploy.sh substitutes the real tag
-          command: ["php", "artisan", "migrate", "--force"]
+          command: ['php', 'artisan', 'migrate', '--force']
           envFrom:
             - configMapRef:
-                name: juniper-table-config
+                name: hungry-gorilla-config
             - secretRef:
-                name: juniper-table-secret
+                name: hungry-gorilla-secret
           resources:
             requests:
-              cpu: "100m"
-              memory: "128Mi"
+              cpu: '100m'
+              memory: '128Mi'
             limits:
-              cpu: "500m"
-              memory: "256Mi"
+              cpu: '500m'
+              memory: '256Mi'

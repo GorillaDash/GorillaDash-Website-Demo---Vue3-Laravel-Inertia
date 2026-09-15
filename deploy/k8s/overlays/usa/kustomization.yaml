@@ -1,29 +1,29 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: juniper-table-usa
+namespace: hungry-gorilla-usa
 
 resources:
-- namespace.yaml
-- ../../base
-- ingress.yaml
+  - namespace.yaml
+  - ../../base
+  - ingress.yaml
 
 # Same image for every country, built once. deploy.sh sets the tag here.
 images:
-- name: app-ssr
-  newName: us-west1-docker.pkg.dev/gorilla-dash-178800/juniper-table/ssr
-  newTag: latest
-- name: app-web
-  newName: us-west1-docker.pkg.dev/gorilla-dash-178800/juniper-table/web
-  newTag: latest
+  - name: app-ssr
+    newName: us-west1-docker.pkg.dev/gorilla-dash-178800/hungry-gorilla/ssr
+    newTag: latest
+  - name: app-web
+    newName: us-west1-docker.pkg.dev/gorilla-dash-178800/hungry-gorilla/web
+    newTag: latest
 
-# config.env (the ".env.usa") -> juniper-table-config ConfigMap, consumed via
+# config.env (the ".env.usa") -> hungry-gorilla-config ConfigMap, consumed via
 # envFrom in the web/scheduler/worker pods.
 configMapGenerator:
-- behavior: create
-  envs:
-  - config.env
-  name: juniper-table-config
+  - behavior: create
+    envs:
+      - config.env
+    name: hungry-gorilla-config
 
 # Stable ConfigMap name so the out-of-band migrate Job can reference it.
 generatorOptions:
