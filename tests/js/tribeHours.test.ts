@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { addDays, todayIn, weekdayOf } from '../../resources/ts/lib/calendarDates'
 import {
   openStatus,
   toTwentyFourHour,
@@ -41,3 +42,15 @@ assert.deepEqual(openStatus(hours, 'America/New_York', new Date('2026-09-19T19:0
 })
 
 console.log('tribeHours: ok')
+
+// Calendar dates across the US daylight-saving change on 1 November 2026.
+
+assert.equal(todayIn('America/Denver', new Date('2026-11-01T06:30:00Z')), '2026-11-01')
+assert.deepEqual(
+  Array.from({ length: 3 }, (_, offset) => addDays('2026-10-31', offset)),
+  ['2026-10-31', '2026-11-01', '2026-11-02']
+)
+assert.equal(addDays('2026-12-31', 1), '2027-01-01')
+assert.equal(weekdayOf('2026-09-15'), 'Tuesday')
+
+console.log('calendarDates: ok')

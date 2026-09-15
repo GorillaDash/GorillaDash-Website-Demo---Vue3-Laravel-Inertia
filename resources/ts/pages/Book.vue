@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, reactive, ref, watch } from 'vue'
+import { computed, inject, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useTranslate } from '@tolgee/vue'
 import SeoHead from '@/components/core/SeoHead.vue'
 import CmsBlock from '@/components/demo/CmsBlock.vue'
@@ -13,6 +13,7 @@ import { useBoundLocation } from '@/composables/useBoundLocation'
 import { APOLLO_CLIENT } from '@/composables/useQuery'
 import { useTribes } from '@/composables/useTribes'
 import { photo } from '@/lib/demoImagery'
+import { addDays, formatCalendarDate, todayIn, weekdayOf } from '@/lib/calendarDates'
 import { formatTime } from '@/lib/format'
 import { milesBetween } from '@/lib/geo'
 import { toUsE164 } from '@/lib/phone'
@@ -92,63 +93,71 @@ const cafes = computed(() =>
 )
 
 const dates = computed(() => {
-  const timezone = cafe.value?.timezone ?? 'America/Chicago'
+  const today = todayIn(cafe.value?.timezone)
   const week = weekHours(cafe.value?.opening_hours_array)
 
   return Array.from({ length: 14 }, (_, offset) => {
-    const moment = new Date(Date.now() + offset * 86400000)
-    const value = new Intl.DateTimeFormat('en-CA', {
-      timeZone: timezone,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).format(moment)
-    const weekday = new Intl.DateTimeFormat('en-US', {
-      timeZone: timezone,
-      weekday: 'long'
-    }).format(moment)
+    const value = addDays(today, offset)
     const open =
-      (week[WEEK_DAYS.indexOf(weekday as (typeof WEEK_DAYS)[number])]?.slots.length ?? 0) > 0
+      (week[WEEK_DAYS.indexOf(weekdayOf(value) as (typeof WEEK_DAYS)[number])]?.slots.length ?? 0) >
+      0
 
     return {
       value,
       open,
-      day: new Intl.DateTimeFormat('en-US', { timeZone: timezone, weekday: 'short' }).format(
-        moment
-      ),
-      number: new Intl.DateTimeFormat('en-US', { timeZone: timezone, day: 'numeric' }).format(
-        moment
-      ),
-      month: new Intl.DateTimeFormat('en-US', { timeZone: timezone, month: 'short' }).format(moment)
+      day: formatCalendarDate(value, { weekday: 'short' }),
+      number: formatCalendarDate(value, { day: 'numeric' }),
+      month: formatCalendarDate(value, { month: 'short' })
     }
   })
 })
+
+/** The first open day, used whenever a cafe is known but no day is picked yet. */
+const ensureDate = () => {
+  if (cafe.value && !dates.value.some((option) => option.value === date.value && option.open)) {
+    date.value = dates.value.find((option) => option.open)?.value ?? ''
+  }
+}
 
 type Slot = { enable: boolean; text: string; value: string }
 const slots = ref<Slot[]>([])
 const loadingSlots = ref(false)
 
+// Only the newest request may fill the slot list, so quick taps across days cannot
+// show one day's times under another.
+let slotRequest = 0
+
 const loadSlots = async () => {
+  const request = ++slotRequest
+  time.value = ''
   if (!client || !cafeSlug.value || !service.value || !date.value) {
+    slots.value = []
     return
   }
   loadingSlots.value = true
-  time.value = ''
+  const requestedDate = date.value
   try {
     const { data } = await client.query({
       query: GetAppointmentTimesDocument,
-      variables: { slug: cafeSlug.value, type: service.value.type, date: date.value },
+      variables: { slug: cafeSlug.value, type: service.value.type, date: requestedDate },
       fetchPolicy: 'network-only'
     })
+    if (request !== slotRequest) {
+      return
+    }
     const now = localNow(cafe.value?.timezone)
-    const isToday = date.value === dates.value[0]?.value
+    const isToday = requestedDate === dates.value[0]?.value
     slots.value = ((data?.appointmentAvailableTime?.times as Slot[] | null) ?? []).filter(
       (slot) => !isToday || slot.value > now.time
     )
   } catch {
-    slots.value = []
+    if (request === slotRequest) {
+      slots.value = []
+    }
   } finally {
-    loadingSlots.value = false
+    if (request === slotRequest) {
+      loadingSlots.value = false
+    }
   }
 }
 
@@ -191,14 +200,23 @@ const next = () => {
 
 const chooseService = (option: (typeof SERVICES)[number]) => {
   service.value = option
-  step.value = cafeSlug.value ? 2 : 1
+  ensureDate()
+  step.value = cafe.value ? 2 : 1
 }
 
 const chooseCafe = (slug: string) => {
   cafeSlug.value = slug
-  date.value = dates.value.find((option) => option.open)?.value ?? ''
+  date.value = ''
+  ensureDate()
   step.value = 2
 }
+
+// Move focus to the new step's heading so keyboard and screen reader users follow along.
+const stepPanel = ref<HTMLElement | null>(null)
+watch(step, async () => {
+  await nextTick()
+  stepPanel.value?.querySelector<HTMLElement>('h2')?.focus()
+})
 
 const locate = () => {
   navigator.geolocation?.getCurrentPosition((position) => {
@@ -241,38 +259,69 @@ const confirm = async () => {
   }
 }
 
-/** An .ics file for the visitor's calendar, built in the browser. */
-const calendarHref = computed(() => {
-  if (!booked.value || !service.value || !cafe.value) {
-    return ''
+/** Escape a value for an iCalendar text property (RFC 5545 section 3.3.11). */
+const icsText = (value: string): string => value.replace(/[\\;,]/g, (match) => `\\${match}`)
+
+/** Download the booking as an .ics file the visitor's calendar can import. */
+const downloadCalendar = () => {
+  if (!service.value || !cafe.value) {
+    return
   }
-  const stamp = `${date.value.replaceAll('-', '')}T${time.value.replace(':', '')}00`
+  const [hour = 0, minute = 0] = time.value.split(':').map(Number)
+  const endMinutes = hour * 60 + minute + service.value.minutes
+  const endTime = `${String(Math.floor(endMinutes / 60)).padStart(2, '0')}${String(endMinutes % 60).padStart(2, '0')}00`
+  const day = date.value.replaceAll('-', '')
+  const zone = cafe.value.timezone || 'America/Chicago'
+  const stamp = new Date()
+    .toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/\.\d{3}/, '')
   const ics = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
+    'PRODID:-//Juniper Table//Website Demo//EN',
     'BEGIN:VEVENT',
-    `DTSTART;TZID=${cafe.value.timezone}:${stamp}`,
-    `SUMMARY:${service.value.type} at ${cafe.value.name}`,
-    `LOCATION:${cafe.value.address_1}, ${cafe.value.locality}, ${cafe.value.state_abbreviated}`,
+    `UID:${day}${time.value.replace(':', '')}-${cafe.value.slug}@junipertable.example.com`,
+    `DTSTAMP:${stamp}`,
+    `DTSTART;TZID=${zone}:${day}T${time.value.replace(':', '')}00`,
+    `DTEND;TZID=${zone}:${day}T${endTime}`,
+    `SUMMARY:${icsText(`${service.value.type} at ${cafe.value.name}`)}`,
+    `LOCATION:${icsText(`${cafe.value.address_1}, ${cafe.value.locality}, ${cafe.value.state_abbreviated}`)}`,
     'END:VEVENT',
     'END:VCALENDAR'
   ].join('\r\n')
 
-  return `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`
-})
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }))
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'juniper-table-booking.ics'
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+// A cafe from the link or the bound tribe is only used when it is a trading cafe; the
+// tribe list may already be cached (so no change fires) or arrive later.
+const preferredCafe = ref<string | null>(null)
+
+const applyPreferredCafe = () => {
+  if (
+    !cafeSlug.value &&
+    preferredCafe.value &&
+    trading.value.some((tribe) => tribe.slug === preferredCafe.value)
+  ) {
+    cafeSlug.value = preferredCafe.value
+  }
+  ensureDate()
+}
 
 onMounted(() => {
-  const requested = new URLSearchParams(window.location.search).get('cafe')
-  const preferred = requested ?? boundSlug.value
-  if (preferred) {
-    cafeSlug.value = preferred
-  }
+  preferredCafe.value = new URLSearchParams(window.location.search).get('cafe') ?? boundSlug.value
+  applyPreferredCafe()
 })
 
-watch(trading, () => {
-  if (cafeSlug.value && !date.value) {
-    date.value = dates.value.find((option) => option.open)?.value ?? ''
-  }
+watch([trading, boundSlug], () => {
+  preferredCafe.value ??= boundSlug.value
+  applyPreferredCafe()
 })
 </script>
 
@@ -324,7 +373,10 @@ watch(trading, () => {
           </li>
         </ol>
 
-        <div class="rounded-card border border-brand-tint-strong bg-white p-6 sm:p-10">
+        <div
+          ref="stepPanel"
+          class="rounded-card border border-brand-tint-strong bg-white p-6 sm:p-10 [&_h2]:outline-none"
+        >
           <!-- Success -->
           <div
             v-if="booked"
@@ -336,7 +388,10 @@ watch(trading, () => {
             >
               ✓
             </p>
-            <h2 class="mt-6 heading-display text-3xl text-brand-primary">
+            <h2
+              tabindex="-1"
+              class="mt-6 heading-display text-3xl text-brand-primary"
+            >
               {{ t('book.done', 'You are booked in, {name}.', { name: details.firstName }) }}
             </h2>
             <p class="mt-3 text-lg text-muted">
@@ -352,9 +407,8 @@ watch(trading, () => {
             </p>
             <div class="mt-8 flex flex-wrap justify-center gap-3">
               <AppButton
-                :href="calendarHref"
-                external
                 variant="dark"
+                @click="downloadCalendar"
               >
                 {{ t('Add to calendar', 'Add to calendar') }}
               </AppButton>
@@ -364,7 +418,10 @@ watch(trading, () => {
 
           <!-- Step 1: service -->
           <div v-else-if="step === 0">
-            <h2 class="heading-display text-3xl text-brand-primary">
+            <h2
+              tabindex="-1"
+              class="heading-display text-3xl text-brand-primary"
+            >
               {{ t('What do you need?', 'What do you need?') }}
             </h2>
             <div class="mt-6 grid gap-4 md:grid-cols-3">
@@ -378,6 +435,7 @@ watch(trading, () => {
                     ? 'border-brand-accent ring-2 ring-brand-accent/30'
                     : 'border-brand-tint-strong'
                 "
+                :aria-pressed="service?.type === option.type"
                 @click="chooseService(option)"
               >
                 <span
@@ -398,7 +456,10 @@ watch(trading, () => {
           <!-- Step 2: where -->
           <div v-else-if="step === 1">
             <div class="flex flex-wrap items-center justify-between gap-3">
-              <h2 class="heading-display text-3xl text-brand-primary">
+              <h2
+                tabindex="-1"
+                class="heading-display text-3xl text-brand-primary"
+              >
                 {{ t('Where are you?', 'Where are you?') }}
               </h2>
               <AppButton
@@ -420,6 +481,7 @@ watch(trading, () => {
                     ? 'border-brand-accent ring-2 ring-brand-accent/30'
                     : 'border-brand-tint-strong'
                 "
+                :aria-pressed="cafeSlug === option.tribe.slug"
                 @click="chooseCafe(option.tribe.slug)"
               >
                 <IconMapPin class="mt-1 size-5 shrink-0 text-brand-accent" />
@@ -448,7 +510,10 @@ watch(trading, () => {
 
           <!-- Step 3: when -->
           <div v-else-if="step === 2">
-            <h2 class="heading-display text-3xl text-brand-primary">
+            <h2
+              tabindex="-1"
+              class="heading-display text-3xl text-brand-primary"
+            >
               {{ t('When suits you?', 'When suits you?') }}
             </h2>
             <p class="mt-1 text-muted">{{ service?.type }} · {{ cafe?.name }}</p>
@@ -464,6 +529,7 @@ watch(trading, () => {
                     ? 'border-brand-primary bg-brand-primary text-white'
                     : 'border-brand-tint-strong hover:border-brand-primary'
                 "
+                :aria-pressed="date === option.value"
                 @click="date = option.value"
               >
                 <span class="text-xs uppercase">{{ option.day }}</span>
@@ -499,6 +565,7 @@ watch(trading, () => {
                       ? 'border-brand-accent bg-brand-accent text-brand-on-accent'
                       : 'border-brand-tint-strong hover:border-brand-primary'
                   "
+                  :aria-pressed="time === slot.value"
                   @click="time = slot.value"
                 >
                   {{ formatTime(slot.value) }}
@@ -513,7 +580,10 @@ watch(trading, () => {
             id="booking-details"
             @submit.prevent="next"
           >
-            <h2 class="heading-display text-3xl text-brand-primary">
+            <h2
+              tabindex="-1"
+              class="heading-display text-3xl text-brand-primary"
+            >
               {{ t('Your details', 'Your details') }}
             </h2>
             <div class="mt-6 grid gap-4 sm:grid-cols-2">
@@ -579,7 +649,10 @@ watch(trading, () => {
 
           <!-- Step 5: confirm -->
           <div v-else>
-            <h2 class="heading-display text-3xl text-brand-primary">
+            <h2
+              tabindex="-1"
+              class="heading-display text-3xl text-brand-primary"
+            >
               {{ t('Check and confirm', 'Check and confirm') }}
             </h2>
             <dl class="mt-6 divide-y divide-brand-tint rounded-2xl border border-brand-tint-strong">

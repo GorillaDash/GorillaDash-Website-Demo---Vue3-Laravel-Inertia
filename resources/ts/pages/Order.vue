@@ -13,6 +13,7 @@ import { useCart } from '@/composables/useCart'
 import { usePagePaths } from '@/composables/usePagePaths'
 import { APOLLO_CLIENT } from '@/composables/useQuery'
 import { useTribes } from '@/composables/useTribes'
+import { addDays, formatCalendarDate, todayIn, weekdayOf } from '@/lib/calendarDates'
 import { formatPrice, formatTime } from '@/lib/format'
 import { toUsE164 } from '@/lib/phone'
 import { WEEK_DAYS, weekHours } from '@/services/tribeHoursService'
@@ -42,29 +43,16 @@ const form = reactive({ firstName: '', lastName: '', email: '', phone: '', comme
 const error = ref('')
 const placed = ref<{ name: string; cafe: string; when: string; total: number } | null>(null)
 
-const localDate = (offset: number, timezone: string): string =>
-  new Intl.DateTimeFormat('en-CA', {
-    timeZone: timezone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  }).format(new Date(Date.now() + offset * 86400000))
-
 const buildDates = () => {
-  const timezone = cafe.value?.timezone ?? 'America/Chicago'
+  const today = todayIn(cafe.value?.timezone)
   dates.value = Array.from({ length: 7 }, (_, offset) => {
-    const value = localDate(offset, timezone)
+    const value = addDays(today, offset)
     const label =
       offset === 0
         ? t.value('Today', 'Today')
         : offset === 1
           ? t.value('Tomorrow', 'Tomorrow')
-          : new Intl.DateTimeFormat('en-US', {
-              weekday: 'short',
-              month: 'short',
-              day: 'numeric',
-              timeZone: 'UTC'
-            }).format(new Date(`${value}T12:00:00Z`))
+          : formatCalendarDate(value, { weekday: 'short', month: 'short', day: 'numeric' })
 
     return { value, label }
   })
@@ -73,34 +61,46 @@ const buildDates = () => {
   }
 }
 
+// Only the newest request may fill the slot list: taps on two days in quick succession
+// must not show the first day's times under the second day.
+let slotRequest = 0
+
 const loadSlots = async () => {
+  const request = ++slotRequest
+  time.value = ''
   if (!client || !cafeSlug.value || !date.value) {
     slots.value = []
     return
   }
   loadingSlots.value = true
-  time.value = ''
+  const requestedDate = date.value
   try {
     const { data } = await client.query({
       query: GetPickupTimesDocument,
-      variables: { slug: cafeSlug.value, date: date.value },
+      variables: { slug: cafeSlug.value, date: requestedDate },
       fetchPolicy: 'network-only'
     })
-    // Gorilla Dash starts today's slots from "now", even before the cafe opens, so
-    // keep only times inside the cafe's hours for that weekday.
-    const weekday = new Intl.DateTimeFormat('en-US', { weekday: 'long', timeZone: 'UTC' }).format(
-      new Date(`${date.value}T12:00:00Z`)
-    )
+    if (request !== slotRequest) {
+      return
+    }
+    // Gorilla Dash starts today's slots from "now" even before the cafe opens, so drop
+    // anything earlier than the day's opening time. Later slots are left to Gorilla
+    // Dash, which already applies custom hours for the date.
     const hours = weekHours(cafe.value?.opening_hours_array)[
-      WEEK_DAYS.indexOf(weekday as (typeof WEEK_DAYS)[number])
+      WEEK_DAYS.indexOf(weekdayOf(requestedDate) as (typeof WEEK_DAYS)[number])
     ]
-    slots.value = ((data?.foodTribeAvailableTime?.times as Slot[] | null) ?? []).filter((slot) =>
-      (hours?.slots ?? []).some((open) => slot.value >= open.open && slot.value < open.close)
+    const opensAt = hours?.slots[0]?.open ?? '00:00'
+    slots.value = ((data?.foodTribeAvailableTime?.times as Slot[] | null) ?? []).filter(
+      (slot) => slot.value >= opensAt
     )
   } catch {
-    slots.value = []
+    if (request === slotRequest) {
+      slots.value = []
+    }
   } finally {
-    loadingSlots.value = false
+    if (request === slotRequest) {
+      loadingSlots.value = false
+    }
   }
 }
 
@@ -136,7 +136,14 @@ const placeOrder = async () => {
   }
 
   try {
-    await checkout({ ...form, phone, date: date.value, time: time.value })
+    const outcome = await checkout({ ...form, phone, date: date.value, time: time.value })
+    if (outcome === 'payment-required') {
+      error.value = t.value(
+        'order.paymentRequired',
+        'This cafe takes card payment online, which the demo does not include. Remove its Stripe keys in Gorilla Dash to take pay-at-pickup orders.'
+      )
+      return
+    }
     placed.value = summary
   } catch {
     error.value = t.value('order.failed', 'We could not place your order. Please try again')
@@ -183,7 +190,7 @@ const placeOrder = async () => {
           {{
             t(
               'order.demoNote',
-              'This order has just been created in Gorilla Dash as a pickup order, with the customer added to People.'
+              'The order is now in Gorilla Dash as a pickup order awaiting payment, with the customer added to People. On the tribe’s Store Sales page, tick Show All Orders to see it.'
             )
           }}
         </p>
@@ -239,6 +246,7 @@ const placeOrder = async () => {
                     ? 'border-brand-primary bg-brand-primary text-white'
                     : 'border-brand-tint-strong hover:border-brand-primary'
                 "
+                :aria-pressed="date === option.value"
                 @click="date = option.value"
               >
                 {{ option.label }}
@@ -271,6 +279,7 @@ const placeOrder = async () => {
                       ? 'border-brand-accent bg-brand-accent text-brand-on-accent'
                       : 'border-brand-tint-strong hover:border-brand-primary'
                   "
+                  :aria-pressed="time === slot.value"
                   @click="time = slot.value"
                 >
                   {{ formatTime(slot.value) }}
