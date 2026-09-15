@@ -21,7 +21,6 @@ import { STRUCTURE } from '@/constants/structure'
 import { bindBoundLocation } from '@/lib/boundLocation'
 import { personPhoto, tribePhoto } from '@/lib/demoImagery'
 import { directionsUrl, mapEmbedUrl } from '@/lib/geo'
-import type { JsonLd } from '@/lib/seo'
 import { useFoodMenuService } from '@/services/foodMenuService'
 import { todayName, weekHours } from '@/services/tribeHoursService'
 
@@ -74,35 +73,14 @@ const anchors = computed(() =>
   ].filter((anchor) => !anchor.hidden)
 )
 
-const jsonLd = computed<JsonLd | null>(() => {
-  const value = tribe.value
-  if (!value) {
-    return null
-  }
+// No local-business structured data: Hungry Gorilla is fictional, and a CafeOrCoffeeShop
+// record with a street address and coordinates is what search engines use for local
+// results. With the site indexable, it would put invented cafes in front of people
+// looking for a real one nearby.
 
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'CafeOrCoffeeShop',
-    name: value.name,
-    telephone: value.main_telephone ?? undefined,
-    email: value.public_email ?? undefined,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: [value.address_1, value.address_2].filter(Boolean).join(', '),
-      addressLocality: value.locality ?? undefined,
-      addressRegion: value.state_abbreviated ?? undefined,
-      postalCode: value.postal_code ?? undefined,
-      addressCountry: 'US'
-    },
-    geo: value.latitude
-      ? {
-          '@type': 'GeoCoordinates',
-          latitude: Number(value.latitude),
-          longitude: Number(value.longitude)
-        }
-      : undefined
-  } as JsonLd
-})
+// The Google Maps embed sets dozens of third-party cookies as soon as it loads, so it
+// waits until the visitor asks for the map.
+const mapLoaded = ref(false)
 
 // Bind on mount as well as on change: after SSR the tribe arrives from the restored
 // Apollo cache during setup, so the watcher below never fires on a hard load.
@@ -128,7 +106,6 @@ watch(tribe, (value) => {
     <SeoHead
       :title="tribe?.meta_title ?? tribe?.name ?? ''"
       :description="tribe?.meta_description ?? ''"
-      :json-ld="jsonLd"
     />
 
     <nav
@@ -201,7 +178,7 @@ watch(tribe, (value) => {
           class="mt-6 flex flex-col gap-2 text-base not-italic"
         >
           <span class="flex gap-2">
-            <IconMapPin class="mt-1 size-4 shrink-0 text-brand-accent" />
+            <IconMapPin class="mt-1 size-4 shrink-0 text-brand-accent-ink" />
             {{ [tribe.address_1, tribe.address_2].filter(Boolean).join(', ') }},
             {{ tribe.locality }}, {{ tribe.state_abbreviated }} {{ tribe.postal_code }}
           </span>
@@ -311,12 +288,33 @@ watch(tribe, (value) => {
           class="mt-8 overflow-hidden rounded-card border border-brand-tint-strong"
         >
           <iframe
+            v-if="mapLoaded"
             :src="mapEmbedUrl(tribe.latitude, tribe.longitude, 15)"
             :title="t('locations.mapTitle', 'Map of {name}', { name: tribe.name })"
             class="aspect-video w-full border-0"
-            loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
           />
+          <div
+            v-else
+            class="flex aspect-video w-full flex-col items-center justify-center gap-3 bg-brand-tint p-6 text-center"
+          >
+            <IconMapPin class="size-8 text-brand-accent-ink" />
+            <p class="text-sm text-muted">
+              {{
+                t(
+                  'locationDetail.mapConsent',
+                  'The map is provided by Google Maps and sets Google cookies.'
+                )
+              }}
+            </p>
+            <AppButton
+              variant="dark"
+              size="sm"
+              @click="mapLoaded = true"
+            >
+              {{ t('locationDetail.showMap', 'Show map') }}
+            </AppButton>
+          </div>
         </div>
       </div>
 
@@ -435,7 +433,7 @@ watch(tribe, (value) => {
             <h3 class="mt-4 heading-display text-xl text-brand-primary">
               {{ member.first_name }} {{ member.last_name }}
             </h3>
-            <p class="text-sm font-semibold text-brand-accent">{{ member.role }}</p>
+            <p class="text-sm font-semibold text-brand-accent-ink">{{ member.role }}</p>
             <p class="mt-2 text-sm leading-relaxed text-muted">{{ member.about }}</p>
           </article>
         </div>
