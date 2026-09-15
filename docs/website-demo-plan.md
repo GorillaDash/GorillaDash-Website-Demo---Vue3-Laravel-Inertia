@@ -157,7 +157,7 @@ What `website-demo:seed` writes today:
 |---|---|
 | Organisation | Created through `OrganisationService`, so roles, applications and theme initialise as for a real customer. Report emails and billing reminders are switched off so the demo never mails anyone. |
 | Website | "Juniper Table Website", with its OAuth client (client credentials grant) and all tribes connected |
-| Tribes | 10 tribes with a tribe type: address, coordinates, phone, email, weekly hours, social links, intro copy. 8 are Active and 2 are Opening Soon. |
+| Tribes | 10 tribes with a tribe type: address, coordinates, phone, email, weekly hours in each tribe's own timezone, social links, intro copy. 8 are Active and 2 are Opening Soon. Enquiry notification emails are switched off, because the example.com inboxes would bounce. |
 | Appointment types | Catering Consultation, Tasting Session, Event Walkthrough |
 | Enquiry forms | Contact Us, Catering Quote, Franchise Enquiry (with fields) |
 | Food | "Website Menu" (6 sections, with modifier groups) and "Catering Menu" |
@@ -184,6 +184,12 @@ php artisan website-demo:seed --apply --force --owner-email=anthony@gorilladash.
 ```
 
 It runs once on the queue server (`queue.gorilladash.com`).
+
+When running it locally, point TimescaleDB at localhost first. The local environment file names a remote TimescaleDB host, and the review live-feed insert waits on it:
+
+```bash
+PG_TIMESCALE_DB_HOST=127.0.0.1 herd php artisan website-demo:seed --apply
+```
 
 ---
 
@@ -221,4 +227,5 @@ Estimates are working days for one developer with agent help. They are an estima
 4. **Franchise leads.** The Franchise Development module has no website API. The franchise page therefore submits the "Franchise Enquiry" enquiry form. Routing those enquiries into the Franchise Development pipeline would be a separate Gorilla Dash feature.
 5. **Appointment slots.** `appointmentAvailableTime` compares UTC appointment start times with local slot times, so a booked slot may grey out the wrong hour for tribes outside UTC. Confirm on the first booking test and fix it in Gorilla Dash if it is wrong.
 6. **Reviews.** The `reviews` query has no status filter, so every review row in the organisation is public. The seed data only writes public reviews, but reviews visitors leave at the stand appear on the site straight away. `reset-activity` clears them.
-7. **Subdomain and hosting.** Deploy on GKE like Great Greek (the starter's default), or on the Forge client fleet? A Tolgee project is also needed per the starter checklist, or the demo can be pinned to English only.
+7. **The demo organisation is a real, Active organisation.** It may appear wherever Gorilla Dash lists or compares organisations, such as admin lists, billing and review benchmarks. Check whether an internal or demo flag should be set before running the command in production.
+8. **Subdomain and hosting.** Deploy on GKE like Great Greek (the starter's default), or on the Forge client fleet? A Tolgee project is also needed per the starter checklist, or the demo can be pinned to English only.
