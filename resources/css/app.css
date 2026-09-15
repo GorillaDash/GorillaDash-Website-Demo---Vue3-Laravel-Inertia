@@ -187,3 +187,32 @@ html {
     border-color: var(--color-brand-accent);
   }
 }
+
+/* CMS rich text: articles, Our Work and the about story arrive as HTML. */
+.article-body h2 {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+  text-transform: var(--display-transform);
+  color: var(--color-brand-primary);
+  font-size: 1.875rem;
+  line-height: 1.2;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.article-body p,
+.article-body ul,
+.article-body ol {
+  margin-bottom: 1.25rem;
+}
+
+.article-body ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+
+.article-body ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+}
