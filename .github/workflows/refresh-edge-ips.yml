@@ -18,9 +18,9 @@ name: refresh-edge-ips
 #     --role="roles/compute.networkViewer" --condition=None
 
 on:
-  schedule:
-    # Weekly, Mondays 08:00 UTC. Edge IP changes are infrequent + announced.
-    - cron: '0 8 * * 1'
+  # No weekly schedule here: demo.gorilladash.com has no CDN in front and its
+  # BackendConfig detaches the edge-only policy, so the lockdown check below would
+  # fail every week. The shared policy is kept fresh by the client repos that use it.
   workflow_dispatch: {} # allow manual refresh on demand
 
 # Never let two refreshes edit the policy at once.
@@ -35,7 +35,7 @@ permissions:
 env:
   PROJECT_ID: gorilla-dash-178800
   # Post-refresh lockdown check targets (hungry-gorilla-usa; the policy is project-global).
-  DOMAIN: hungry-gorilla-usa.gorilladashstaging.com
+  DOMAIN: demo.gorilladash.com
   STATIC_IP_NAME: hungry-gorilla-usa-ip
 
 jobs:

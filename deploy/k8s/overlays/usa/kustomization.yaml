@@ -7,6 +7,20 @@ resources:
   - namespace.yaml
   - ../../base
   - ingress.yaml
+  - managedcertificate.yaml
+  - frontendconfig.yaml
+
+# No CDN sits in front of demo.gorilladash.com, so the base's Cloudflare-only Cloud
+# Armor policy would block every visitor. GKE only detaches a policy when its name is
+# set to an empty string; deleting the field would leave the old one attached.
+patches:
+  - target:
+      kind: BackendConfig
+      name: hungry-gorilla-backendconfig
+    patch: |-
+      - op: replace
+        path: /spec/securityPolicy/name
+        value: ''
 
 # Same image for every country, built once. deploy.sh sets the tag here.
 images:

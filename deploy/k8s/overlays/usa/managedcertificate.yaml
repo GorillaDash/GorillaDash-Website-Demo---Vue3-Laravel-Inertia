@@ -1,0 +1,9 @@
+# Google-managed certificate for the public host, referenced by the Ingress's
+# networking.gke.io/managed-certificates annotation. See ingress.yaml.
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: hungry-gorilla-cert
+spec:
+  domains:
+    - demo.gorilladash.com
