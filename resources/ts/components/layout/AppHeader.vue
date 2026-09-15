@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { router } from '@inertiajs/vue3'
 import { useTranslate } from '@tolgee/vue'
 import LocaleLink from '@/components/core/LocaleLink.vue'
 import CmsBlock from '@/components/demo/CmsBlock.vue'
+import IconBag from '@/components/icons/IconBag.vue'
 import IconChevronDown from '@/components/icons/IconChevronDown.vue'
 import IconClose from '@/components/icons/IconClose.vue'
 import IconMapPin from '@/components/icons/IconMapPin.vue'
@@ -12,6 +13,7 @@ import BrandLogo from '@/components/layout/BrandLogo.vue'
 import FranchiseBanner from '@/components/layout/FranchiseBanner.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import { useBoundLocation } from '@/composables/useBoundLocation'
+import { useCart } from '@/composables/useCart'
 import { usePagePaths } from '@/composables/usePagePaths'
 import type { NavLink } from '@/constants/navigation'
 import { STRUCTURE } from '@/constants/structure'
@@ -20,7 +22,15 @@ import { useWebsiteMenuService } from '@/services/websiteMenus/websiteMenuServic
 
 const { t } = useTranslate()
 const { pagePath } = usePagePaths()
-const { lockedStore, name: storeName, href: storeHref } = useBoundLocation()
+const { lockedStore, name: storeName, href: storeHref, slug: boundSlug } = useBoundLocation()
+const { count: cartCount, init: initCart } = useCart()
+
+// The bound tribe arrives as a deferred prop after mount; it fills an empty cafe choice.
+watch(boundSlug, (slug) => {
+  if (slug) {
+    void initCart(slug)
+  }
+})
 const { data, loading } = useWebsiteMenuService()
 
 const toNavLink = (item: WebsiteMenuItemType): NavLink => ({
@@ -53,6 +63,7 @@ let removeNavigateListener: (() => void) | undefined
 onMounted(() => {
   window.addEventListener('keydown', onKeydown)
   removeNavigateListener = router.on('navigate', closeMobile)
+  void initCart(boundSlug.value)
 })
 
 onBeforeUnmount(() => {
@@ -133,6 +144,19 @@ onBeforeUnmount(() => {
             <IconMapPin class="size-4 text-brand-accent" />
             <span v-if="lockedStore">{{ shortStoreName }}</span>
             <span v-else>{{ t('Find a cafe', 'Find a cafe') }}</span>
+          </LocaleLink>
+
+          <LocaleLink
+            :href="pagePath('order')"
+            class="relative inline-flex rounded-full p-2 hover:bg-brand-tint"
+            :aria-label="t('header.cart', 'Your order, {count} items', { count: cartCount })"
+          >
+            <IconBag class="size-6" />
+            <span
+              v-if="cartCount"
+              class="absolute -top-0.5 -right-0.5 grid size-5 place-items-center rounded-full bg-brand-accent text-[0.6875rem] font-bold text-brand-on-accent"
+              >{{ cartCount }}</span
+            >
           </LocaleLink>
 
           <AppButton
