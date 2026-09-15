@@ -5,7 +5,7 @@ import type { StoreLocation } from '@/constants/locations'
 
 // CMS tribe-type name per market. USA is the fallback (every market resolves to it).
 const TRIBE_TYPE_BY_COUNTRY = new Map<SupportCountryName, string>([
-  [SupportCountryName.USA, 'Acme Diner Restaurants']
+  [SupportCountryName.USA, 'Juniper Table Restaurants']
 ])
 
 // "New Hampshire" → "new-hampshire" for the {state} URL segment.

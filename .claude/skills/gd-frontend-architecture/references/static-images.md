@@ -21,8 +21,8 @@ public/static/images/
 
 ```
 public/static/images/bg/hero-bg.jpg
-  → gs://gorilladash-static-files/static/clients/acme_/images/bg/hero-bg.jpg
-  → served at https://cdn.gorilladash.com/static/clients/acme_/images/bg/hero-bg.jpg
+  → gs://gorilladash-static-files/static/clients/juniperTable_/images/bg/hero-bg.jpg
+  → served at https://cdn.gorilladash.com/static/clients/juniperTable_/images/bg/hero-bg.jpg
 ```
 
 The command needs `gcloud auth login` + bucket write access. It's incremental
@@ -46,7 +46,7 @@ Never hardcode the CDN URL. Build paths from the helpers in `lib/gcs.ts`:
 ```ts
 import { iconPath, logoPath, bgPath, menuPath } from '@/lib/gcs'
 // each is `${STATIC_SOURCES_URL}/images/<kind>`, e.g.
-// menuPath → https://cdn.gorilladash.com/static/clients/acme_/images/menu
+// menuPath → https://cdn.gorilladash.com/static/clients/juniperTable_/images/menu
 ```
 
 `STATIC_SOURCES_URL` reads `VITE_GCS_STATIC_URL` (falls back to the production
@@ -70,7 +70,7 @@ import { cardSizes, cardSizesAttr, photoOptions } from '@/lib/imagePresets'
 <template>
   <FastlyOptimizedImage
     :src="`${bgPath}/hero-bg.jpg`"
-    alt="Acme Diner Gyro"
+    alt="Juniper Table Gyro"
     class-name="aspect-square w-full object-cover"
     :responsive-sizes="cardSizes"
     :optimization-options="photoOptions"

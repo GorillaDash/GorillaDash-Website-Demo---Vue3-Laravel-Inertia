@@ -1,17 +1,17 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: acme-migrate
+  name: juniper-table-migrate
 spec:
   backoffLimit: 3
   ttlSecondsAfterFinished: 600
   template:
     metadata:
       labels:
-        app: acme
+        app: juniper-table
         role: migrate
     spec:
-      serviceAccountName: acme
+      serviceAccountName: juniper-table
       restartPolicy: Never
       initContainers:
         # Native sidecar (restartPolicy: Always): the Cloud SQL proxy runs
@@ -30,7 +30,7 @@ spec:
             - name: CLOUD_SQL_INSTANCE
               valueFrom:
                 configMapKeyRef:
-                  name: acme-config
+                  name: juniper-table-config
                   key: CLOUD_SQL_INSTANCE
           startupProbe:
             httpGet:
@@ -53,9 +53,9 @@ spec:
           command: ["php", "artisan", "migrate", "--force"]
           envFrom:
             - configMapRef:
-                name: acme-config
+                name: juniper-table-config
             - secretRef:
-                name: acme-secret
+                name: juniper-table-secret
           resources:
             requests:
               cpu: "100m"

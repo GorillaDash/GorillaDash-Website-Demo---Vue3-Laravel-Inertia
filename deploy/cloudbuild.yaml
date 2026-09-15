@@ -16,7 +16,7 @@
 
 substitutions:
   _REGION: us-west1
-  _REPO: acme
+  _REPO: juniper-table
   _TAG: latest
 
 steps:

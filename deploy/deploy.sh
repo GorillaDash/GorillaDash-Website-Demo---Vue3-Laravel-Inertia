@@ -4,7 +4,7 @@
 #
 # Required:  COUNTRY (matches deploy/k8s/overlays/<country>, e.g. usa, au)
 # Optional (defaults baked in): PROJECT_ID (gorilla-dash-178800), REGION (us-west1),
-#            REPO (acme), TAG (git short SHA), NAMESPACE (acme-<country>),
+#            REPO (juniper-table), TAG (git short SHA), NAMESPACE (juniper-table-<country>),
 #            CLUSTER (gorilladash-cluster), KUBE_CONTEXT (auto from project/region/cluster)
 #
 # Self-targets the expected GKE cluster on every kubectl call (via --context), so
@@ -17,9 +17,9 @@ set -euo pipefail
 PROJECT_ID="${PROJECT_ID:-gorilla-dash-178800}"
 : "${COUNTRY:?Set COUNTRY (e.g. usa, au)}"
 REGION="${REGION:-us-west1}"
-REPO="${REPO:-acme}"
+REPO="${REPO:-juniper-table}"
 TAG="${TAG:-$(git rev-parse --short HEAD)}"
-NAMESPACE="${NAMESPACE:-acme-${COUNTRY}}"
+NAMESPACE="${NAMESPACE:-juniper-table-${COUNTRY}}"
 REG="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}"
 CLUSTER="${CLUSTER:-gorilladash-cluster}"
 
@@ -88,13 +88,13 @@ echo ">> Country=${COUNTRY}  Namespace=${NAMESPACE}  Tag=${TAG}  Context=${EXPEC
 kubectl apply -f "${OVERLAY}/namespace.yaml"
 
 # Per-country Secret (APP_KEY + DB creds) must exist — created out-of-band.
-if ! kubectl -n "${NAMESPACE}" get secret acme-secret >/dev/null 2>&1; then
-  echo "!! Secret 'acme-secret' not found in ${NAMESPACE}. Create it first (see README). Aborting."
+if ! kubectl -n "${NAMESPACE}" get secret juniper-table-secret >/dev/null 2>&1; then
+  echo "!! Secret 'juniper-table-secret' not found in ${NAMESPACE}. Create it first (see README). Aborting."
   exit 1
 fi
 
 # 1) ConfigMap from this country's config.env first, so the migrate Job sees it.
-kubectl -n "${NAMESPACE}" create configmap acme-config \
+kubectl -n "${NAMESPACE}" create configmap juniper-table-config \
   --from-env-file="${OVERLAY}/config.env" --dry-run=client -o yaml \
   | kubectl -n "${NAMESPACE}" apply -f -
 
@@ -103,10 +103,10 @@ kubectl -n "${NAMESPACE}" create configmap acme-config \
 kubectl -n "${NAMESPACE}" apply -f "${ROOT}/deploy/k8s/base/serviceaccount.yaml"
 
 # 2) Migrate once for this release against this country's DB.
-kubectl -n "${NAMESPACE}" delete job acme-migrate --ignore-not-found
+kubectl -n "${NAMESPACE}" delete job juniper-table-migrate --ignore-not-found
 sed "s#image: app-web#image: ${REG}/web:${TAG}#" "${ROOT}/deploy/k8s/base/migrate-job.yaml" \
   | kubectl -n "${NAMESPACE}" apply -f -
-kubectl -n "${NAMESPACE}" wait --for=condition=complete --timeout=300s job/acme-migrate
+kubectl -n "${NAMESPACE}" wait --for=condition=complete --timeout=300s job/juniper-table-migrate
 
 # 3) Point the overlay at the freshly built images and roll out.
 cd "${OVERLAY}"
@@ -122,9 +122,9 @@ kustomize edit set image \
   app-ssr="${REG}/ssr:latest"
 
 # 4) Wait for all three Deployments to become ready.
-kubectl -n "${NAMESPACE}" rollout status deployment/acme
-kubectl -n "${NAMESPACE}" rollout status deployment/acme-scheduler
-kubectl -n "${NAMESPACE}" rollout status deployment/acme-worker
+kubectl -n "${NAMESPACE}" rollout status deployment/juniper-table
+kubectl -n "${NAMESPACE}" rollout status deployment/juniper-table-scheduler
+kubectl -n "${NAMESPACE}" rollout status deployment/juniper-table-worker
 echo ">> ${COUNTRY} deployed."
 
 # Optional origin-lockdown smoke (direct IP -> 403, through the edge -> 200). OFF by

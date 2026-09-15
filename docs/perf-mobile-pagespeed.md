@@ -1,6 +1,6 @@
 # Mobile PageSpeed — render-path optimization
 
-The mobile Lighthouse score for `acme-usa` was held down by the **critical
+The mobile Lighthouse score for `juniper-table-usa` was held down by the **critical
 rendering path**: render-blocking requests and a late-discovered LCP image were
 pushing First Contentful Paint (FCP) and Largest Contentful Paint (LCP) out past
 5–7 seconds on a simulated Slow-4G phone. This note records what we changed, the

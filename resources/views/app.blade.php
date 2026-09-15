@@ -11,13 +11,13 @@
         <link rel="preconnect" href="https://cdn.gorilladash.com">
         {{-- TODO: favicon.png not yet available on the CDN (path 404s). Restore these
              once the image file is uploaded to images/logos/favicon.png. --}}
-        {{-- <link rel="apple-touch-icon" href="https://cdn.gorilladash.com/static/clients/acme_/images/logos/favicon.png">
-        <link rel="apple-touch-icon" sizes="128x128" href="https://cdn.gorilladash.com/static/clients/acme_/images/logos/favicon.png">
-        <link rel="icon" type="image/png" href="https://cdn.gorilladash.com/static/clients/acme_/images/logos/favicon.png">
-        <link rel="icon" sizes="192x192" type="image/png" href="https://cdn.gorilladash.com/static/clients/acme_/images/logos/favicon.png">
-        <link rel="shortcut icon" href="https://cdn.gorilladash.com/static/clients/acme_/images/logos/favicon.png"> --}}
+        {{-- <link rel="apple-touch-icon" href="https://cdn.gorilladash.com/static/clients/juniperTable_/images/logos/favicon.png">
+        <link rel="apple-touch-icon" sizes="128x128" href="https://cdn.gorilladash.com/static/clients/juniperTable_/images/logos/favicon.png">
+        <link rel="icon" type="image/png" href="https://cdn.gorilladash.com/static/clients/juniperTable_/images/logos/favicon.png">
+        <link rel="icon" sizes="192x192" type="image/png" href="https://cdn.gorilladash.com/static/clients/juniperTable_/images/logos/favicon.png">
+        <link rel="shortcut icon" href="https://cdn.gorilladash.com/static/clients/juniperTable_/images/logos/favicon.png"> --}}
         <meta name="msapplication-TileColor" content="#FFFFFF">
-        {{-- <meta name="msapplication-TileImage" content="https://cdn.gorilladash.com/static/clients/acme_/images/logos/favicon.png"> --}}
+        {{-- <meta name="msapplication-TileImage" content="https://cdn.gorilladash.com/static/clients/juniperTable_/images/logos/favicon.png"> --}}
         <meta name="theme-color" content="#064d7b">
 
         @fonts

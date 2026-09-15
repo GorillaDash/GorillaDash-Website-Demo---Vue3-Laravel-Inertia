@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * "Find your Acme Diner" search card above a live map. Type an address → Google
+ * "Find your Juniper Table" search card above a live map. Type an address → Google
  * Places autocomplete → on select, search the closest stores (within radius) and
  * show them both in the dropdown and on the map. "Use My Location" pans the map to
  * the visitor. Ported from the old StoreLocator's search flow.

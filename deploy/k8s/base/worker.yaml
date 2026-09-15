@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: acme-worker
+  name: juniper-table-worker
   labels:
-    app: acme
+    app: juniper-table
     role: worker
 spec:
   # Workers are stateless consumers — scale this up as job volume grows. The
@@ -11,17 +11,17 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: acme
+      app: juniper-table
       role: worker
   template:
     metadata:
       labels:
-        app: acme
+        app: juniper-table
         role: worker
     spec:
       # queue:work catches SIGTERM and finishes the in-flight job before exiting;
       # give it room to do so on rollout/scale-down.
-      serviceAccountName: acme
+      serviceAccountName: juniper-table
       terminationGracePeriodSeconds: 90
       initContainers:
         # Cloud SQL Auth Proxy as a native sidecar — ready before queue:work, so
@@ -39,7 +39,7 @@ spec:
             - name: CLOUD_SQL_INSTANCE
               valueFrom:
                 configMapKeyRef:
-                  name: acme-config
+                  name: juniper-table-config
                   key: CLOUD_SQL_INSTANCE
           startupProbe:
             httpGet:
@@ -69,9 +69,9 @@ spec:
             - --rest=1
           envFrom:
             - configMapRef:
-                name: acme-config
+                name: juniper-table-config
             - secretRef:
-                name: acme-secret
+                name: juniper-table-secret
           resources:
             requests:
               cpu: "100m"

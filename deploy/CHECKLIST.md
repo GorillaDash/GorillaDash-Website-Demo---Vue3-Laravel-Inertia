@@ -1,4 +1,4 @@
-# Go-live checklist — Acme Diner on GKE
+# Go-live checklist — Juniper Table on GKE
 
 Printable, tick-as-you-go checklist. **Part 1** is once per project; **Part 2–3**
 repeat per country. Full background is in [`README.md`](./README.md).
@@ -10,8 +10,8 @@ Baked-in defaults (override with env vars if needed):
 | Project                | `gorilla-dash-178800`              |
 | Region                 | `us-west1`                         |
 | Cluster                | `gorilladash-cluster`              |
-| Artifact Registry repo | `acme`                             |
-| Namespace              | `acme-<country>` (e.g. `acme-usa`) |
+| Artifact Registry repo | `juniper-table`                             |
+| Namespace              | `juniper-table-<country>` (e.g. `juniper-table-usa`) |
 
 ---
 
@@ -49,10 +49,10 @@ Baked-in defaults (override with env vars if needed):
 
 - [ ] `build-and-push.sh` **auto-creates** this repo on first run. To create it up front instead:
   ```bash
-  gcloud artifacts repositories create acme \
+  gcloud artifacts repositories create juniper-table \
     --repository-format=docker --location=us-west1
   ```
-- [ ] Images will be: `us-west1-docker.pkg.dev/gorilla-dash-178800/acme/{web,ssr}`
+- [ ] Images will be: `us-west1-docker.pkg.dev/gorilla-dash-178800/juniper-table/{web,ssr}`
 
 **C. Cluster access** _(this project has several clusters — pick the right one!)_
 
@@ -81,9 +81,9 @@ cluster and DB are on different VPCs, so a DB private IP just times out)_
 
 - [ ] Create / locate the MySQL instance; note its **connection name**
       `PROJECT:REGION:INSTANCE` (e.g. `gorilla-dash-178800:us-west1:gorilladash-client-v2`)
-- [ ] Create the database (e.g. `acme_usa_k8s`) and a DB user
+- [ ] Create the database (e.g. `juniper_table_usa_k8s`) and a DB user
 - [ ] Once per project: `make wi-gsa` (creates the `k8s-sql` GSA + grants `roles/cloudsql.client`)
-- [ ] Per country: `make wi-bind COUNTRY=usa` (lets `acme-usa`'s KSA impersonate the GSA)
+- [ ] Per country: `make wi-bind COUNTRY=usa` (lets `juniper-table-usa`'s KSA impersonate the GSA)
 
 **D2. CI deploy credentials** _(once per REPO — not per country)_
 
@@ -98,11 +98,11 @@ cluster and DB are on different VPCs, so a DB private IP just times out)_
 
 **E. Domain + static IP**
 
-- [ ] `make reserve-ip COUNTRY=usa` — reserves `acme-usa-ip` if it isn't there yet and
+- [ ] `make reserve-ip COUNTRY=usa` — reserves `juniper-table-usa-ip` if it isn't there yet and
       prints the address. Idempotent, so `make bootstrap` can re-run it.
-- [ ] DNS **A record**: `acme-usa.example.com` → that IP
+- [ ] DNS **A record**: `juniper-table-usa.example.com` → that IP
 - [ ] In `deploy/k8s/overlays/usa/ingress.yaml`: set the domain (2 places) and uncomment
-      `global-static-ip-name: acme-usa-ip`
+      `global-static-ip-name: juniper-table-usa-ip`
 
 **F. Config (the ".env.usa")**
 
@@ -123,7 +123,7 @@ cluster and DB are on different VPCs, so a DB private IP just times out)_
   make origin-tls-copy COUNTRY=usa FROM_NS=<other-client-ns> FROM_SECRET=<their>-origin-tls
   ```
 - [ ] Confirm `overlays/<country>/ingress.yaml` still has its `spec.tls` block
-      naming `acme-origin-tls` — the Secret on its own does nothing without it.
+      naming `juniper-table-origin-tls` — the Secret on its own does nothing without it.
 
 **G. Namespace + Secret (declarative)**
 
@@ -148,7 +148,7 @@ cluster and DB are on different VPCs, so a DB private IP just times out)_
 
 ## Part 3 — Verify (`usa`)
 
-- [ ] `kubectl -n acme-usa get pods` — `acme`, `acme-scheduler`, `acme-worker` all Ready
+- [ ] `kubectl -n juniper-table-usa get pods` — `juniper-table`, `juniper-table-scheduler`, `juniper-table-worker` all Ready
 - [ ] Origin lockdown built: `./deploy/setup-cloud-armor.sh` ran, and `backendconfig.yaml`
       (with `securityPolicy: edge-only`) is deployed. Cloudflare holds the cert for
       `<domain>` and its origin = the LB static IP over http.
@@ -159,7 +159,7 @@ cluster and DB are on different VPCs, so a DB private IP just times out)_
       (it probes the live host and rolls itself back if a bypass rule doesn't match).
 - [ ] **Assets load over https**: open the site, DevTools → Network — `/build/assets/*.css|js`
       are `https` + `200` (if `http` → mixed-content/503, `APP_FORCE_HTTPS` is missing; see Gotchas)
-- [ ] `acme-scheduler` / `acme-worker` pods Running (they idle until you
+- [ ] `juniper-table-scheduler` / `juniper-table-worker` pods Running (they idle until you
       define scheduled tasks in `routes/console.php` / dispatch queue jobs)
 
 > Adding a second country: copy overlays/usa to overlays/<country>, swap names/domain/DB,
@@ -237,13 +237,13 @@ server has gone away` / `Error while reading greeting packet` and succeed on a
   `.github/workflows/refresh-edge-ips.yml` re-runs the (idempotent) script weekly. One-time: grant `github-deployer` the
   `roles/compute.securityAdmin` role (see the script header).
 
-- **Service selector must be `role: web`.** A bare `app: acme` selector also
+- **Service selector must be `role: web`.** A bare `app: juniper-table` selector also
   grabs scheduler/worker pods (same `app` label) → they get a NEG readiness gate
   they can't satisfy (stuck `0/1`, LB could route web traffic to them → 502). The
-  Service selects `app: acme, role: web`.
+  Service selects `app: juniper-table, role: web`.
 
 - **ServiceAccount before the migrate Job.** The migrate Job uses
-  `serviceAccountName: acme`, so `deploy.sh` applies the ServiceAccount before
+  `serviceAccountName: juniper-table`, so `deploy.sh` applies the ServiceAccount before
   running it (else `error looking up service account … not found`).
 
 - **SSR cluster forks by NODE cores, not your CPU limit.** Inertia's `cluster`
@@ -283,11 +283,11 @@ server has gone away` / `Error while reading greeting packet` and succeed on a
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
 | Check current cluster    | `kubectl config current-context`                                                                                                 |
 | Switch to this cluster   | `kubectl config use-context gke_gorilla-dash-178800_us-west1_gorilladash-cluster`                                                |
-| Read a secret back       | `kubectl -n acme-usa get secret acme-secret -o jsonpath='{.data.APP_KEY}' \| base64 -d`                                          |
-| Read all secrets         | `kubectl -n acme-usa get secret acme-secret -o go-template='{{range $k,$v := .data}}{{$k}}={{$v\|base64decode}}{{"\n"}}{{end}}'` |
-| Apply config-only change | edit `config.env` → `COUNTRY=usa ./deploy/deploy.sh` → `kubectl -n acme-usa rollout restart deploy`                              |
-| Tail web logs            | `kubectl -n acme-usa logs -f deploy/acme`                                                                                        |
-| Tail SSR logs            | `kubectl -n acme-usa logs -f deploy/acme -c ssr`                                                                                 |
-| Scale workers            | `kubectl -n acme-usa scale deploy/acme-worker --replicas=3`                                                                      |
+| Read a secret back       | `kubectl -n juniper-table-usa get secret juniper-table-secret -o jsonpath='{.data.APP_KEY}' \| base64 -d`                                          |
+| Read all secrets         | `kubectl -n juniper-table-usa get secret juniper-table-secret -o go-template='{{range $k,$v := .data}}{{$k}}={{$v\|base64decode}}{{"\n"}}{{end}}'` |
+| Apply config-only change | edit `config.env` → `COUNTRY=usa ./deploy/deploy.sh` → `kubectl -n juniper-table-usa rollout restart deploy`                              |
+| Tail web logs            | `kubectl -n juniper-table-usa logs -f deploy/juniper-table`                                                                                        |
+| Tail SSR logs            | `kubectl -n juniper-table-usa logs -f deploy/juniper-table -c ssr`                                                                                 |
+| Scale workers            | `kubectl -n juniper-table-usa scale deploy/juniper-table-worker --replicas=3`                                                                      |
 | Run migrations only      | re-run `deploy.sh` (it runs the migrate Job), or apply `base/migrate-job.yaml` with the image substituted                        |
-| Open a shell in web      | `kubectl -n acme-usa exec -it deploy/acme -c web -- bash`                                                                        |
+| Open a shell in web      | `kubectl -n juniper-table-usa exec -it deploy/juniper-table -c web -- bash`                                                                        |

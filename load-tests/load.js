@@ -1,7 +1,7 @@
 import http from 'k6/http'
 import { check, sleep, group } from 'k6'
 
-const BASE = __ENV.BASE_URL || 'https://acme-usa.gorilladashstaging.com'
+const BASE = __ENV.BASE_URL || 'https://juniper-table-usa.gorilladashstaging.com'
 
 // Load test: ramp up to a steady number of users to see how the app server
 // + DB behave under sustained, realistic traffic.

@@ -16,22 +16,22 @@ const { t } = useTranslate()
 const defaultMetaTitleTemplate = (tribeName: string) =>
   t.value(
     'locationDetail.metaTitle',
-    'Location | {tribeName} - Acme Diner | Mediterranean Food | Restaurant & Catering',
+    'Location | {tribeName} - Juniper Table | Mediterranean Food | Restaurant & Catering',
     { tribeName }
   )
 const defaultMetaDescriptionTemplate = (tribeName: string) =>
   t.value(
     'locationDetail.metaDescription',
-    'Menu for Acme Diner® in {tribeName}. Explore latest menu with photos and reviews.',
+    'Menu for Juniper Table® in {tribeName}. Explore latest menu with photos and reviews.',
     { tribeName }
   )
 const defaultIntroductionTemplate = (tribeName: string) =>
   t.value(
     'locationDetail.introduction',
-    'At Acme Diner {tribeName}, we’re passionate about timeless flavors and legendary service. Our delicious Mediterranean dishes are created daily from classic family recipes with fresh, authentic ingredients. Stop by today or order online for pickup or delivery!',
+    'At Juniper Table {tribeName}, we’re passionate about timeless flavors and legendary service. Our delicious Mediterranean dishes are created daily from classic family recipes with fresh, authentic ingredients. Stop by today or order online for pickup or delivery!',
     { tribeName }
   )
-const defaultPageHeadingTemplate = (tribeName: string) => `Acme Diner ${tribeName}`
+const defaultPageHeadingTemplate = (tribeName: string) => `Juniper Table ${tribeName}`
 
 // No defineOptions({ layout }) → the default AppLayout applies. This page fetches the
 // FULL tribe for its richer content (hours, map, ordering, SEO meta); the basics

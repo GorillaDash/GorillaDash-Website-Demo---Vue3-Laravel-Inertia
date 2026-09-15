@@ -1,16 +1,16 @@
-# Deploy / ops shortcuts for Acme Diner on GKE.
+# Deploy / ops shortcuts for Juniper Table on GKE.
 # Most ops targets take COUNTRY (default usa).
 # Override any var inline: `make build TAG=abc1234`.
 
 PROJECT_ID ?= gorilla-dash-178800
 REGION     ?= us-west1
-REPO       ?= acme
+REPO       ?= juniper-table
 CLUSTER    ?= gorilladash-cluster
 COUNTRY    ?= usa
 REPLICAS   ?= 2
 TAG        ?= $(shell git rev-parse --short HEAD)
 
-NS       := acme-$(COUNTRY)
+NS       := juniper-table-$(COUNTRY)
 CONTEXT  := gke_$(PROJECT_ID)_$(REGION)_$(CLUSTER)
 GSA_NAME ?= k8s-sql
 GSA      := $(GSA_NAME)@$(PROJECT_ID).iam.gserviceaccount.com
@@ -25,7 +25,7 @@ CI_SA      := $(CI_SA_NAME)@$(PROJECT_ID).iam.gserviceaccount.com
 # The Ingress references this by NAME (global-static-ip-name), so it must match
 # overlays/<COUNTRY>/ingress.yaml. GKE silently leaves the Ingress without an IP
 # when the name doesn't resolve, so a typo here is a slow, quiet failure.
-IP_NAME  ?= acme-$(COUNTRY)-ip
+IP_NAME  ?= juniper-table-$(COUNTRY)-ip
 # Source for `origin-tls-copy` (which namespace to lift the cert from). FROM names
 # another COUNTRY of this client; FROM_NS/FROM_SECRET override that outright, which is
 # how you copy the shared *.gorilladashstaging.com wildcard from a DIFFERENT client on
@@ -34,8 +34,8 @@ IP_NAME  ?= acme-$(COUNTRY)-ip
 # yet. A Cloudflare Origin CA certificate is trusted on the origin leg only and by no
 # browser, so sharing one across the zone's clients is the intended use, not a smell.
 FROM        ?= usa
-FROM_NS     ?= acme-$(FROM)
-FROM_SECRET ?= acme-origin-tls
+FROM_NS     ?= juniper-table-$(FROM)
+FROM_SECRET ?= juniper-table-origin-tls
 
 # Every kubectl below is pinned to the target cluster's context. Do NOT drop
 # this: `deploy.sh` pins itself the same way, so a bare `kubectl` here would act
@@ -96,7 +96,7 @@ wi-gsa: ## One-time: create the Cloud SQL GSA + grant roles/cloudsql.client
 wi-bind: ## Bind this country's KSA to the GSA via Workload Identity (COUNTRY=<country>)
 	gcloud iam service-accounts add-iam-policy-binding $(GSA) --project=$(PROJECT_ID) \
 	  --role="roles/iam.workloadIdentityUser" \
-	  --member="serviceAccount:$(PROJECT_ID).svc.id.goog[$(NS)/acme]"
+	  --member="serviceAccount:$(PROJECT_ID).svc.id.goog[$(NS)/juniper-table]"
 
 # ── CI deploy credentials (GitHub Actions → GCP over OIDC) ─────────────────────
 # Same split as wi-gsa/wi-bind above: the service account is once per PROJECT,
@@ -142,15 +142,15 @@ origin-tls: ## Install an origin certificate as the Ingress TLS secret (CERT=...
 	@# Not used until an overlay sets spec.tls: the CDN terminates TLS and the
 	@# origin leg is plain HTTP. Reach for this when a host needs an authenticated
 	@# origin — Cloudflare's Full (strict) mode, served by a Cloudflare Origin CA
-	@# certificate. Adding one also means referencing acme-origin-tls from that
+	@# certificate. Adding one also means referencing juniper-table-origin-tls from that
 	@# overlay's ingress.yaml, or nothing will present it.
 	@test -n "$(CERT)" -a -n "$(KEY)" \
 	  || { echo "usage: make origin-tls COUNTRY=$(COUNTRY) CERT=origin.pem KEY=origin.key"; exit 1; }
 	@test -f "$(CERT)" || { echo "no such file: $(CERT)"; exit 1; }
 	@test -f "$(KEY)"  || { echo "no such file: $(KEY)";  exit 1; }
-	$(KUBECTL) -n $(NS) create secret tls acme-origin-tls \
+	$(KUBECTL) -n $(NS) create secret tls juniper-table-origin-tls \
 	  --cert="$(CERT)" --key="$(KEY)" --dry-run=client -o yaml | $(KUBECTL) apply -f -
-	@echo ">> acme-origin-tls installed. Re-apply the Ingress if it was created before this: make deploy COUNTRY=$(COUNTRY)"
+	@echo ">> juniper-table-origin-tls installed. Re-apply the Ingress if it was created before this: make deploy COUNTRY=$(COUNTRY)"
 
 origin-tls-copy: ## Copy an origin cert into this namespace (FROM=usa COUNTRY=nz, or FROM_NS=<ns> FROM_SECRET=<name>) — only if it covers the TLS hosts
 	@# One wildcard certificate can serve every host on a shared domain, but the
@@ -176,7 +176,7 @@ origin-tls-copy: ## Copy an origin cert into this namespace (FROM=usa COUNTRY=nz
 	rm -f /tmp/origin-copy-$(COUNTRY).crt; \
 	echo ">> $(FROM_NS)/$(FROM_SECRET) covers every TLS host of $(COUNTRY) — copying into $(NS)"
 	@$(KUBECTL) -n $(FROM_NS) get secret $(FROM_SECRET) -o json \
-	  | jq '{apiVersion, kind, type, data, metadata: {name: "acme-origin-tls", namespace: "$(NS)"}}' \
+	  | jq '{apiVersion, kind, type, data, metadata: {name: "juniper-table-origin-tls", namespace: "$(NS)"}}' \
 	  | $(KUBECTL) apply -f -
 
 # ci-bind is per-REPO, not per-country, so on the second country it is a no-op —
@@ -185,7 +185,7 @@ origin-tls-copy: ## Copy an origin cert into this namespace (FROM=usa COUNTRY=nz
 bootstrap: ci-bind reserve-ip ns wi-bind apply-secret ## Per-country bring-up: everything automatable (COUNTRY=nz)
 	@echo ""
 	@echo "======== $(COUNTRY) bootstrap done ========"
-	@echo "  CI deploy credentials, reserved IP, namespace $(NS), Workload Identity binding, acme-secret"
+	@echo "  CI deploy credentials, reserved IP, namespace $(NS), Workload Identity binding, juniper-table-secret"
 	@echo ""
 	@echo "  Still manual — see deploy/CHECKLIST.md:"
 	@echo "   1. Cloud SQL:  CREATE DATABASE $$(grep '^DB_DATABASE=' deploy/k8s/overlays/$(COUNTRY)/config.env | cut -d= -f2);"
@@ -200,34 +200,34 @@ pods: ## List pods
 
 status: ## Deploys + ingress + cert status
 	$(KUBECTL) -n $(NS) get deploy,ingress
-	@$(KUBECTL) -n $(NS) describe managedcertificate acme-cert 2>/dev/null | grep -E "Status|Domains" || true
+	@$(KUBECTL) -n $(NS) describe managedcertificate juniper-table-cert 2>/dev/null | grep -E "Status|Domains" || true
 
 logs-web: ## Tail web logs
-	$(KUBECTL) -n $(NS) logs -f deploy/acme -c web
+	$(KUBECTL) -n $(NS) logs -f deploy/juniper-table -c web
 
 logs-ssr: ## Tail SSR logs
-	$(KUBECTL) -n $(NS) logs -f deploy/acme -c ssr
+	$(KUBECTL) -n $(NS) logs -f deploy/juniper-table -c ssr
 
 logs-worker: ## Tail queue worker logs
-	$(KUBECTL) -n $(NS) logs -f deploy/acme-worker
+	$(KUBECTL) -n $(NS) logs -f deploy/juniper-table-worker
 
 logs-scheduler: ## Tail scheduler logs
-	$(KUBECTL) -n $(NS) logs -f deploy/acme-scheduler
+	$(KUBECTL) -n $(NS) logs -f deploy/juniper-table-scheduler
 
 restart: ## Restart all deploys (pick up config.env changes)
 	$(KUBECTL) -n $(NS) rollout restart deploy
 
 scale-worker: ## Scale queue workers (REPLICAS=3)
-	$(KUBECTL) -n $(NS) scale deploy/acme-worker --replicas=$(REPLICAS)
+	$(KUBECTL) -n $(NS) scale deploy/juniper-table-worker --replicas=$(REPLICAS)
 
 migrate: ## Run DB migrations in a running web pod
-	$(KUBECTL) -n $(NS) exec deploy/acme -c web -- php artisan migrate --force
+	$(KUBECTL) -n $(NS) exec deploy/juniper-table -c web -- php artisan migrate --force
 
 shell: ## Shell into the web container
-	$(KUBECTL) -n $(NS) exec -it deploy/acme -c web -- bash
+	$(KUBECTL) -n $(NS) exec -it deploy/juniper-table -c web -- bash
 
 secret: ## Print the decoded Secret
-	$(KUBECTL) -n $(NS) get secret acme-secret \
+	$(KUBECTL) -n $(NS) get secret juniper-table-secret \
 	  -o go-template='{{range $$k,$$v := .data}}{{$$k}}={{$$v | base64decode}}{{"\n"}}{{end}}'
 
 # ── Local ────────────────────────────────────────────────────────────────────

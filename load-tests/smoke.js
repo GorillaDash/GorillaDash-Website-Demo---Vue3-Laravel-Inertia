@@ -1,7 +1,7 @@
 import http from 'k6/http'
 import { check, sleep } from 'k6'
 
-const BASE = __ENV.BASE_URL || 'https://acme-usa.gorilladashstaging.com'
+const BASE = __ENV.BASE_URL || 'https://juniper-table-usa.gorilladashstaging.com'
 
 // Smoke test: 1 VU for a short time, just to verify the site responds
 // and the script is correct before running heavier load tests.

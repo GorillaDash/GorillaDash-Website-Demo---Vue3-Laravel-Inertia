@@ -1,5 +1,5 @@
 /**
- * Mock store locations for the "Choose your Acme Diner" finder dialog.
+ * Mock store locations for the "Choose your Juniper Table" finder dialog.
  * Replace with live data (GraphQL) once the locations API is wired up.
  */
 

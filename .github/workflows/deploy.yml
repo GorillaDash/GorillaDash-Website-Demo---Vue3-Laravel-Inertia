@@ -43,7 +43,7 @@ permissions:
 env:
   PROJECT_ID: gorilla-dash-178800
   REGION: us-west1
-  REPO: acme
+  REPO: juniper-table
   CLUSTER: gorilladash-cluster
 
 jobs:

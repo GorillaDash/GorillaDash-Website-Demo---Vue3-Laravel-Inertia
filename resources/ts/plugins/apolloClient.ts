@@ -99,7 +99,7 @@ export function createApolloClient(graphqlURL: string, graphqlToken: string, deb
         Authorization: `Bearer ${currentToken}`,
         ...(import.meta.env.SSR
           ? {
-              'User-Agent': 'GD-SSR/1.0 (acme)',
+              'User-Agent': 'GD-SSR/1.0 (juniper-table)',
               ...(process.env.GD_SSR_EDGE_KEY
                 ? { 'x-gd-edge-key': process.env.GD_SSR_EDGE_KEY }
                 : {})

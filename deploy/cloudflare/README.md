@@ -16,7 +16,7 @@ directory is the edge's half.
 ## Deploying
 
 ```bash
-CLOUDFLARE_API_TOKEN=... ./deploy/cloudflare/apply-rules.sh acme-usa.gorilladashstaging.com
+CLOUDFLARE_API_TOKEN=... ./deploy/cloudflare/apply-rules.sh juniper-table-usa.gorilladashstaging.com
 CLOUDFLARE_API_TOKEN=... ./deploy/cloudflare/apply-rules.sh --dry-run <host>   # show, don't write
 ./deploy/cloudflare/verify-rules.sh <host>                                     # probes only, no token
 ```

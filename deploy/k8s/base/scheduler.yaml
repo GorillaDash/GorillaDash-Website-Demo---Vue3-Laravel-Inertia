@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: acme-scheduler
+  name: juniper-table-scheduler
   labels:
-    app: acme
+    app: juniper-table
     role: scheduler
 spec:
   # Exactly ONE scheduler — never run two, or every cron task fires twice.
@@ -12,15 +12,15 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: acme
+      app: juniper-table
       role: scheduler
   template:
     metadata:
       labels:
-        app: acme
+        app: juniper-table
         role: scheduler
     spec:
-      serviceAccountName: acme
+      serviceAccountName: juniper-table
       terminationGracePeriodSeconds: 60
       initContainers:
         # Cloud SQL Auth Proxy as a native sidecar — ready before schedule:work.
@@ -37,7 +37,7 @@ spec:
             - name: CLOUD_SQL_INSTANCE
               valueFrom:
                 configMapKeyRef:
-                  name: acme-config
+                  name: juniper-table-config
                   key: CLOUD_SQL_INSTANCE
           startupProbe:
             httpGet:
@@ -64,9 +64,9 @@ spec:
           command: ["php", "artisan", "schedule:work"]
           envFrom:
             - configMapRef:
-                name: acme-config
+                name: juniper-table-config
             - secretRef:
-                name: acme-secret
+                name: juniper-table-secret
           resources:
             requests:
               cpu: "50m"

@@ -1,4 +1,4 @@
-# GKE deployment — Acme Diner (Laravel + Inertia SSR, multi-country)
+# GKE deployment — Juniper Table (Laravel + Inertia SSR, multi-country)
 
 One codebase, one set of images, **many countries**. Each country is a Kustomize
 overlay (its own namespace, config, domain, database). Images are built **once**
@@ -24,8 +24,8 @@ Started by the image CMD (`octane:frankenphp --workers=4 --max-requests=500`);
 Octane generates its own Caddyfile (no custom one needed). See the `--workers`
 ↔ memory note in `base/deployment.yaml`.
 
-Per namespace there are also `acme-scheduler` (1 replica, `schedule:work`)
-and `acme-worker` (`queue:work`, scale as needed).
+Per namespace there are also `juniper-table-scheduler` (1 replica, `schedule:work`)
+and `juniper-table-worker` (`queue:work`, scale as needed).
 
 ## Layout
 
@@ -41,7 +41,7 @@ deploy/k8s/
 └── overlays/
     ├── usa/
     │   ├── kustomization.yaml   # namespace + images + configMapGenerator
-    │   ├── namespace.yaml       # the acme-usa Namespace (declarative)
+    │   ├── namespace.yaml       # the juniper-table-usa Namespace (declarative)
     │   ├── config.env           # ← this IS your ".env.usa" (non-secret)
     │   ├── ingress.yaml         # HTTP-only GKE Ingress (TLS is at Cloudflare)
     │   └── secret.example.yaml  # copy -> secret.yaml (gitignored), then apply
@@ -60,13 +60,13 @@ The scripts ship with these baked-in defaults (override any via env var):
 | ------------ | --------------------- | -------------------------------- |
 | `PROJECT_ID` | `gorilla-dash-178800` | `build-and-push.sh`, `deploy.sh` |
 | `REGION`     | `us-west1`            | `build-and-push.sh`, `deploy.sh` |
-| `REPO`       | `acme`                | both                             |
+| `REPO`       | `juniper-table`                | both                             |
 | Cluster      | `gorilladash-cluster` | you pass it to `get-credentials` |
 | `COUNTRY`    | _(required)_          | `deploy.sh`                      |
 
 Per-country values you still edit by hand: domain (`overlays/<c>/ingress.yaml` +
 `config.env` `APP_URL`), DB host/name (`config.env`), and the `Secret` (APP_KEY +
-DB creds) in the `acme-<c>` namespace.
+DB creds) in the `juniper-table-<c>` namespace.
 
 ## First-time go-live checklist
 
@@ -81,7 +81,7 @@ country).
 
 **B. Artifact Registry** _(once)_ — this is where the Docker images land
 
-- [ ] `gcloud artifacts repositories create acme --repository-format=docker --location=us-west1`
+- [ ] `gcloud artifacts repositories create juniper-table --repository-format=docker --location=us-west1`
 
 **C. Cluster access** _(once)_
 
@@ -101,15 +101,15 @@ country).
 **D. Cloud SQL** _(per country)_
 
 - [ ] Create a MySQL instance (USA → `us-west1`) with **Private IP** on the cluster's VPC. Private IP needs **Private Service Access** on that VPC (the `servicenetworking` API in step A) — otherwise use the cloud-sql-proxy sidecar (commented in `base/deployment.yaml`).
-- [ ] Create database `acme_usa` and a DB user.
+- [ ] Create database `juniperTable_usa` and a DB user.
 - [ ] Note the instance **private IP** → goes in `config.env` `DB_HOST`.
 
 **E. Domain + static IP** _(per country)_
 
-- [ ] `make reserve-ip COUNTRY=usa` — reserves `acme-usa-ip` if it isn't there yet and
+- [ ] `make reserve-ip COUNTRY=usa` — reserves `juniper-table-usa-ip` if it isn't there yet and
       prints the address. Idempotent, so `make bootstrap` can re-run it.
-- [ ] Point your DNS **A record** (`acme-usa.example.com`) at that IP.
-- [ ] In `overlays/usa/ingress.yaml`: set the domain (2 places) and uncomment `global-static-ip-name: acme-usa-ip`.
+- [ ] Point your DNS **A record** (`juniper-table-usa.example.com`) at that IP.
+- [ ] In `overlays/usa/ingress.yaml`: set the domain (2 places) and uncomment `global-static-ip-name: juniper-table-usa-ip`.
 
 **F. Namespace + Secret + config** _(per country)_
 
@@ -135,13 +135,13 @@ country).
 
 **H. Verify**
 
-- [ ] `kubectl -n acme-usa get pods` — web/ssr/scheduler/worker all Ready
+- [ ] `kubectl -n juniper-table-usa get pods` — web/ssr/scheduler/worker all Ready
 - [ ] Origin lockdown: `./deploy/setup-cloud-armor.sh` ran + `backendconfig.yaml` deployed; Cloudflare holds the public cert, the origin presents its Origin CA cert to Cloudflare
 - [ ] Smoke: `COUNTRY=usa ./deploy/smoke-origin-lockdown.sh` — direct IP → `403`, through the edge → `200` (use `SKIP_EDGE_CHECK=1` before Cloudflare is wired)
 - [ ] Edge cache rules: `./deploy/cloudflare/verify-rules.sh <host>` — anonymous page cacheable, session/Inertia/`?debug=1` bypassed
-- [ ] SSR check: `curl -s https://acme-usa.example.com | grep -o 'id="app">..*' | head -1` is non-empty
+- [ ] SSR check: `curl -s https://juniper-table-usa.example.com | grep -o 'id="app">..*' | head -1` is non-empty
 - [ ] Assets load over https (DevTools → Network: `/build/assets/*` are `https` 200)
-- [ ] `acme-scheduler` / `acme-worker` Running (idle until you add scheduled tasks/jobs)
+- [ ] `juniper-table-scheduler` / `juniper-table-worker` Running (idle until you add scheduled tasks/jobs)
 
 ## Deploy (subsequent releases)
 
@@ -155,14 +155,14 @@ country's DB, then `kubectl apply -k overlays/<country>` and waits for web +
 scheduler + worker. Roll back with `TAG=<old-sha> COUNTRY=usa ./deploy/deploy.sh`.
 
 > Config-only change (edited `config.env`)? Re-run `deploy.sh`, then
-> `kubectl -n acme-<c> rollout restart deploy` so pods re-read it.
+> `kubectl -n juniper-table-<c> rollout restart deploy` so pods re-read it.
 
 ### Add a new country (e.g. NZ)
 
 ```bash
 cp -r deploy/k8s/overlays/usa deploy/k8s/overlays/nz
 # edit overlays/nz/{kustomization.yaml (namespace), config.env, ingress.yaml}
-kubectl create namespace acme-nz && kubectl -n acme-nz create secret ...
+kubectl create namespace juniper-table-nz && kubectl -n juniper-table-nz create secret ...
 COUNTRY=nz ./deploy/deploy.sh
 ```
 
@@ -202,11 +202,11 @@ values, read them straight back from the cluster (you don't lose them):
 
 ```bash
 # one key
-kubectl -n acme-usa get secret acme-secret \
+kubectl -n juniper-table-usa get secret juniper-table-secret \
   -o jsonpath='{.data.APP_KEY}' | base64 -d; echo
 
 # all keys, decoded
-kubectl -n acme-usa get secret acme-secret \
+kubectl -n juniper-table-usa get secret juniper-table-secret \
   -o go-template='{{range $k,$v := .data}}{{$k}}={{$v | base64decode}}{{"\n"}}{{end}}'
 ```
 
@@ -221,7 +221,7 @@ session, and `encrypted`-cast column. So keep a durable source of truth:
   Operator**, instead of applying YAML by hand.
 
 To rotate a value: edit `secret.yaml`, `kubectl apply -f` it, then
-`kubectl -n acme-<c> rollout restart deploy` so pods pick it up.
+`kubectl -n juniper-table-<c> rollout restart deploy` so pods pick it up.
 
 ## Origin certificate
 
@@ -229,7 +229,7 @@ Cloudflare reaches this origin over TLS **and validates it** — the shared stag
 zone is on SSL mode "Full (strict)", a zone-wide switch shared with every other
 client on it. So the Ingress has to present a certificate Cloudflare trusts: a
 **Cloudflare Origin CA** one, named by the overlay's `spec.tls` and held in
-`acme-origin-tls`. Without it every request through the edge answers **525**,
+`juniper-table-origin-tls`. Without it every request through the edge answers **525**,
 while the cluster reads healthy from the inside.
 
 ```bash

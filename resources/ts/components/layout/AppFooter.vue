@@ -70,7 +70,7 @@ const { loading, footerColumns, legalLinks } = useFooterMenuService()
       >
         <p class="font-serif font-bold text-white/70">
           {{
-            t('footer.copyright', '© {year} Acme Diner. All rights reserved.', {
+            t('footer.copyright', '© {year} Juniper Table. All rights reserved.', {
               year: String(year)
             })
           }}

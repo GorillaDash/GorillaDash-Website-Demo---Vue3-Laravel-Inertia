@@ -2,7 +2,7 @@
 
 The GorillaDash client-site skeleton — a production-grade Laravel 13 + Inertia v3 +
 Vue 3 SPA, extracted from the The Great Greek build. Every client-specific value has
-been replaced with the neutral placeholder brand **"Acme Diner"** (slug `acme`);
+been replaced with the neutral placeholder brand **"Juniper Table"** (slug `juniper-table`);
 `bin/new-client.sh` renames the whole tree for a new client in one step.
 
 ## What's inside (beyond the Laravel starter kit)
@@ -62,7 +62,7 @@ gh repo create GorillaDash/<Client>-inertiajs --private \
   --template=GorillaDash/gd-client-inertia-starter --clone
 cd <Client>-inertiajs
 
-# 2. Rename the Acme placeholder brand in one step:
+# 2. Rename the Juniper Table placeholder brand in one step:
 bin/new-client.sh --slug great-burger --name "Great Burger" --domain greatburger.com
 
 # 3. Confirm the baseline is still green, then commit the rename:
@@ -98,19 +98,19 @@ page content needs `GD_*` values in `.env` — see `.env.example` comments.
 
 ## Placeholder inventory
 
-Everything client-specific is spelled `acme` / `Acme Diner` / `acme-usa.example.com`
+Everything client-specific is spelled `juniper-table` / `Juniper Table` / `juniper-table-usa.example.com`
 so it is greppable. The main sites (all handled by `bin/new-client.sh`):
 
 | Placeholder                                | Where                                                                                                                                                          |
 | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Acme Diner` (display name)                | `.env.example`, overlay `config.env`, UI copy                                                                                                                  |
-| `acme` (slug)                              | `Makefile`, k8s manifests, namespaces, secrets, image repo, static-IP name                                                                                     |
-| `acme_` (GCS prefix: camelCase slug + `_`) | `package.json static:upload`, `.env.example`, overlay `config.env`, `lib/gcs.ts`, `app.blade.php` — bucket + naming rules in `docs/NEW-CLIENT-CHECKLIST.md` §4 |
-| `acme-usa.example.com`                     | `constants/navigation.ts`, `tests/js/pagePaths.test.ts`, `deploy/*.md`                                                                                         |
+| `Juniper Table` (display name)                | `.env.example`, overlay `config.env`, UI copy                                                                                                                  |
+| `juniper-table` (slug)                              | `Makefile`, k8s manifests, namespaces, secrets, image repo, static-IP name                                                                                     |
+| `juniperTable_` (GCS prefix: camelCase slug + `_`) | `package.json static:upload`, `.env.example`, overlay `config.env`, `lib/gcs.ts`, `app.blade.php` — bucket + naming rules in `docs/NEW-CLIENT-CHECKLIST.md` §4 |
+| `juniper-table-usa.example.com`                     | `constants/navigation.ts`, `tests/js/pagePaths.test.ts`, `deploy/*.md`                                                                                         |
 | Empty `GD_*`/`TOLGEE_*`/map keys           | overlay `config.env` — fill per client                                                                                                                         |
 
 > **`--domain` does not reach Kubernetes.** The overlay's `APP_URL` and the Ingress
-> `host:` are `acme-usa.gorilladashstaging.com` — a _staging_ host, so the **slug** rule
+> `host:` are `juniper-table-usa.gorilladashstaging.com` — a _staging_ host, so the **slug** rule
 > renames it (`<slug>-usa.gorilladashstaging.com`), not `--domain`. Point them at the real
 > apex by hand at go-live, once DNS and the Cloudflare zone exist.
 

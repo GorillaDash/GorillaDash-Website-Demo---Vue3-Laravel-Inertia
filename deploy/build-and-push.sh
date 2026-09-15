@@ -3,7 +3,7 @@
 # Artifact Registry. Both share the SAME tag (git SHA) so they deploy together.
 #
 # Optional (defaults baked in): PROJECT_ID (gorilla-dash-178800),
-#   REGION (us-west1), REPO (acme), TAG (git short SHA)
+#   REGION (us-west1), REPO (juniper-table), TAG (git short SHA)
 #
 #   ./deploy/build-and-push.sh                 # uses defaults
 #   PROJECT_ID=other REGION=asia-east1 ./deploy/build-and-push.sh   # override
@@ -11,7 +11,7 @@ set -euo pipefail
 
 PROJECT_ID="${PROJECT_ID:-gorilla-dash-178800}"
 REGION="${REGION:-us-west1}"
-REPO="${REPO:-acme}"
+REPO="${REPO:-juniper-table}"
 TAG="${TAG:-$(git rev-parse --short HEAD)}"
 REG="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}"
 # GKE nodes are amd64. Build for that even on an Apple Silicon (arm64) Mac,

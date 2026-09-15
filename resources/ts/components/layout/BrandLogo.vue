@@ -16,11 +16,11 @@ withDefaults(defineProps<{ class?: string }>(), { class: 'h-9' })
   <LocaleLink
     href="/"
     class="inline-flex shrink-0 items-center"
-    aria-label="Acme Diner"
+    aria-label="Juniper Table"
   >
     <img
       :src="logoWhite"
-      alt="Acme Diner"
+      alt="Juniper Table"
       width="300"
       height="69"
       :class="['w-auto', $props.class]"

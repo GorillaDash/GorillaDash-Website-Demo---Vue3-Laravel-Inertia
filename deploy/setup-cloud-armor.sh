@@ -66,13 +66,13 @@ echo ">> Project=${PROJECT_ID}  Policy=${POLICY}"
 if ! gc compute security-policies describe "${POLICY}" >/dev/null 2>&1; then
   echo ">> Creating security policy ${POLICY}"
   gc compute security-policies create "${POLICY}" \
-    --description "Allow only CDN edge IPs to reach the Acme origin (TLS is at the edge)."
+    --description "Allow only CDN edge IPs to reach the Juniper Table origin (TLS is at the edge)."
 fi
 
 # 1b) Keep the description current even on a policy created by an earlier run, so a
 # reader in the console can see which edges the allowlist is supposed to cover.
 gc compute security-policies update "${POLICY}" \
-  --description "Allow only CDN edge IPs (${EDGE_PROVIDERS}) to reach the Acme origin (TLS is at the edge)." >/dev/null
+  --description "Allow only CDN edge IPs (${EDGE_PROVIDERS}) to reach the Juniper Table origin (TLS is at the edge)." >/dev/null
 
 # 2) Default rule -> deny 403 (the auto-created default is 'allow'; flip it).
 echo ">> Setting default rule (2147483647) to deny-403"

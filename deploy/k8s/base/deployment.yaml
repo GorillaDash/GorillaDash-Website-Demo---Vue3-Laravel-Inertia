@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: acme
+  name: juniper-table
   labels:
-    app: acme
+    app: juniper-table
 spec:
   # HPA manages the replica count (see hpa.yaml); this is the starting point.
   replicas: 2
   selector:
-    # MUST include role: web. `app: acme` alone also matches the scheduler, worker
+    # MUST include role: web. `app: juniper-table` alone also matches the scheduler, worker
     # and migrate pods — they all carry that label — and the HPA resolves its pod
     # set through this selector, so it would average web CPU together with idle
     # scheduler/worker CPU: roughly halving the utilisation it sees and delaying
-    # scale-up under load. It also makes `kubectl exec deploy/acme` pick an
+    # scale-up under load. It also makes `kubectl exec deploy/juniper-table` pick an
     # arbitrary pod of any role.
     #
     # Pods are never actually stolen between Deployments — ReplicaSets add
@@ -23,7 +23,7 @@ spec:
     # plain apply: it needs a new Deployment name alongside the old one and a
     # cutover. Which is exactly why it is right here in the template.
     matchLabels:
-      app: acme
+      app: juniper-table
       role: web
   strategy:
     type: RollingUpdate
@@ -45,10 +45,10 @@ spec:
   template:
     metadata:
       labels:
-        app: acme
+        app: juniper-table
         role: web # the Service selects only these pods (not scheduler/worker)
     spec:
-      serviceAccountName: acme # Workload Identity -> Cloud SQL client GSA
+      serviceAccountName: juniper-table # Workload Identity -> Cloud SQL client GSA
       terminationGracePeriodSeconds: 30
       initContainers:
         # --- Cloud SQL Auth Proxy as a NATIVE sidecar (restartPolicy: Always):
@@ -68,7 +68,7 @@ spec:
             - name: CLOUD_SQL_INSTANCE
               valueFrom:
                 configMapKeyRef:
-                  name: acme-config
+                  name: juniper-table-config
                   key: CLOUD_SQL_INSTANCE
           startupProbe:
             httpGet:
@@ -94,9 +94,9 @@ spec:
               containerPort: 8080
           envFrom:
             - configMapRef:
-                name: acme-config
+                name: juniper-table-config
             - secretRef:
-                name: acme-secret
+                name: juniper-table-secret
           # A startupProbe gates readiness+liveness until the app first answers,
           # which is what lets readiness run on a tight interval without a slow boot
           # ever tripping liveness. Budget: 2s x 45 = 90s to boot (the old liveness
@@ -176,7 +176,7 @@ spec:
             - name: GD_SSR_EDGE_KEY
               valueFrom:
                 secretKeyRef:
-                  name: acme-secret
+                  name: juniper-table-secret
                   key: GD_SSR_EDGE_KEY
                   optional: true
           ports:
