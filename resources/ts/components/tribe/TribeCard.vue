@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useTranslate } from '@tolgee/vue'
 import LocaleLink from '@/components/core/LocaleLink.vue'
 import TribeOpenBadge from '@/components/tribe/TribeOpenBadge.vue'
 import IconMapPin from '@/components/icons/IconMapPin.vue'
@@ -20,6 +21,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{ select: [slug: string] }>()
 
+const { t } = useTranslate()
 const { cmsRoute, pagePath } = usePagePaths()
 
 const openingSoon = computed(() => props.tribe.status === 'Opening Soon')
@@ -88,20 +90,20 @@ const href = computed(() => cmsRoute('locations.show', { slug: props.tribe.slug 
             :href="`${pagePath('menu')}?cafe=${tribe.slug}`"
             class="rounded-full bg-brand-accent px-4 py-2 text-brand-on-accent hover:bg-brand-accent-600"
           >
-            Order
+            {{ t('Order', 'Order') }}
           </LocaleLink>
           <LocaleLink
             :href="`${pagePath('book')}?cafe=${tribe.slug}`"
             class="rounded-full border border-brand-tint-strong px-4 py-2 text-brand-primary hover:bg-brand-tint"
           >
-            Book
+            {{ t('Book', 'Book') }}
           </LocaleLink>
         </template>
         <LocaleLink
           :href="href"
           class="rounded-full px-3 py-2 text-brand-primary hover:bg-brand-tint"
         >
-          Cafe page →
+          {{ t('Cafe page', 'Cafe page') }} →
         </LocaleLink>
       </div>
     </div>

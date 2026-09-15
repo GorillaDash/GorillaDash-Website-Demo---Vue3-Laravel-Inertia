@@ -53,7 +53,8 @@ const choose = (name: string | null) => {
     >
       <div
         class="flex flex-wrap gap-2"
-        role="tablist"
+        role="group"
+        :aria-label="t('Filter by category', 'Filter by category')"
       >
         <button
           type="button"

@@ -80,7 +80,7 @@ export function useDemoControls() {
     apply()
 
     window.addEventListener('keydown', (event) => {
-      if (event.key.toLowerCase() === 's' && !event.metaKey && !event.ctrlKey && !event.altKey) {
+      if (event.key?.toLowerCase() === 's' && !event.metaKey && !event.ctrlKey && !event.altKey) {
         if (!isTyping(event.target)) {
           toggleStructureView()
         }

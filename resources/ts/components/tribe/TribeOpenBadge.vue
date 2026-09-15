@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useTranslate } from '@tolgee/vue'
 import { openStatus, type OpenStatus } from '@/services/tribeHoursService'
 
 /**
@@ -12,6 +13,7 @@ const props = defineProps<{
   openingSoon?: boolean
 }>()
 
+const { t } = useTranslate()
 const status = ref<OpenStatus | null>(null)
 
 onMounted(() => {
@@ -25,7 +27,7 @@ onMounted(() => {
     class="inline-flex items-center gap-1.5 rounded-full bg-brand-secondary/15 px-2.5 py-1 text-xs font-semibold text-brand-primary"
   >
     <span class="size-1.5 rounded-full bg-brand-secondary" />
-    Opening soon
+    {{ t('Opening soon', 'Opening soon') }}
   </span>
   <span
     v-else-if="status"

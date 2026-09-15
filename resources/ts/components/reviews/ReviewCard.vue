@@ -10,7 +10,10 @@ withDefaults(defineProps<{ review: ReviewResult; showTribe?: boolean }>(), { sho
   <figure
     class="flex h-full flex-col gap-4 rounded-card border border-brand-tint-strong bg-white p-6"
   >
-    <StarRating :rating="review.rating ?? 5" />
+    <StarRating
+      v-if="review.rating"
+      :rating="review.rating"
+    />
     <blockquote class="flex-1 leading-relaxed text-ink">“{{ review.review }}”</blockquote>
     <figcaption class="flex items-center gap-3 border-t border-brand-tint pt-4">
       <span

@@ -33,8 +33,10 @@ const sizeClasses = {
   lg: 'px-8 py-4 text-lg'
 }
 
+// In-page anchors and mailto:/tel: links stay plain <a> elements: sent through
+// LocaleLink they would become a full Inertia visit.
 const isAbsolute = (url: string | null | undefined) =>
-  !!url && /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(url)
+  !!url && /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(url)
 
 const tag = computed(() => {
   if (props.href === undefined || props.href === null) {
