@@ -4,6 +4,10 @@ fragment ArticleInfo on Article {
   slug
   abstract
   created_at
+  article_categories {
+    name
+    slug
+  }
   media_collection {
     ...MediaCollectionInfo
   }
@@ -54,7 +58,7 @@ query getArticle($slug: String) {
   }
 }
 
-query getArticlesByCategories($categories: [String!], $page: Int!, $itemsPerPage: Int!) {
+query getArticlesByCategories($categories: [String], $page: Int!, $itemsPerPage: Int!) {
   articlesPagination(
     status: "Published"
     categories: $categories

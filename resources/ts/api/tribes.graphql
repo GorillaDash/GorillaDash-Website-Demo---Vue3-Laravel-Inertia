@@ -1,6 +1,9 @@
 fragment TribeInfo on Tribe {
   name
   slug
+  status
+  heading
+  sub_heading
   public_email
   main_telephone
   organic_number
@@ -10,10 +13,12 @@ fragment TribeInfo on Tribe {
   address_2
   locality
   state
+  state_abbreviated
   country
   postal_code
   latitude
   longitude
+  timezone
   social_google_url
   social_twitter_url
   social_facebook_url
@@ -26,6 +31,8 @@ fragment TribeInfo on Tribe {
   page_heading
   introduction
   opening_hours
+  opening_hours_array
+  show_opening_hours
   contents(name: "Online Ordering URL") {
     name
     value
@@ -33,26 +40,39 @@ fragment TribeInfo on Tribe {
   }
 }
 
+# One tribe by slug, Opening Soon included so a pre-opening tribe still has a page.
 query getTribe($slug: String!, $locale: String) {
-  tribe(slug: $slug, locale: $locale) {
+  tribe(slug: $slug, locale: $locale, status: "all") {
     ...TribeInfo
+    teamMembers(active: true) {
+      first_name
+      last_name
+      role
+      about
+      avatar
+    }
   }
 }
 
-# Store list for the locations pages — enough to group by state (directory) and to
-# plot each store on the state page's map/list (address + geo). Full per-store data
-# still comes from getTribe/TribeInfo.
+# The directory: every trading and Opening Soon tribe of one tribe type, with what
+# the finder cards render (address, geo, phone, hours for the "open now" badge).
 query getTribes($tribeType: String, $order: [String]) {
-  tribes(name: $tribeType, orderBy: $order) {
+  tribes(name: $tribeType, orderBy: $order, status: "all") {
     name
     slug
+    status
+    heading
     state
+    state_abbreviated
     address_1
     address_2
     locality
     postal_code
     latitude
     longitude
+    main_telephone
+    timezone
+    opening_hours_array
   }
 }
 

@@ -1,0 +1,41 @@
+fragment OurWorkInfo on OurWork {
+  heading
+  sub_heading
+  slug
+  excerpt
+  client_name
+  published_at
+  media_collection {
+    ...MediaCollectionInfo
+  }
+}
+
+query getOrganisationOurWorks($page: Int!, $itemsPerPage: Int!, $featured: Boolean) {
+  organisationOurWorks(page: $page, itemsPerPage: $itemsPerPage, featured: $featured) {
+    data {
+      ...OurWorkInfo
+    }
+    total
+    has_more_pages
+    current_page
+    last_page
+  }
+}
+
+query getOrganisationOurWork($slug: String!) {
+  organisationOurWork(slug: $slug) {
+    ...OurWorkInfo
+    article
+    meta_title
+    meta_description
+  }
+}
+
+query getTribeOurWorks($tribeSlug: String!, $page: Int!, $itemsPerPage: Int!) {
+  ourWorks(tribe_slug: $tribeSlug, page: $page, itemsPerPage: $itemsPerPage) {
+    data {
+      ...OurWorkInfo
+    }
+    total
+  }
+}

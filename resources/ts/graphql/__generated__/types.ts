@@ -10,131 +10,131 @@ export type Scalars = {
   JsonParser: { input: unknown; output: unknown; }
 };
 
-/** Appointment available time type */
+/** The bookable appointment times for one appointment type at a tribe on one date. */
 export type AppointmentAvailableTime = {
   __typename?: 'AppointmentAvailableTime';
-  /** Appointment Date */
+  /** The date the times apply to, as passed to the query. */
   date: Maybe<Scalars['String']['output']>;
-  /** Last Updated At */
+  /** When the organisation's content last changed; the same value the `lastUpdatedAt` query returns. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Appointment Available times */
+  /** Every slot within the tribe's opening hours for that date, as a list of objects with `enable` (false when an existing appointment already covers the slot), `text` (for display, for example `09:30 am`) and `value` (24-hour `HH:MM`). */
   times: Maybe<Scalars['JsonParser']['output']>;
-  /** Appointment type */
+  /** The appointment type name, as passed to the query. */
   type: Maybe<Scalars['String']['output']>;
 };
 
-/** A Article type */
+/** A blog or news article, with its copy, SEO fields, categories and images. */
 export type Article = {
   __typename?: 'Article';
-  /** Article abstract */
+  /** A short summary of the article. */
   abstract: Maybe<Scalars['String']['output']>;
-  /** Article article */
+  /** The article body. */
   article: Maybe<Scalars['String']['output']>;
-  /** Article fields */
+  /** Extra fields defined by the article's page template, with their values. */
   articleFields: Maybe<Array<Maybe<ArticleFields>>>;
   /** Article categories */
   article_categories: Array<ArticleCategory>;
   /** Article author */
   author: Maybe<Scalars['String']['output']>;
-  /** Created At */
+  /** When the article was created. */
   created_at: Maybe<Scalars['String']['output']>;
-  /** editor enabled */
+  /** Whether the article uses a blog page template written with the visual editor. */
   editor_enabled: Maybe<Scalars['Boolean']['output']>;
-  /** Facts Table */
+  /** A table of key facts about the article, as JSON. */
   facts_table: Maybe<Scalars['JsonParser']['output']>;
-  /** Related Feature Articles */
+  /** Other published articles that feature the same website page, newest first. Only filled in for Gorilla Dash's own website; empty for every other organisation. */
   feature_related_articles: Array<Article>;
-  /** Feature website page */
+  /** The website page this article features, if any. */
   feature_website_page: Maybe<WebsitePage>;
-  /** Feature website page id */
+  /** The id of the website page this article features, if any. */
   feature_website_page_id: Maybe<Scalars['Int']['output']>;
-  /** Gorilla dash new links */
+  /** Gorilla Dash news links (people and businesses mentioned) attached to the article. */
   gorilla_news_links: Array<GorillaNewsLink>;
   /** Article heading */
   heading: Scalars['String']['output'];
-  /** editor html */
+  /** The article body as HTML, when the article is written with the visual editor. */
   html: Maybe<Scalars['String']['output']>;
-  /** Is customised from organisation article */
+  /** Whether this is a tribe's customised copy of an organisation article. */
   is_customised: Maybe<Scalars['Boolean']['output']>;
-  /** Article Organisation */
+  /** Whether this is an organisation-level article rather than one written only for specific tribes. Also true for a tribe's customised copy of an organisation article. */
   is_organisation: Maybe<Scalars['Boolean']['output']>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed. Use the `lastUpdatedAt` query to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Product media */
+  /** Images attached to this record, grouped into named collections such as `main`, `gallery` or `banner`. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
-  /** meta canonical */
+  /** The canonical URL for the article, when one is set. */
   meta_canonical: Maybe<Scalars['String']['output']>;
   /** Meta Description */
   meta_description: Maybe<Scalars['String']['output']>;
   /** Meta Title */
   meta_title: Maybe<Scalars['String']['output']>;
-  /** Next (newer) published article in the same listing */
+  /** The next (newer) published article in the same listing. Only available when fetching a single article; requesting it inside a list returns an error. */
   next: Maybe<Article>;
-  /** no index */
+  /** Whether search engines should be told not to index the article. */
   no_index: Maybe<Scalars['Boolean']['output']>;
-  /** Previous (older) published article in the same listing */
+  /** The previous (older) published article in the same listing. Only available when fetching a single article; requesting it inside a list returns an error. */
   prev: Maybe<Article>;
-  /** Related Articles */
+  /** Other published articles that share a news link with this one, newest first. Only filled in for Gorilla Dash's own website; empty for every other organisation. */
   related_articles: Array<Article>;
   /** Article slug */
   slug: Scalars['String']['output'];
-  /** Article heading */
+  /** The article's publishing status: `Published`, `Draft` or `Deleted`. */
   status: Maybe<Scalars['String']['output']>;
   /** Article sub heading */
   sub_heading: Maybe<Scalars['String']['output']>;
-  /** Top Bullet Points */
+  /** Short key points to show at the top of the article. */
   top_bullet_points: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** Updated At */
+  /** When the article itself was last saved. */
   updated_at: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A Article type */
+/** A blog or news article, with its copy, SEO fields, categories and images. */
 export type ArticleFeature_Related_ArticlesArgs = {
   limit: InputMaybe<Scalars['Int']['input']>;
 };
 
 
-/** A Article type */
+/** A blog or news article, with its copy, SEO fields, categories and images. */
 export type ArticleMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A Article type */
+/** A blog or news article, with its copy, SEO fields, categories and images. */
 export type ArticleNextArgs = {
   categories: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A Article type */
+/** A blog or news article, with its copy, SEO fields, categories and images. */
 export type ArticlePrevArgs = {
   categories: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A Article type */
+/** A blog or news article, with its copy, SEO fields, categories and images. */
 export type ArticleRelated_ArticlesArgs = {
   limit: InputMaybe<Scalars['Int']['input']>;
 };
 
-/** A Article Category type */
+/** A category that groups articles, with its heading, caption and images. */
 export type ArticleCategory = {
   __typename?: 'ArticleCategory';
-  /** Article list */
+  /** Articles in the category, newest first. */
   articles: Maybe<Array<Maybe<Article>>>;
-  /** Article list with pagination */
+  /** Articles in the category, newest first, one page at a time. */
   articlesPagination: Maybe<ArticlePagination>;
-  /** Article count */
+  /** Number of articles in the category. */
   articles_count: Scalars['Int']['output'];
   /** Article category caption */
   caption: Maybe<Scalars['String']['output']>;
   /** Article category heading */
   heading: Maybe<Scalars['String']['output']>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed. Use the `lastUpdatedAt` query to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Product media */
+  /** Images attached to this record, grouped into named collections such as `main`, `gallery` or `banner`. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
   /** Article category name */
   name: Maybe<Scalars['String']['output']>;
@@ -143,13 +143,13 @@ export type ArticleCategory = {
 };
 
 
-/** A Article Category type */
+/** A category that groups articles, with its heading, caption and images. */
 export type ArticleCategoryArticlesArgs = {
   status: InputMaybe<Scalars['String']['input']>;
 };
 
 
-/** A Article Category type */
+/** A category that groups articles, with its heading, caption and images. */
 export type ArticleCategoryArticlesPaginationArgs = {
   itemsPerPage: InputMaybe<Scalars['Int']['input']>;
   page: InputMaybe<Scalars['Int']['input']>;
@@ -157,7 +157,7 @@ export type ArticleCategoryArticlesPaginationArgs = {
 };
 
 
-/** A Article Category type */
+/** A category that groups articles, with its heading, caption and images. */
 export type ArticleCategoryMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -183,58 +183,73 @@ export type ArticlePagination = {
   total: Scalars['Int']['output'];
 };
 
-/** A public-safe source the chatbot used to answer. */
+/** A source the chatbot used for its reply, such as a website page or a tribe. */
 export type ChatbotCitation = {
   __typename?: 'ChatbotCitation';
+  /** The title of the source. */
   heading: Maybe<Scalars['String']['output']>;
+  /** The id of the source record. */
   id: Maybe<Scalars['String']['output']>;
+  /** The kind of source, for example `tribe`. */
   source_type: Maybe<Scalars['String']['output']>;
+  /** The URL of the source, when it has one. */
   url: Maybe<Scalars['String']['output']>;
 };
 
-/** The chatbot's response to a public website visitor turn. */
+/** The chatbot's reply to a website visitor, with the conversation token and any tribes or sources it refers to. */
 export type ChatbotReply = {
   __typename?: 'ChatbotReply';
+  /** The sources the chatbot used for this reply. */
   citations: Maybe<Array<Maybe<ChatbotCitation>>>;
+  /** The chatbot's greeting when a conversation is started; otherwise null. */
   greeting: Maybe<Scalars['String']['output']>;
+  /** Whether this reply captured the visitor's details as an enquiry. */
   lead_captured: Maybe<Scalars['Boolean']['output']>;
+  /** The chatbot's reply text. When a conversation starts without a first message, this is the greeting. */
   reply: Maybe<Scalars['String']['output']>;
+  /** The token for this conversation. Send it with the visitor's next message to continue the same conversation. */
   session_token: Maybe<Scalars['String']['output']>;
+  /** Tribes the chatbot suggested in this reply. */
   suggested_tribes: Maybe<Array<Maybe<ChatbotSuggestedTribe>>>;
+  /** The tribe the conversation is tied to, if any. */
   tribe: Maybe<ChatbotSuggestedTribe>;
   /** Whether suggested_tribes is a choice to put to the visitor (render them as selectable locations) rather than background context. */
   tribe_choice: Maybe<Scalars['Boolean']['output']>;
 };
 
-/** A tribe (location) the chatbot can tie a session to. */
+/** A tribe, one location of the organisation, that the chatbot suggested or tied the conversation to. */
 export type ChatbotSuggestedTribe = {
   __typename?: 'ChatbotSuggestedTribe';
-  /** Straight-line distance in statute miles (legacy consumers). */
+  /** Straight-line distance from the visitor in statute miles. Null when no distance was calculated. */
   distance: Maybe<Scalars['Float']['output']>;
-  /** Straight-line distance in kilometres. */
+  /** Straight-line distance from the visitor in kilometres. */
   distance_km: Maybe<Scalars['Float']['output']>;
   /** That distance ready to show a visitor, in the unit the business's country uses (e.g. "24 km", "15 miles"). */
   distance_label: Maybe<Scalars['String']['output']>;
+  /** The tribe id. */
   id: Maybe<Scalars['Int']['output']>;
+  /** The tribe's suburb, town or city. */
   locality: Maybe<Scalars['String']['output']>;
+  /** The tribe's name. */
   name: Maybe<Scalars['String']['output']>;
+  /** The tribe's URL slug. */
   slug: Maybe<Scalars['String']['output']>;
 };
 
-/** A component */
+/** A reusable block of content created by the organisation, with its named contents and the products, ranges, categories and tribes it relates to. */
 export type Component = {
   __typename?: 'Component';
   /** Component contents */
   contents: Array<ComponentContent>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed. Use the `lastUpdatedAt` query to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
   /** Component name */
   name: Maybe<Scalars['String']['output']>;
-  /** Product Categories */
+  /** Product categories linked to the component. */
   product_categories: Maybe<Array<Maybe<ProductCategory>>>;
-  /** Product Ranges */
+  /** Product ranges linked to the component. */
   product_ranges: Maybe<Array<Maybe<ProductRange>>>;
-  /** Products */
+  /** Products linked to the component. */
   products: Maybe<Array<Maybe<Product>>>;
   /** Related product categories */
   related_product_categories: Maybe<Array<Maybe<ProductCategory>>>;
@@ -251,29 +266,29 @@ export type Component = {
 };
 
 
-/** A component */
+/** A reusable block of content created by the organisation, with its named contents and the products, ranges, categories and tribes it relates to. */
 export type ComponentContentsArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   type: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A component content */
+/** One named value inside a component, such as a heading, a block of text or a gallery. */
 export type ComponentContent = {
   __typename?: 'ComponentContent';
-  /** Last Updated At */
+  /** The start of the current day, not when the record changed. Use the `lastUpdatedAt` query to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Component content media */
+  /** Images held by this content, grouped into named collections, using the requested locale's images when a translation has its own. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
   /** Component content name */
   name: Maybe<Scalars['String']['output']>;
-  /** Component content type */
+  /** The content type, for example `Short Text`, `Rich Text`, `Date`, `Single Image` or `Gallery`. */
   type: Maybe<Scalars['String']['output']>;
-  /** Component content value */
+  /** The text value in the requested locale. Null for image content; read `media_collection` instead. */
   value: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A component content */
+/** One named value inside a component, such as a heading, a block of text or a gallery. */
 export type ComponentContentMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -299,14 +314,14 @@ export type ComponentPagination = {
   total: Scalars['Int']['output'];
 };
 
-/** A component type */
+/** A type of reusable content component defined by the organisation, with the components created from it. */
 export type ComponentType = {
   __typename?: 'ComponentType';
-  /** Component type base_path */
+  /** The base path configured for this component type. */
   base_path: Maybe<Scalars['String']['output']>;
-  /** Components */
+  /** The components of this type, in their saved order. */
   components: Array<Component>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed. Use the `lastUpdatedAt` query to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
   /** Component type name */
   name: Maybe<Scalars['String']['output']>;
@@ -315,663 +330,666 @@ export type ComponentType = {
 };
 
 
-/** A component type */
+/** A type of reusable content component defined by the organisation, with the components created from it. */
 export type ComponentTypeComponentsArgs = {
   tribe_slug: InputMaybe<Scalars['String']['input']>;
 };
 
-/** A tribe custom opening hour */
+/** Special opening hours for a tribe on one date, such as a public holiday. */
 export type CustomOpeningHour = {
   __typename?: 'CustomOpeningHour';
-  /** Close time of the custom opening hour */
+  /** The closing time. Uses 12-hour format, for example `5:30 pm`, when the tribe is set to 12-hour time. */
   close: Scalars['String']['output'];
-  /** Date of the custom opening hour */
+  /** The date the special hours apply to. */
   date: Scalars['String']['output'];
-  /** Name of the custom opening hour */
+  /** The name of the occasion, for example a public holiday. */
   name: Scalars['String']['output'];
-  /** Open time of the custom opening hour */
+  /** The opening time. Uses 12-hour format, for example `9:00 am`, when the tribe is set to 12-hour time. */
   open: Scalars['String']['output'];
-  /** Organisation Id */
+  /** The id of the organisation the tribe belongs to. */
   organisation_id: Scalars['Int']['output'];
-  /** Tribe Id */
+  /** The id of the tribe the hours apply to. */
   tribe_id: Scalars['Int']['output'];
 };
 
-/** A enquiry form type */
+/** An enquiry form and its fields. */
 export type EnquiryForm = {
   __typename?: 'EnquiryForm';
-  /** enquiry fields */
+  /** The fields on the form. */
   fields: Array<EnquiryFormField>;
-  /** enquiry name */
+  /** The form's name. */
   name: Scalars['String']['output'];
 };
 
-/** A enquiry form field type */
+/** One field on an enquiry form. */
 export type EnquiryFormField = {
   __typename?: 'EnquiryFormField';
-  /** field name */
+  /** The field's name. */
   name: Scalars['String']['output'];
-  /** field type */
+  /** The field's type. */
   type: Scalars['String']['output'];
-  /** field name */
+  /** The field's value or options, as JSON. */
   value: Maybe<Scalars['JsonParser']['output']>;
 };
 
-/** A food component type */
+/** An ingredient used in food products, with its unit of measurement. */
 export type FoodComponent = {
   __typename?: 'FoodComponent';
-  /** measurement */
+  /** The unit the ingredient is measured in. */
   measurement: Scalars['String']['output'];
-  /** measurement_size */
+  /** The measurement size that goes with `measurement`. */
   measurement_size: Scalars['String']['output'];
-  /** name */
+  /** The ingredient's name. */
   name: Scalars['String']['output'];
 };
 
-/** A food coupon type */
+/** A food ordering coupon, with its discount, validity dates, minimum spend and usage limits. */
 export type FoodCoupon = {
   __typename?: 'FoodCoupon';
-  /** The code of the food coupon */
+  /** The code customers enter to use the coupon. */
   code: Scalars['String']['output'];
-  /** The end date of the food coupon */
+  /** When the coupon stops being valid. Ignore it when `no_end_date` is true. */
   end_date: Maybe<Scalars['String']['output']>;
   /** The food coupon id */
   id: Scalars['Int']['output'];
-  /** The minimum spend of the food coupon */
+  /** The smallest order amount the coupon can be used on, in whole currency units. */
   minimum_spend: Scalars['Int']['output'];
   /** The name of the food coupon */
   name: Scalars['String']['output'];
-  /** The no end date of the food coupon */
+  /** Whether the coupon never expires. */
   no_end_date: Scalars['Boolean']['output'];
-  /** The quantity of the food coupon */
+  /** How many times the coupon can be used in total. Ignore it when `quantity_unlimited` is true. */
   quantity: Maybe<Scalars['Int']['output']>;
-  /** The quantity customer unlimited of the food coupon */
+  /** Whether one customer can use the coupon any number of times. */
   quantity_customer_unlimited: Scalars['Boolean']['output'];
-  /** The quantity per customer of the food coupon */
+  /** How many times one customer can use the coupon. Ignore it when `quantity_customer_unlimited` is true. */
   quantity_per_customer: Maybe<Scalars['Int']['output']>;
-  /** The quantity unlimited of the food coupon */
+  /** Whether the coupon can be used any number of times. */
   quantity_unlimited: Scalars['Boolean']['output'];
-  /** The start date of the food coupon */
+  /** When the coupon becomes valid. */
   start_date: Maybe<Scalars['String']['output']>;
-  /** The status of the food coupon */
+  /** The coupon status: `Active`, `Paused` or `Deleted`. */
   status: Scalars['String']['output'];
-  /** The tribes of the food coupon */
+  /** The tribes the coupon can be used at. */
   tribes: Maybe<Array<Tribe>>;
-  /** The type of the food coupon */
+  /** The coupon type: `Percent Discount`, `Amount Discount` or `Menu Item`. */
   type: Scalars['String']['output'];
-  /** The value of the food coupon */
+  /** The coupon's value: a percentage for `Percent Discount` coupons, or an amount in whole currency units for `Amount Discount` coupons. */
   value: Scalars['Int']['output'];
 };
 
-/** A food coupon available type */
+/** The result of checking a food coupon code against an order amount at a tribe, with the discount it gives. */
 export type FoodCouponAvailable = {
   __typename?: 'FoodCouponAvailable';
-  /** The amount of the food coupon */
+  /** The order amount after the discount, in the smallest currency unit (for example cents). */
   amount: Scalars['Int']['output'];
   /** The code of the food coupon */
   code: Scalars['String']['output'];
-  /** The discount amount of the food coupon */
+  /** The discount the coupon gives, in the smallest currency unit (for example cents). Zero for `Menu Item` coupons. */
   discount_amount: Scalars['Int']['output'];
-  /** The food menu item of the food coupon */
+  /** The free menu item the coupon gives, for `Menu Item` coupons; otherwise null. */
   food_menu_item: Maybe<FoodMenuItem>;
   /** The id of the food coupon */
   id: Scalars['Int']['output'];
-  /** The origin amount of the food coupon */
+  /** The order amount the coupon was checked against, in the smallest currency unit (for example cents). */
   origin_amount: Scalars['Int']['output'];
-  /** The type of the food coupon */
+  /** The coupon type: `Percent Discount`, `Amount Discount` or `Menu Item`. */
   type: Scalars['String']['output'];
-  /** The value of the food coupon */
+  /** The coupon's value: a percentage for `Percent Discount` coupons, or an amount in whole currency units for `Amount Discount` coupons. */
   value: Scalars['Int']['output'];
 };
 
-/** A food menu type */
+/** A food menu, made up of ordered sections. */
 export type FoodMenu = {
   __typename?: 'FoodMenu';
-  /** Food menu sections */
+  /** The menu's sections, in their saved order. */
   foodMenuSections: Maybe<Array<FoodMenuSection>>;
-  /** Name */
+  /** The menu's name. */
   name: Maybe<Scalars['String']['output']>;
 };
 
-/** A food menu item type */
+/** A dish or drink that can be ordered, with its prices, nutrition, options and images. */
 export type FoodMenuItem = {
   __typename?: 'FoodMenuItem';
-  /** Allergy statement */
+  /** The item's allergy statement, in the requested locale. */
   allergy_statement: Maybe<Scalars['String']['output']>;
   /** Energy per serving in Calories (kcal), converted when entered in kilojoules */
   calories: Maybe<Scalars['Float']['output']>;
-  /** Default price */
+  /** The item's default price, in major currency units (for example dollars). */
   default_price: Scalars['Float']['output'];
-  /** Description */
+  /** The item's description, in the requested locale. */
   description: Maybe<Scalars['String']['output']>;
   /** Unit the energy was entered in — `kcal` or `kJ` */
   energy_unit: Maybe<Scalars['String']['output']>;
   /** Energy per serving, as entered by the operator */
   energy_value: Maybe<Scalars['Float']['output']>;
-  /** Food menu item attributes */
+  /** Attributes such as vegetarian or gluten free. */
   foodAttributes: Array<FoodMenuItemAttribute>;
-  /** Food modifier group */
+  /** Groups of options customers choose from, such as sizes or extras. */
   foodModifierGroups: Array<FoodModifierGroup>;
-  /** Food products */
+  /** The food products the item is made from. */
   foodProducts: Array<FoodProduct>;
   /** Food menu item id */
   id: Scalars['Int']['output'];
   /** Energy per serving in kilojoules, converted when entered in Calories (kcal) */
   kilojoules: Maybe<Scalars['Float']['output']>;
-  /** media */
+  /** Images held by this content, grouped into named collections, using the requested locale's images when a translation has its own. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
-  /** Name */
+  /** The item's name, in the requested locale. */
   name: Scalars['String']['output'];
-  /** Photo description */
+  /** Text describing the item's photo, in the requested locale. */
   photo_description: Maybe<Scalars['String']['output']>;
-  /** Price */
+  /** The item's price on this menu entry, in major currency units (for example dollars): the entry's own price when one is set, otherwise `default_price`. */
   price: Scalars['Float']['output'];
   /** Unit the serving size is measured in, e.g. g, oz, ml, slice */
   serving_size_measure: Maybe<Scalars['String']['output']>;
   /** Nutrition serving size the figures below are measured over */
   serving_size_quantity: Maybe<Scalars['Float']['output']>;
-  /** sort */
+  /** Sort position within the menu entry. */
   sort: Scalars['Int']['output'];
-  /** tribe price */
+  /** The price and availability of the item at the tribe given by `tribe_slug`, for this menu entry. */
   tribeFoodMenuPrice: Maybe<FoodMenuItemTribePrice>;
 };
 
 
-/** A food menu item type */
+/** A dish or drink that can be ordered, with its prices, nutrition, options and images. */
 export type FoodMenuItemMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A food menu item type */
+/** A dish or drink that can be ordered, with its prices, nutrition, options and images. */
 export type FoodMenuItemTribeFoodMenuPriceArgs = {
   tribe_slug: InputMaybe<Scalars['String']['input']>;
 };
 
-/** A food menu item attribute type */
+/** A dietary or product attribute shown on menu items, such as vegetarian or gluten free, with its icon. */
 export type FoodMenuItemAttribute = {
   __typename?: 'FoodMenuItemAttribute';
   /** Food menu item attribute id */
   id: Scalars['Int']['output'];
-  /** media */
+  /** The attribute's icon images. Returns the `icon` collection unless `size` names other collections. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
-  /** Name */
+  /** The attribute's name. */
   name: Scalars['String']['output'];
 };
 
 
-/** A food menu item attribute type */
+/** A dietary or product attribute shown on menu items, such as vegetarian or gluten free, with its icon. */
 export type FoodMenuItemAttributeMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A food menu item tribe price type */
+/** A tribe's own price and availability for a menu item. */
 export type FoodMenuItemTribePrice = {
   __typename?: 'FoodMenuItemTribePrice';
-  /** Enabled */
+  /** Whether the item is available at the tribe. */
   enabled: Maybe<Scalars['Boolean']['output']>;
-  /** External order URL */
+  /** A link for ordering the item from this tribe on an external ordering site. */
   external_order_url: Maybe<Scalars['String']['output']>;
-  /** Price */
+  /** The tribe's price for the item, in major currency units (for example dollars). */
   price: Maybe<Scalars['Float']['output']>;
-  /** Use default price */
+  /** Whether the tribe uses the item's default price instead of `price`. */
   use_default_price: Maybe<Scalars['Boolean']['output']>;
 };
 
-/** A food menu list items type */
+/** An entry on a food menu, either a single dish or a group of dishes, with its menu items, pairings and ordering link. */
 export type FoodMenuListItem = {
   __typename?: 'FoodMenuListItem';
-  /** Description */
+  /** The entry's description, in the requested locale. */
   description: Maybe<Scalars['String']['output']>;
-  /** External order URL */
+  /** A link for ordering this entry from the tribe given by `tribe_slug` on an external ordering site. Built from the organisation's online ordering settings when the entry has no link of its own. Null when no `tribe_slug` is given or a working link cannot be built. */
   external_order_url: Maybe<Scalars['String']['output']>;
-  /** Food menu items */
+  /** The dishes in the entry, with the prices and sort order set on this entry. */
   foodMenuItems: Array<FoodMenuItem>;
-  /** Food menu section */
+  /** The menu section the entry belongs to. */
   foodMenuSection: FoodMenuSection;
   /** Food menu list item id */
   id: Scalars['Int']['output'];
-  /** media */
+  /** Images held by this content, grouped into named collections, using the requested locale's images when a translation has its own. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
-  /** Name */
+  /** The entry's name, in the requested locale. */
   name: Maybe<Scalars['String']['output']>;
   /** Paired food menu list items, in their configured sort order */
   pairings: Array<FoodMenuListItem>;
-  /** Photo description */
+  /** Text describing the entry's photo, in the requested locale. */
   photo_description: Maybe<Scalars['String']['output']>;
-  /** Slug */
+  /** The entry's URL slug. */
   slug: Scalars['String']['output'];
-  /** Sort */
+  /** Sort position within the menu section. */
   sort: Maybe<Scalars['Int']['output']>;
-  /** Status */
+  /** The entry's status. */
   status: Maybe<Scalars['String']['output']>;
-  /** Type */
+  /** The entry type: `single` for one dish or `group` for a choice of dishes. */
   type: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A food menu list items type */
+/** An entry on a food menu, either a single dish or a group of dishes, with its menu items, pairings and ordering link. */
 export type FoodMenuListItemExternal_Order_UrlArgs = {
   tribe_slug: InputMaybe<Scalars['String']['input']>;
 };
 
 
-/** A food menu list items type */
+/** An entry on a food menu, either a single dish or a group of dishes, with its menu items, pairings and ordering link. */
 export type FoodMenuListItemMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A food menu list items type */
+/** An entry on a food menu, either a single dish or a group of dishes, with its menu items, pairings and ordering link. */
 export type FoodMenuListItemPairingsArgs = {
   status: InputMaybe<Scalars['String']['input']>;
 };
 
-/** A food menu section type */
+/** A section of a food menu, such as starters or drinks, with its entries. */
 export type FoodMenuSection = {
   __typename?: 'FoodMenuSection';
-  /** Description */
+  /** The section's description, in the requested locale. */
   description: Maybe<Scalars['String']['output']>;
-  /** Food menu list items */
+  /** The entries in the section. */
   foodMenuListItems: Array<FoodMenuListItem>;
-  /** media */
+  /** Images held by this content, grouped into named collections, using the requested locale's images when a translation has its own. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
-  /** Name */
+  /** The section's name, in the requested locale. */
   name: Maybe<Scalars['String']['output']>;
-  /** Show on nav */
+  /** Whether the section should appear in the menu's section navigation. */
   show_on_nav: Scalars['Boolean']['output'];
-  /** Slug */
+  /** The section's URL slug. */
   slug: Scalars['String']['output'];
-  /** Sort */
+  /** Sort position within the menu. */
   sort: Maybe<Scalars['Int']['output']>;
 };
 
 
-/** A food menu section type */
+/** A section of a food menu, such as starters or drinks, with its entries. */
 export type FoodMenuSectionFoodMenuListItemsArgs = {
   status: InputMaybe<Scalars['String']['input']>;
 };
 
 
-/** A food menu section type */
+/** A section of a food menu, such as starters or drinks, with its entries. */
 export type FoodMenuSectionMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A food modifier type */
+/** One option in a modifier group, such as a size or an extra topping. */
 export type FoodModifier = {
   __typename?: 'FoodModifier';
   /** Food modifier id */
   id: Scalars['Int']['output'];
-  /** Label */
+  /** The option label shown to customers. */
   label: Scalars['String']['output'];
-  /** link_product */
+  /** Whether the option is linked to a product. */
   link_product: Scalars['Boolean']['output'];
-  /** price */
+  /** The extra charge for the option, in major currency units (for example dollars). */
   price: Scalars['Float']['output'];
-  /** quantity */
+  /** The option's quantity. */
   quantity: Scalars['Float']['output'];
 };
 
-/** A food modifier group type */
+/** A group of options customers choose from for a menu item, such as sizes or extras, with its selection rules. */
 export type FoodModifierGroup = {
   __typename?: 'FoodModifierGroup';
-  /** Enable Quantity */
+  /** Whether customers can choose a quantity of each option. */
   enable_qty: Maybe<Scalars['Boolean']['output']>;
-  /** Food modifier */
+  /** The options in the group. */
   foodModifiers: Array<FoodModifier>;
   /** Food modifier group id */
   id: Scalars['Int']['output'];
-  /** Label */
+  /** The label shown to customers. */
   label: Maybe<Scalars['String']['output']>;
-  /** Maximum Selection */
+  /** The most options a customer may choose. */
   maximum_selection: Maybe<Scalars['Int']['output']>;
-  /** Minimum Selection */
+  /** The fewest options a customer must choose. */
   minimum_selection: Maybe<Scalars['Int']['output']>;
-  /** Name */
+  /** The group's name. */
   name: Scalars['String']['output'];
-  /** No Maximum */
+  /** Whether there is no maximum number of options. */
   no_maximum: Maybe<Scalars['Boolean']['output']>;
-  /** No Minimum */
+  /** Whether there is no minimum number of options. */
   no_minimum: Maybe<Scalars['Boolean']['output']>;
 };
 
-/** A food ordering portal */
+/** An online food ordering portal set up for a customer, with its menu and contact details. */
 export type FoodOrderingPortal = {
   __typename?: 'FoodOrderingPortal';
-  /** customer_main_contact_email */
+  /** The email address of the customer's main contact. */
   customer_main_contact_email: Maybe<Scalars['String']['output']>;
-  /** customer_main_contact_name */
+  /** The name of the customer's main contact. */
   customer_main_contact_name: Maybe<Scalars['String']['output']>;
-  /** customer_main_contact_telephone */
+  /** The telephone number of the customer's main contact, as entered. */
   customer_main_contact_telephone: Maybe<Scalars['String']['output']>;
-  /** description */
+  /** The portal's description. */
   description: Maybe<Scalars['String']['output']>;
-  /** foodMenu */
+  /** The food menu customers order from. */
   foodMenu: Maybe<FoodMenu>;
-  /** heading */
+  /** The heading shown at the top of the portal. */
   heading: Maybe<Scalars['String']['output']>;
-  /** name */
+  /** The portal's name. */
   name: Scalars['String']['output'];
-  /** no_index */
+  /** Whether search engines should be told not to index the portal. */
   no_index: Maybe<Scalars['Boolean']['output']>;
-  /** ordering_instructions */
+  /** Instructions shown to people placing an order. */
   ordering_instructions: Maybe<Scalars['String']['output']>;
-  /** sales_flow */
+  /** How orders from the portal are processed, for example `Online Order`. */
   sales_flow: Maybe<Scalars['String']['output']>;
-  /** slug */
+  /** The portal's URL slug. */
   slug: Scalars['String']['output'];
-  /** status */
+  /** The portal's status. */
   status: Scalars['String']['output'];
-  /** sub_heading */
+  /** The sub heading shown under the heading. */
   sub_heading: Maybe<Scalars['String']['output']>;
 };
 
-/** A food ordering portal location */
+/** A delivery or pickup location on a food ordering portal, with its address and contact details. */
 export type FoodOrderingPortalLocation = {
   __typename?: 'FoodOrderingPortalLocation';
-  /** address 1 */
+  /** The first line of the street address. */
   address_1: Maybe<Scalars['String']['output']>;
-  /** address 2 */
+  /** The second line of the street address. */
   address_2: Maybe<Scalars['String']['output']>;
-  /** allow delivery */
+  /** Whether orders can be delivered. */
   allow_delivery: Maybe<Scalars['Boolean']['output']>;
-  /** allow pickup */
+  /** Whether customers can pick up orders. */
   allow_pickup: Maybe<Scalars['Boolean']['output']>;
-  /** contact email */
+  /** The email address of the contact at the location. */
   contact_email: Maybe<Scalars['String']['output']>;
-  /** contact name */
+  /** The name of the contact at the location. */
   contact_name: Maybe<Scalars['String']['output']>;
-  /** country */
+  /** The country. */
   country: Maybe<Scalars['String']['output']>;
-  /** external id */
+  /** The location's id in an external system. */
   external_id: Maybe<Scalars['String']['output']>;
-  /** locality */
+  /** The suburb, town or city. */
   locality: Maybe<Scalars['String']['output']>;
-  /** name */
+  /** The location's name. */
   name: Scalars['String']['output'];
-  /** notes */
+  /** Notes about the location. */
   notes: Maybe<Scalars['String']['output']>;
-  /** postcode */
+  /** The postcode. */
   postcode: Maybe<Scalars['String']['output']>;
-  /** state */
+  /** The state or province. */
   state: Maybe<Scalars['String']['output']>;
-  /** status */
+  /** The location's status. */
   status: Scalars['String']['output'];
-  /** telephone_e164 */
+  /** The location's telephone number in E.164 format, for example `+61412345678`. */
   telephone_e164: Maybe<Scalars['String']['output']>;
-  /** Tribe */
+  /** The tribe that fulfils orders for this location. */
   tribe: Maybe<Tribe>;
-  /** tribe id */
+  /** The id of the tribe that fulfils orders for this location. */
   tribe_id: Maybe<Scalars['Int']['output']>;
 };
 
-/** A food product type */
+/** A food product that menu items are made from, with its ingredients and images. */
 export type FoodProduct = {
   __typename?: 'FoodProduct';
-  /** Description */
+  /** The product's description. */
   description: Maybe<Scalars['String']['output']>;
-  /** food product components */
+  /** The ingredients in the product, with the quantity of each. */
   foodProductComponents: Array<FoodProductComponent>;
   /** Food product id */
   id: Scalars['Int']['output'];
-  /** media */
+  /** Images attached to this record, grouped into named collections such as `main`, `gallery` or `banner`. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
-  /** Name */
+  /** The product's name. */
   name: Scalars['String']['output'];
 };
 
 
-/** A food product type */
+/** A food product that menu items are made from, with its ingredients and images. */
 export type FoodProductMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A food product component type */
+/** An ingredient used in a food product, with the quantity used. */
 export type FoodProductComponent = {
   __typename?: 'FoodProductComponent';
-  /** food component */
+  /** The ingredient. */
   foodComponent: FoodComponent;
-  /** measurement */
+  /** The unit the quantity is measured in. */
   measurement: Scalars['String']['output'];
-  /** measurement_size */
+  /** The measurement size that goes with `measurement`. */
   measurement_size: Scalars['String']['output'];
-  /** quantity */
+  /** The quantity of the ingredient used. */
   quantity: Scalars['Float']['output'];
 };
 
-/** A type */
+/** A visitor's food shopping cart. */
 export type FoodShoppingCart = {
   __typename?: 'FoodShoppingCart';
-  /** food shopping cart items */
+  /** The items in the cart. */
   foodShoppingCartItems: Maybe<Array<FoodShoppingCartItem>>;
-  /** The session id of the user */
+  /** The session id the cart belongs to. */
   session_id: Scalars['String']['output'];
 };
 
-/** A type */
+/** An item in a food shopping cart, with the options chosen and its calculated prices. */
 export type FoodShoppingCartItem = {
   __typename?: 'FoodShoppingCartItem';
+  /** The dish that was added. */
   foodMenuItem: FoodMenuItem;
+  /** The menu entry the item was added from. */
   foodMenuListItem: FoodMenuListItem;
-  /** food shopping cart modifiers */
+  /** The options chosen for the item. */
   foodShoppingCartModifiers: Maybe<Array<FoodShoppingCartModifier>>;
   /** The id of the shopping cart item */
   id: Scalars['Int']['output'];
   /** The quantity of the shopping cart item */
   quantity: Scalars['Int']['output'];
-  /** The sub total of the food item */
+  /** The unit price times the quantity, plus the chosen options, in major currency units (for example dollars), before tax is applied. */
   sub_total: Scalars['Float']['output'];
-  /** The tax of the food item */
+  /** The tax on this line, in major currency units (for example dollars), calculated from the store's tax settings. */
   tax: Scalars['Float']['output'];
-  /** The total of the food item */
+  /** The line total after applying the store's tax settings, in major currency units (for example dollars). */
   total: Scalars['Float']['output'];
-  /** The unit price of the food item */
+  /** The price of one item before options and tax, in major currency units (for example dollars), using the tribe's own price when it has one. */
   unit_price: Scalars['Float']['output'];
 };
 
-/** A type */
+/** An option a customer chose for an item in their food shopping cart. */
 export type FoodShoppingCartModifier = {
   __typename?: 'FoodShoppingCartModifier';
-  /** The modifier of the food item */
+  /** The chosen option. */
   foodModifier: FoodModifier;
-  /** The modifier group of the food item */
+  /** The modifier group the option belongs to. */
   foodModifierGroup: FoodModifierGroup;
-  /** The quantity of the food item */
+  /** How many of this option were chosen. */
   quantity: Scalars['Int']['output'];
 };
 
-/** A type */
+/** The payment provider details needed to pay for a food shopping cart. */
 export type FoodShoppingCartPaymentProvider = {
   __typename?: 'FoodShoppingCartPaymentProvider';
-  /** payment client secret */
+  /** The client secret used to confirm the payment in the browser. */
   payment_client_secret: Maybe<Scalars['String']['output']>;
-  /** key */
+  /** The payment provider's publishable key, for use in the browser. */
   public_key: Maybe<Scalars['String']['output']>;
 };
 
-/** A type */
+/** The pickup or delivery times a tribe can offer for food orders on one date. */
 export type FoodTribeAvailableTime = {
   __typename?: 'FoodTribeAvailableTime';
-  /** Date */
+  /** The date the times apply to. */
   date: Maybe<Scalars['String']['output']>;
-  /** Available times */
+  /** Available times in 15-minute steps, as a list of objects with `text` (for display, for example `09:30 am`) and `value` (24-hour `HH:MM`). Allows for the store's preparation time and, when the store only delivers during opening hours, the tribe's opening and special hours. */
   times: Maybe<Scalars['JsonParser']['output']>;
 };
 
-/** A gorilla news link type */
+/** A person or business mentioned in a Gorilla Dash news article, with links and hashtags for sharing. */
 export type GorillaNewsLink = {
   __typename?: 'GorillaNewsLink';
-  /** gorilla news link facebook hashtag */
+  /** The hashtag to use when sharing on Facebook. */
   facebook_hashtag: Maybe<Scalars['String']['output']>;
-  /** gorilla news link image url */
+  /** The URL of an image of the person or business. */
   image_url: Maybe<Scalars['String']['output']>;
-  /** gorilla news link url */
+  /** The URL the link points to. */
   link_url: Maybe<Scalars['String']['output']>;
-  /** gorilla news link linkedin hashtag */
+  /** The hashtag to use when sharing on LinkedIn. */
   linkedin_hashtag: Maybe<Scalars['String']['output']>;
-  /** gorilla news link string */
+  /** The text of the link. */
   string: Maybe<Scalars['String']['output']>;
-  /** gorilla news link type */
+  /** Whether the link is for a `Person` or a `Business`. */
   type: Maybe<Scalars['String']['output']>;
 };
 
-/** A Inventory type */
+/** A tribe's stock record for a product, with its price, quantity and custom data. */
 export type Inventory = {
   __typename?: 'Inventory';
-  /** Inventory custom data */
+  /** Custom fields recorded for the stock. */
   customData: Maybe<Array<Maybe<InventoryCustomData>>>;
-  /** Inventory Friendly Name */
+  /** A display name for the stock record. */
   friendly_name: Maybe<Scalars['String']['output']>;
-  /** Inventory id */
+  /** The stock record id. */
   id: Maybe<Scalars['Int']['output']>;
-  /** Inventory quantity */
+  /** The quantity in stock. */
   quantity: Maybe<Scalars['Int']['output']>;
-  /** Inventory unit price */
+  /** The unit price, in major currency units (for example dollars). */
   unit_price: Maybe<Scalars['Float']['output']>;
-  /** Inventory variants */
+  /** The product variant the stock is for, as JSON. */
   variants: Maybe<Scalars['JsonParser']['output']>;
 };
 
-/** A InventoryCustomData type */
+/** A custom field on a tribe's stock record. */
 export type InventoryCustomData = {
   __typename?: 'InventoryCustomData';
-  /** Inventory data name */
+  /** The custom field name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Inventory data type */
+  /** The custom field type. */
   type: Maybe<Scalars['String']['output']>;
-  /** Inventory data value */
+  /** The field value as JSON. For image fields, a list of objects with `name` and `media`, where `media` maps a collection name to an absolute CDN URL. */
   value: Maybe<Scalars['JsonParser']['output']>;
 };
 
-/** A login type */
+/** A customer who has logged in to the website, with their contact and address details. */
 export type Login = {
   __typename?: 'Login';
-  /** address 1 */
+  /** The first line of the street address. */
   address_1: Maybe<Scalars['String']['output']>;
-  /** address 2 */
+  /** The second line of the street address. */
   address_2: Maybe<Scalars['String']['output']>;
-  /** country */
+  /** The country. */
   country: Maybe<Scalars['String']['output']>;
-  /** email */
+  /** The customer's email address. */
   email: Scalars['String']['output'];
-  /** First name */
+  /** The customer's first name. */
   first_name: Scalars['String']['output'];
-  /** Last name */
+  /** The customer's last name. */
   last_name: Scalars['String']['output'];
-  /** locality */
+  /** The suburb, town or city. */
   locality: Maybe<Scalars['String']['output']>;
-  /** mobile */
+  /** The customer's mobile number, as entered. */
   mobile: Maybe<Scalars['String']['output']>;
-  /** postal code */
+  /** The postal code. */
   postal_code: Maybe<Scalars['String']['output']>;
-  /** state */
+  /** The state or province. */
   state: Maybe<Scalars['String']['output']>;
 };
 
-/** A login attribute type */
+/** A value stored against a customer login for an external platform. */
 export type LoginAttribute = {
   __typename?: 'LoginAttribute';
-  /** attribute name */
+  /** The attribute name. */
   attribute_name: Scalars['String']['output'];
-  /** attribute value */
+  /** The stored value, as a string. */
   attribute_value: Maybe<Scalars['String']['output']>;
-  /** platform */
+  /** The platform the value belongs to, for example `x2`. */
   platform: Scalars['String']['output'];
-  /** attribute type */
+  /** How to read `attribute_value`: `string`, `boolean` or `json`. */
   type: Scalars['String']['output'];
 };
 
-/** A login token type */
+/** A token that identifies a logged-in customer in later requests. */
 export type LoginToken = {
   __typename?: 'LoginToken';
-  /** Token */
+  /** The customer login token. Pass it as the `token` argument of the customer queries and mutations. */
   token: Scalars['String']['output'];
 };
 
-/** A media */
+/** One image or file from the media library, with an absolute CDN URL for each size. */
 export type Media = {
   __typename?: 'Media';
-  /** Media Alt Tag */
+  /** Alternative text for the image, when available. */
   alt_tag: Maybe<Scalars['String']['output']>;
-  /** Media Approved */
+  /** Whether the image is approved for use, when available. */
   approved: Maybe<Scalars['Boolean']['output']>;
-  /** Banner url */
+  /** Absolute CDN URL of the banner crop, 1500 x 750 pixels unless the organisation has changed its media sizes. Empty string when this size has not been generated. */
   banner: Scalars['String']['output'];
-  /** default url for non-image */
+  /** Absolute CDN URL of the original uploaded file. Use it for files that are not images, such as PDFs. */
   default: Scalars['String']['output'];
-  /** Original_cropped url */
+  /** Absolute CDN URL of the image at its original dimensions with the chosen crop applied. Empty string when this size has not been generated. */
   original_cropped: Scalars['String']['output'];
-  /** Portrait url */
+  /** Absolute CDN URL of the portrait crop, 600 x 800 pixels unless the organisation has changed its media sizes. Empty string when this size has not been generated. */
   portrait: Scalars['String']['output'];
-  /** Rectangle url */
+  /** Absolute CDN URL of the rectangle crop, 1200 x 800 pixels unless the organisation has changed its media sizes. Empty string when this size has not been generated. */
   rectangle: Scalars['String']['output'];
-  /** Square url */
+  /** Absolute CDN URL of the square crop, 600 x 600 pixels unless the organisation has changed its media sizes. Empty string when this size has not been generated. */
   square: Scalars['String']['output'];
-  /** Thumbnail url */
+  /** Absolute CDN URL of the thumbnail, 300 pixels wide. Empty string when this size has not been generated. */
   thumbnail: Scalars['String']['output'];
-  /** Get tribes */
+  /** The tribes the image is shared with. */
   tribes: Array<Tribe>;
 };
 
-/** A media collection */
+/** A named group of images attached to a record, such as its `main` image or its `gallery`. */
 export type MediaCollection = {
   __typename?: 'MediaCollection';
+  /** Always an empty string. */
   description: Maybe<Scalars['String']['output']>;
-  /** Media collection */
+  /** The images in the collection. */
   media: Array<Media>;
-  /** Media name */
+  /** The collection name, for example `main`, `gallery`, `banner` or `square`. */
   name: Maybe<Scalars['String']['output']>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  /** A add food menu item to food shopping cart */
+  /** Adds one menu item, with any modifiers the visitor chose, as a new line in the open food shopping cart for `session_id`, creating the cart first if none is open. The change is saved immediately and the mutation returns the string `Success`. Adding the same item twice creates two separate lines rather than increasing the quantity. */
   addFoodMenuItemToShoppingCart: Maybe<Scalars['String']['output']>;
-  /** Cancel login user mutation */
+  /** Cancels a website customer account, for example when the customer closes their account on your website. The account is marked as cancelled immediately and can no longer sign in through the `logins` query. Cancelling an account that is already cancelled succeeds without changing the date it was cancelled. Returns a two-item list of the status code `201` and a confirmation message. */
   cancelLoginUser: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** A create login user mutation */
+  /** Registers a new website customer account in the organisation and links it to a person record, reusing a person with the same email address and first name or creating one. The account is created immediately but the customer is not signed in, so call the `logins` query afterwards to get a token. Returns a list of `201`, a confirmation message and the new account ID, or `422`, `User already exists` and null when the organisation already has an account with that email address. */
   createLoginUser: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** A delete food menu item from food shopping cart */
+  /** Removes one line from the open food shopping cart for `session_id`. The change is saved immediately and the mutation returns the string `Success`, including when no line matched; if no cart is open for the session, an empty cart is created. */
   deleteFoodMenuItemFromShoppingCart: Maybe<Scalars['String']['output']>;
-  /** A query */
+  /** Closes the open food shopping cart after the visitor has completed payment in Stripe, so the cart cannot be changed or paid again, and returns a one-item list containing the ID of the order. Call it once Stripe confirms the payment intent created by `submitFoodShoppingCart`. It does not check the payment with Stripe itself: the order is marked as paid separately, when Gorilla Dash receives the payment confirmation from Stripe. */
   foodShippingCartPaymentPaid: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** reset tba login password */
+  /** Sets a new password on a website customer account using the `reset_token` from the link emailed by `tbaForgotPassword`. The token alone identifies the account. The change is immediate, the token and any other reset links for the account stop working, and the customer is signed out of every other session. Returns `true` when the password was changed, and `false` when `reset_token` is missing, has expired, has already been used, belongs to another organisation, or belongs to an account that has since been disabled or cancelled. */
   resetLoginUserPassword: Maybe<Scalars['Boolean']['output']>;
-  /** Set the tribe (location) for a website chatbot conversation. */
+  /** Ties an existing chatbot conversation to the tribe the visitor picked, for example from the chatbot's `suggested_tribes`, so later answers and any enquiry use that tribe. The choice is saved immediately without asking the chatbot, and the returned `ChatbotReply` contains a short fixed confirmation message and the selected tribe. */
   selectChatbotTribe: Maybe<ChatbotReply>;
-  /** Send a message in a website chatbot conversation. */
+  /** Sends the visitor's next message in an existing chatbot conversation and returns the chatbot's answer as a `ChatbotReply`. The answer is generated before the mutation returns, which can take several seconds, and during the turn the chatbot may suggest tribes or save the visitor's details as an enquiry, which is reported in `lead_captured`. */
   sendChatbotMessage: Maybe<ChatbotReply>;
-  /** Start a website chatbot conversation and get a session token. */
+  /** Starts a new conversation with the website's active chatbot and returns a `ChatbotReply` whose `session_token` must be sent with every later chatbot call. Without `message`, `reply` holds the chatbot's greeting; with `message`, the chatbot answers it before the mutation returns, which can take several seconds and may capture the visitor as an enquiry. Returns a not-found error when the website has no active chatbot. */
   startChatbotConversation: Maybe<ChatbotReply>;
-  /** Storing login attribute mutation */
+  /** Saves extra values against a signed-in website customer account, creating each attribute or overwriting the existing one with the same name and platform. The values are saved immediately. Returns a two-item list of the status code `201` and a confirmation message. */
   storeLoginAttributes: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** A mutation */
+  /** Books an appointment of a named appointment type and adds the visitor as its attendee, matching an existing person by email address, first name and last name or creating a new person in the tribe. Offer the visitor times from `appointmentAvailableTime` so they choose a free slot. Returns an empty list. */
   submitAppointment: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** Submit custom page enquiry */
+  /** Creates an enquiry from a custom page form on the enquiry form with the given slug; if the organisation has no form with that slug, a new form is created first with default wording and a single field named `Fields`. The enquiry is saved before the mutation returns, in the same way as `submitEnquiry`, and notification emails and other follow-up work continue in the background. Returns a three-item list of the form's thank-you page title, heading and text, with tribe placeholders filled in. */
   submitCustomPageEnquiry: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** Submit enquiry */
+  /** Creates an enquiry on one of the organisation's enquiry forms: it saves the answers and files, links the enquirer to a person record and the listed tribes, and checks the organisation's spam list. The enquiry is saved before the mutation returns, and an identical repeat submission returns the thank-you text without creating a second enquiry; notification emails follow a few minutes later and other follow-up work, such as lead-source calculation and AI summaries, runs in the background. Returns a three-item list of the form's thank-you page title, heading and text, with placeholders filled in. */
   submitEnquiry: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** A mutation */
+  /** Checks out the open food shopping cart for a tribe: it creates (or re-prices) an order awaiting payment in Gorilla Dash with every line priced from the tribe's menu prices, modifiers, tax, coupon and shipping, and links the customer to a person record in the tribe. When Stripe is set up for the tribe or organisation it also creates a new Stripe payment intent, cancelling any earlier one for the cart, and returns a two-item list of the Stripe publishable key and the payment intent client secret for use with Stripe.js; otherwise the order is still saved and two empty strings are returned. The cart stays open until `foodShippingCartPaymentPaid` is called after the payment succeeds. */
   submitFoodShoppingCart: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** A mutation */
+  /** Adds every person in the organisation with the given email address to the named person category, for example to record a newsletter sign-up. If nobody has that email address a new person is created with only the email, and if the category does not exist it is created. The change is immediate and the mutation returns an empty list. */
   submitPersonToCategory: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** A mutation */
+  /** Submits an open food shopping cart through a food ordering portal as an order to be invoiced, with no online payment taken. It assigns the cart to the chosen tribe, creates an order awaiting invoice with every line priced and taxed, records the portal as the channel the order came from and closes the cart, all before returning. It returns a one-item list containing the ID of the order. */
   submitPortalFoodShoppingCart: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** Submit promotion */
+  /** Enters a person into one of the organisation's promotions, such as a competition or giveaway. The entry is queued and saved in the background, where the person record is created or updated and the promotion's confirmation email is sent, so the response does not confirm that the entry was saved. Returns a one-item list containing the unique entry ID assigned to the entry. */
   submitPromotion: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** Submit Review */
+  /** Records a review written on your website against a tribe, linked to a person record matched by email address and first name or created for the reviewer. The review is saved immediately and appears with the tribe's reviews in Gorilla Dash, and a 5-star review also sends the reviewer the organisation's review follow-up email. Returns an empty list. */
   submitReview: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** reset tba login password */
+  /** Starts a password reset for a website customer account by emailing the customer a link to your website's reset-password page, sent from the organisation with its logo and colour. Gorilla Dash adds a `reset_token` parameter to the link; the token expires after 60 minutes and can be used once, with `resetLoginUserPassword`. The link must be on one of the organisation's website domains. The email is sent before the mutation returns. Returns `true` when the email was sent. An account is sent at most 5 reset emails in 15 minutes; a request over that limit also returns `true` but sends nothing. Returns `false` when the organisation has no enabled account with that email address (including a disabled or cancelled account), or when the link is not on one of the organisation's website domains. */
   tbaForgotPassword: Maybe<Scalars['Boolean']['output']>;
-  /** Update login user mutation */
+  /** Updates the details of a signed-in website customer account. Only the arguments you send are changed, and they are saved immediately to the account itself; the linked person record in Gorilla Dash is not updated. Returns a two-item list of the status code `201` and a confirmation message. */
   updateLoginUser: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  /** Update save listing for x2 mutation */
+  /** Adds a listing to, or removes one from, the saved listings of a signed-in website customer account. The change is saved immediately and the mutation returns the full list of saved listing IDs after the change. */
   updateSavedList: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
 };
 
@@ -1023,7 +1041,7 @@ export type MutationFoodShippingCartPaymentPaidArgs = {
 export type MutationResetLoginUserPasswordArgs = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
-  signature: Scalars['String']['input'];
+  reset_token: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1094,6 +1112,7 @@ export type MutationSubmitCustomPageEnquiryArgs = {
   postal_code: InputMaybe<Scalars['String']['input']>;
   products: InputMaybe<Array<InputMaybe<Scalars['JsonParser']['input']>>>;
   slug: InputMaybe<Scalars['String']['input']>;
+  sms_approved: InputMaybe<Scalars['Boolean']['input']>;
   source: InputMaybe<Scalars['String']['input']>;
   state: InputMaybe<Scalars['String']['input']>;
   tracking_data: InputMaybe<Array<InputMaybe<Scalars['JsonParser']['input']>>>;
@@ -1168,6 +1187,8 @@ export type MutationSubmitPortalFoodShoppingCartArgs = {
   delivery_date: Scalars['String']['input'];
   delivery_option: Scalars['String']['input'];
   delivery_time: InputMaybe<Scalars['String']['input']>;
+  early_pick_up: InputMaybe<Scalars['Boolean']['input']>;
+  early_pick_up_message: InputMaybe<Scalars['String']['input']>;
   portal_slug: Scalars['String']['input'];
   session_id: Scalars['String']['input'];
   tribe_slug: Scalars['String']['input'];
@@ -1236,112 +1257,114 @@ export type MutationUpdateSavedListArgs = {
   token: Scalars['String']['input'];
 };
 
-/** A org chart person type */
+/** A team member from the organisation chart, with the contact details they have chosen to make public. */
 export type OrgChartPerson = {
   __typename?: 'OrgChartPerson';
-  /** About */
+  /** The person's profile text. */
   about: Maybe<Scalars['String']['output']>;
-  /** Avatar */
+  /** Absolute URL of the person's profile photo, using the cropped version when there is one. Empty when there is no photo. */
   avatar: Maybe<Scalars['String']['output']>;
-  /** Email */
+  /** The person's email address. Null unless `email_public` is true. */
   email: Maybe<Scalars['String']['output']>;
-  /** Email public */
+  /** Whether the person's email address may be shown publicly. */
   email_public: Maybe<Scalars['Boolean']['output']>;
-  /** First name */
+  /** The person's first name. */
   first_name: Maybe<Scalars['String']['output']>;
-  /** Last name */
+  /** The person's last name. */
   last_name: Maybe<Scalars['String']['output']>;
-  /** Mobile number */
+  /** The person's mobile number in E.164 format. Null unless `mobile_public` is true. */
   mobile_e164: Maybe<Scalars['String']['output']>;
-  /** Mobile public */
+  /** Whether the person's mobile number may be shown publicly. */
   mobile_public: Maybe<Scalars['Boolean']['output']>;
-  /** Tribe */
+  /** The positions the person holds, in their saved order. */
   positions: Maybe<Array<Maybe<OrgChartPosition>>>;
-  /** Role */
+  /** The person's job title. */
   role: Maybe<Scalars['String']['output']>;
-  /** Show on website */
+  /** Whether the person should be listed on the website. */
   show_on_website: Maybe<Scalars['Boolean']['output']>;
   /** The organisation's team member custom fields, with this person's value for each */
   teamMemberCustomFields: Array<TeamMemberCustomField>;
-  /** Telephone extension */
+  /** The person's telephone extension. Null unless `telephone_public` is true. */
   telephone_extension: Maybe<Scalars['String']['output']>;
-  /** Telephone number */
+  /** The person's telephone number, as entered. Null unless `telephone_public` is true. */
   telephone_number: Maybe<Scalars['String']['output']>;
-  /** Telephone public */
+  /** Whether the person's telephone number may be shown publicly. */
   telephone_public: Maybe<Scalars['Boolean']['output']>;
-  /** Tribe */
+  /** The tribe the person works at. */
   tribe: Maybe<Tribe>;
 };
 
-/** A org chart position type */
+/** A position a team member holds, such as store manager. */
 export type OrgChartPosition = {
   __typename?: 'OrgChartPosition';
-  /** Description */
+  /** A description of the position. */
   description: Maybe<Scalars['String']['output']>;
-  /** Name */
+  /** The position name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Order */
+  /** Sort order of the position. */
   order: Maybe<Scalars['Int']['output']>;
 };
 
-/** A media */
+/** An item in an organisation's or tribe's media library, as returned by `all_media`. */
 export type OriginMedia = {
   __typename?: 'OriginMedia';
-  /** Media alt tag */
+  /** Alternative text for the image. */
   alt_tag: Maybe<Scalars['String']['output']>;
-  /** Approved */
+  /** Whether the item is approved for use. */
   approved: Maybe<Scalars['Boolean']['output']>;
-  /** Media Category */
+  /** Names of the media library categories the item belongs to. Only filled in on a tribe's `all_media`. */
   categories: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /** Always an empty string. */
   description: Maybe<Scalars['String']['output']>;
-  /** Media id */
+  /** The media library item id. */
   id: Maybe<Scalars['Int']['output']>;
-  /** Media Starred */
+  /** Whether the item is starred in the media library. */
   is_star: Maybe<Scalars['Boolean']['output']>;
-  /** Media collection */
+  /** The stored files behind the item. Use `url` for links. */
   media: Maybe<Array<Maybe<Media>>>;
-  /** Media name */
+  /** The name given to the item in the media library. */
   name: Maybe<Scalars['String']['output']>;
+  /** Absolute CDN URLs for the sizes requested with the `size` argument of `all_media`, as a list of single-key objects, for example `[{"default": "https://..."}, {"square": "https://..."}]`. A size that has not been generated is an empty string. */
   url: Maybe<Scalars['JsonParser']['output']>;
 };
 
-/** A our work */
+/** A case study or example of work, with its copy, client details and images. */
 export type OurWork = {
   __typename?: 'OurWork';
-  /** Article */
+  /** The full write-up, in the requested locale. */
   article: Maybe<Scalars['String']['output']>;
-  /** Author */
+  /** The author. */
   author: Maybe<Scalars['String']['output']>;
-  /** Client Name */
+  /** The client's name. */
   client_name: Maybe<Scalars['String']['output']>;
-  /** Client URL */
+  /** A link to the client's website. */
   client_url: Maybe<Scalars['String']['output']>;
-  /** Excerpt */
+  /** A short summary, in the requested locale. */
   excerpt: Maybe<Scalars['String']['output']>;
-  /** Heading */
+  /** The heading, in the requested locale. */
   heading: Maybe<Scalars['String']['output']>;
-  /** Media */
+  /** Images attached to this record, grouped into named collections such as `main`, `gallery` or `banner`. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
-  /** Meta description */
+  /** The meta description, in the requested locale. */
   meta_description: Maybe<Scalars['String']['output']>;
-  /** Meta title */
+  /** The meta title, in the requested locale. */
   meta_title: Maybe<Scalars['String']['output']>;
-  /** No index */
+  /** Whether search engines should be told not to index the page. */
   no_index: Maybe<Scalars['Boolean']['output']>;
-  /** Publish Date */
+  /** When the work was, or will be, published. */
   published_at: Maybe<Scalars['String']['output']>;
-  /** Slug */
+  /** The URL slug, in the requested locale. */
   slug: Maybe<Scalars['String']['output']>;
-  /** Status */
+  /** The status, for example `Published` or `Draft`. */
   status: Maybe<Scalars['String']['output']>;
-  /** Sub heading */
+  /** The sub heading. */
   sub_heading: Maybe<Scalars['String']['output']>;
-  /** Tribe */
+  /** The tribe that did the work. */
   tribe: Maybe<Tribe>;
 };
 
 
-/** A our work */
+/** A case study or example of work, with its copy, client details and images. */
 export type OurWorkMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -1367,32 +1390,32 @@ export type OurWorkPagination = {
   total: Scalars['Int']['output'];
 };
 
-/** A product */
+/** A product, with its page copy, pricing, SKUs, custom data, images and the ranges and categories it belongs to. */
 export type Product = {
   __typename?: 'Product';
-  /** Product additional costs */
+  /** Additional costs, as JSON, with amounts in cents. */
   additional_costs: Maybe<Scalars['JsonParser']['output']>;
-  /** Artwork specification pdf */
+  /** The URL of the artwork specification PDF, when the product has one. */
   artwork_specification_pdf_url: Maybe<Scalars['String']['output']>;
-  /** branding options */
+  /** Branding options for the product, as JSON. */
   branding_options: Maybe<Scalars['JsonParser']['output']>;
   /** Product caption */
   caption: Maybe<Scalars['String']['output']>;
-  /** colours */
+  /** The colours the product is available in. */
   colours: Maybe<Array<Maybe<ProductColour>>>;
-  /** Product component type */
+  /** Component types used by components on this product, with their components. */
   componentTypes: Maybe<Array<Maybe<ComponentType>>>;
-  /** customisation_prices_processed */
+  /** Whether the product's customisation prices have been calculated. */
   customisation_prices_processed: Maybe<Scalars['Boolean']['output']>;
   /** Product description */
   description: Maybe<Scalars['String']['output']>;
-  /** enable variant prices */
+  /** Whether each variant has its own price. */
   enable_variant_prices: Maybe<Scalars['Boolean']['output']>;
-  /** Product features */
+  /** The product's features in the requested locale, as JSON. */
   features: Maybe<Scalars['JsonParser']['output']>;
   /** full_colour_branding */
   full_colour_branding: Maybe<Scalars['Int']['output']>;
-  /** Has tribe custom data */
+  /** Whether the tribe given by `tribe_slug` has its own values for this product. False when no `tribe_slug` is given. */
   has_tribe_custom_data: Maybe<Scalars['Boolean']['output']>;
   /** Product heading */
   heading: Maybe<Scalars['String']['output']>;
@@ -1402,105 +1425,105 @@ export type Product = {
   identifier: Maybe<Scalars['String']['output']>;
   /** image_count_branding */
   image_count_branding: Maybe<Scalars['Int']['output']>;
-  /** installation available */
+  /** Whether installation can be added: true when the product is in the online shop and its primary SKU has an installation cost. */
   installation_available: Maybe<Scalars['Boolean']['output']>;
-  /** Inventory */
+  /** Tribe stock records for the product. */
   inventories: Maybe<Array<Maybe<Inventory>>>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed. Use the `lastUpdatedAt` query to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Product media */
+  /** Images attached to this record, grouped into named collections such as `main`, `gallery` or `banner`. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
-  /** Product menu label */
+  /** The label to use in navigation menus, in the requested locale. */
   menu_label: Maybe<Scalars['String']['output']>;
   /** Product meta */
   meta: Maybe<Scalars['String']['output']>;
-  /** Minimum quantity */
+  /** The minimum quantity that can be ordered. */
   minimum_quantity: Maybe<Scalars['String']['output']>;
-  /** Product name */
+  /** The product name, in the requested locale. */
   name: Maybe<Scalars['String']['output']>;
   /** Product page heading */
   page_heading: Maybe<Scalars['String']['output']>;
   /** Product page subheading */
   page_sub_heading: Maybe<Scalars['String']['output']>;
-  /** Product path */
+  /** The product's path on the website: the website's `base_products_path` followed by the product `slug`. */
   path: Maybe<Scalars['String']['output']>;
-  /** Product price brackets */
+  /** Quantity price brackets, as JSON, with amounts in cents. */
   price_brackets: Maybe<Scalars['JsonParser']['output']>;
-  /** primary_price_description */
+  /** Text shown with the product's primary price. */
   primary_price_description: Maybe<Scalars['String']['output']>;
-  /** primary_pricing_comment */
+  /** A comment shown with the product's primary pricing. */
   primary_pricing_comment: Maybe<Scalars['String']['output']>;
-  /** Product categories */
+  /** Active product categories the product belongs to. */
   product_categories: Array<ProductCategory>;
-  /** Product categories count */
+  /** Number of product categories the product belongs to. */
   product_categories_count: Maybe<Scalars['Int']['output']>;
-  /** Product custom data */
+  /** The product's custom fields in the requested locale, with the tribe's own values used instead when `tribe_slug` is given. */
   product_custom_data: Maybe<Array<Maybe<ProductCustomData>>>;
-  /** Product ranges */
+  /** Active product ranges the product belongs to. */
   product_ranges: Array<ProductRange>;
-  /** Product ranges count */
+  /** Number of product ranges the product belongs to. */
   product_ranges_count: Maybe<Scalars['Int']['output']>;
   /** Related Products */
   product_related_products: Maybe<Array<Maybe<Product>>>;
-  /** product sku variants */
+  /** The product's SKUs with the variant values each one represents, as JSON. */
   product_sku_variants: Maybe<Scalars['JsonParser']['output']>;
-  /** Product SKUs */
+  /** The product's SKUs. Empty unless the product is available in the online shop. */
   product_skus: Maybe<Array<Maybe<ProductSku>>>;
-  /** product store addition costs */
+  /** Additional costs customers can add in the online store, using the tribe's own prices when `tribe_slug` is given. */
   product_store_additional_costs: Maybe<Array<Maybe<ProductStoreAdditionalCost>>>;
-  /** product store colours */
+  /** Colour options for the product in the online store. */
   product_store_colours: Maybe<Array<Maybe<ProductStoreColour>>>;
-  /** product store customisation */
+  /** Customisations customers can add in the online store, using the tribe's own prices when `tribe_slug` is given. */
   product_store_customisations: Maybe<Array<Maybe<ProductStoreCustomisation>>>;
-  /** product store price bracket */
+  /** Quantity price brackets for the online store, using the tribe's own prices when `tribe_slug` is given. */
   product_store_price_brackets: Maybe<Array<Maybe<ProductStorePriceBracket>>>;
-  /** product store setting */
+  /** The product's online store settings. */
   product_store_setting: Maybe<ProductStoreSetting>;
-  /** Product type */
+  /** The product type, which defines the product's custom fields. */
   product_type: Maybe<ProductType>;
-  /** product variants */
+  /** The product's variant options and their values, as JSON. */
   product_variants: Maybe<Scalars['JsonParser']['output']>;
-  /** secondary colours */
+  /** Secondary colours the product is available in. */
   secondary_colours: Maybe<Array<Maybe<ProductColour>>>;
-  /** seo_review_average */
+  /** The average review rating to show in the product's search engine results. */
   seo_review_average: Maybe<Scalars['Float']['output']>;
-  /** seo_review_count */
+  /** The number of reviews to show in the product's search engine results. */
   seo_review_count: Maybe<Scalars['Int']['output']>;
-  /** shop_active */
+  /** Whether the product is available in the online shop. */
   shop_active: Maybe<Scalars['Boolean']['output']>;
   /** Product slug */
   slug: Maybe<Scalars['String']['output']>;
-  /** Product status */
+  /** The product status, for example `Active`. */
   status: Maybe<Scalars['String']['output']>;
   /** Product subheading */
   sub_heading: Maybe<Scalars['String']['output']>;
-  /** Product supplier */
+  /** The product's supplier. */
   supplier: Maybe<ProductSupplier>;
-  /** Supplier status */
+  /** The product's status with its supplier. */
   supplier_status: Maybe<Scalars['String']['output']>;
-  /** Tribe customise website images */
+  /** Images a tribe has set to replace this record's own images on its pages. Null unless `images_tribe_slug` is given. */
   tribe_custom_images: Maybe<Array<MediaCollection>>;
-  /** Product url (deprecated) */
+  /** Always null. Build the URL from `slug` and the base paths in `websiteInfo`. */
   url: Maybe<Scalars['String']['output']>;
-  /** Related components */
+  /** Website components linked to the product. */
   websiteComponents: Maybe<Array<Maybe<Component>>>;
 };
 
 
-/** A product */
+/** A product, with its page copy, pricing, SKUs, custom data, images and the ranges and categories it belongs to. */
 export type ProductComponentTypesArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A product */
+/** A product, with its page copy, pricing, SKUs, custom data, images and the ranges and categories it belongs to. */
 export type ProductHas_Tribe_Custom_DataArgs = {
   tribe_slug: InputMaybe<Scalars['String']['input']>;
   website_id: InputMaybe<Scalars['Int']['input']>;
 };
 
 
-/** A product */
+/** A product, with its page copy, pricing, SKUs, custom data, images and the ranges and categories it belongs to. */
 export type ProductInventoriesArgs = {
   id: InputMaybe<Scalars['Int']['input']>;
   tribe_id: InputMaybe<Scalars['Int']['input']>;
@@ -1508,46 +1531,46 @@ export type ProductInventoriesArgs = {
 };
 
 
-/** A product */
+/** A product, with its page copy, pricing, SKUs, custom data, images and the ranges and categories it belongs to. */
 export type ProductMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A product */
+/** A product, with its page copy, pricing, SKUs, custom data, images and the ranges and categories it belongs to. */
 export type ProductProduct_Custom_DataArgs = {
   tribe_slug: InputMaybe<Scalars['String']['input']>;
   website_id: InputMaybe<Scalars['Int']['input']>;
 };
 
 
-/** A product */
+/** A product, with its page copy, pricing, SKUs, custom data, images and the ranges and categories it belongs to. */
 export type ProductProduct_Store_Additional_CostsArgs = {
   tribe_slug: InputMaybe<Scalars['String']['input']>;
 };
 
 
-/** A product */
+/** A product, with its page copy, pricing, SKUs, custom data, images and the ranges and categories it belongs to. */
 export type ProductProduct_Store_CustomisationsArgs = {
   tribe_slug: InputMaybe<Scalars['String']['input']>;
 };
 
 
-/** A product */
+/** A product, with its page copy, pricing, SKUs, custom data, images and the ranges and categories it belongs to. */
 export type ProductProduct_Store_Price_BracketsArgs = {
   tribe_slug: InputMaybe<Scalars['String']['input']>;
 };
 
 
-/** A product */
+/** A product, with its page copy, pricing, SKUs, custom data, images and the ranges and categories it belongs to. */
 export type ProductTribe_Custom_ImagesArgs = {
   images_tribe_slug: InputMaybe<Scalars['String']['input']>;
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A product category */
+/** A product category, with its page copy, SEO fields, images and the products and ranges in it. */
 export type ProductCategory = {
   __typename?: 'ProductCategory';
   /** all category children in current supplier */
@@ -1556,11 +1579,11 @@ export type ProductCategory = {
   caption: Maybe<Scalars['String']['output']>;
   /** Product category children */
   children: Maybe<Array<Maybe<ProductCategory>>>;
-  /** Product range component type */
+  /** Component types used by components on this category, with their components. */
   componentTypes: Maybe<Array<Maybe<ComponentType>>>;
   /** Product category description */
   description: Maybe<Scalars['String']['output']>;
-  /** Has tribe custom data */
+  /** Whether the tribe given by `tribe_slug` has customised this category on the website given by `website_id`. False unless both are given. */
   has_tribe_custom_data: Maybe<Scalars['Boolean']['output']>;
   /** Product category heading */
   heading: Maybe<Scalars['String']['output']>;
@@ -1568,11 +1591,11 @@ export type ProductCategory = {
   id: Maybe<Scalars['Int']['output']>;
   /** Product category introduction text */
   introduction: Maybe<Scalars['String']['output']>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed. Use the `lastUpdatedAt` query to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Product category media */
+  /** Images attached to this record, grouped into named collections such as `main`, `gallery` or `banner`. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
-  /** Product category menu label */
+  /** The label to use in navigation menus, in the requested locale. */
   menu_label: Maybe<Scalars['String']['output']>;
   /** Product category meta */
   meta: Maybe<Scalars['String']['output']>;
@@ -1580,7 +1603,7 @@ export type ProductCategory = {
   meta_description: Maybe<Scalars['String']['output']>;
   /** Meta Title */
   meta_title: Maybe<Scalars['String']['output']>;
-  /** Product category name */
+  /** The category name, in the requested locale. */
   name: Maybe<Scalars['String']['output']>;
   /** Product category page heading */
   page_heading: Maybe<Scalars['String']['output']>;
@@ -1588,67 +1611,67 @@ export type ProductCategory = {
   page_sub_heading: Maybe<Scalars['String']['output']>;
   /** Product category parents */
   parents: Maybe<Array<Maybe<ProductCategory>>>;
-  /** Product category path */
+  /** The category's path on the website: the website's `base_categories_path` followed by the category `slug`. */
   path: Maybe<Scalars['String']['output']>;
-  /** processed_products_count */
+  /** Number of products in the category whose customisation prices have been calculated. */
   processed_products_count: Maybe<Scalars['Int']['output']>;
-  /** Product ranges */
+  /** Active product ranges in the category, in their saved order. */
   product_ranges: Maybe<Array<Maybe<ProductRange>>>;
-  /** Product ranges count */
+  /** Number of product ranges in the category. */
   product_ranges_count: Maybe<Scalars['Int']['output']>;
-  /** Products */
+  /** Active products in the category. */
   products: Maybe<Array<Maybe<Product>>>;
-  /** Products count */
+  /** Number of products in the category. */
   products_count: Maybe<Scalars['Int']['output']>;
-  /** Only Shop Products */
+  /** Products in the category that are available in the online shop. */
   shop_products: Maybe<Array<Maybe<Product>>>;
   /** Show gallery */
   show_gallery: Maybe<Scalars['Boolean']['output']>;
   /** Product category slug */
   slug: Maybe<Scalars['String']['output']>;
-  /** Product category status */
+  /** The category status, for example `Active`. */
   status: Maybe<Scalars['String']['output']>;
   /** Product category subheading */
   sub_heading: Maybe<Scalars['String']['output']>;
-  /** Tribe customise website images */
+  /** Images a tribe has set to replace this record's own images on its pages. Null unless `images_tribe_slug` is given. */
   tribe_custom_images: Maybe<Array<MediaCollection>>;
-  /** Tribe customize data */
+  /** The wording a tribe has customised for this category, for the tribe given by `tribe_slug`. */
   tribe_product_categories: Maybe<Array<Maybe<TribeProductCategoryType>>>;
-  /** Product category url (deprecated) */
+  /** Always null. Build the URL from `slug` and the base paths in `websiteInfo`. */
   url: Maybe<Scalars['String']['output']>;
-  /** Related components */
+  /** Website components linked to the category. */
   websiteComponents: Maybe<Array<Maybe<Component>>>;
 };
 
 
-/** A product category */
+/** A product category, with its page copy, SEO fields, images and the products and ranges in it. */
 export type ProductCategoryComponentTypesArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A product category */
+/** A product category, with its page copy, SEO fields, images and the products and ranges in it. */
 export type ProductCategoryHas_Tribe_Custom_DataArgs = {
   tribe_slug: InputMaybe<Scalars['String']['input']>;
   website_id: InputMaybe<Scalars['Int']['input']>;
 };
 
 
-/** A product category */
+/** A product category, with its page copy, SEO fields, images and the products and ranges in it. */
 export type ProductCategoryMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A product category */
+/** A product category, with its page copy, SEO fields, images and the products and ranges in it. */
 export type ProductCategoryProductsArgs = {
   onlyShop: InputMaybe<Array<InputMaybe<Scalars['Boolean']['input']>>>;
   sortBy: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A product category */
+/** A product category, with its page copy, SEO fields, images and the products and ranges in it. */
 export type ProductCategoryTribe_Custom_ImagesArgs = {
   images_tribe_slug: InputMaybe<Scalars['String']['input']>;
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -1656,41 +1679,41 @@ export type ProductCategoryTribe_Custom_ImagesArgs = {
 };
 
 
-/** A product category */
+/** A product category, with its page copy, SEO fields, images and the products and ranges in it. */
 export type ProductCategoryTribe_Product_CategoriesArgs = {
   tribe_slug: Scalars['String']['input'];
 };
 
-/** A product colour */
+/** A colour a product is available in. */
 export type ProductColour = {
   __typename?: 'ProductColour';
-  /** Colour hex */
+  /** The colour's hex code. */
   hex: Maybe<Scalars['String']['output']>;
-  /** Colour name */
+  /** The colour name. */
   name: Maybe<Scalars['String']['output']>;
 };
 
-/** A product custom data */
+/** A custom field on a product, as defined by the product's type. */
 export type ProductCustomData = {
   __typename?: 'ProductCustomData';
   /** Custom data name */
   name: Maybe<Scalars['String']['output']>;
-  /** Custom data type */
+  /** The custom field type. `Related Products`, `Related Ranges` and `Related Categories` fields return the related records in `value`. */
   type: Maybe<Scalars['String']['output']>;
-  /** Custom data type */
+  /** The field value as JSON, in the requested locale. For `Related Products`, `Related Ranges` and `Related Categories` fields, a list of the related records with their images. */
   value: Maybe<Scalars['JsonParser']['output']>;
 };
 
-/** A product range */
+/** A product range, with its page copy, SEO fields, images and the products and categories in it. */
 export type ProductRange = {
   __typename?: 'ProductRange';
   /** Product range caption */
   caption: Maybe<Scalars['String']['output']>;
-  /** Product range component type */
+  /** Component types used by components on this range, with their components. */
   componentTypes: Maybe<Array<Maybe<ComponentType>>>;
   /** Product range description */
   description: Maybe<Scalars['String']['output']>;
-  /** Has tribe custom data */
+  /** Whether the tribe given by `tribe_slug` has customised this range on the website given by `website_id`. False unless both are given. */
   has_tribe_custom_data: Maybe<Scalars['Boolean']['output']>;
   /** Product range heading */
   heading: Maybe<Scalars['String']['output']>;
@@ -1698,76 +1721,76 @@ export type ProductRange = {
   id: Maybe<Scalars['Int']['output']>;
   /** Introduction */
   introduction: Maybe<Scalars['String']['output']>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed. Use the `lastUpdatedAt` query to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Product category media */
+  /** Images attached to this record, grouped into named collections such as `main`, `gallery` or `banner`. Each image includes absolute CDN URLs for every size. */
   media_collection: Maybe<Array<MediaCollection>>;
-  /** Product range menu_label */
+  /** The label to use in navigation menus, in the requested locale. */
   menu_label: Maybe<Scalars['String']['output']>;
   /** Meta Description */
   meta_description: Maybe<Scalars['String']['output']>;
   /** Meta Title */
   meta_title: Maybe<Scalars['String']['output']>;
-  /** Product range name */
+  /** The range name, in the requested locale. */
   name: Maybe<Scalars['String']['output']>;
   /** Product range page_heading */
   page_heading: Maybe<Scalars['String']['output']>;
   /** Product range page_sub_heading */
   page_sub_heading: Maybe<Scalars['String']['output']>;
-  /** Product range path */
+  /** The range's path on the website: the website's `base_ranges_path` followed by the range `slug`. */
   path: Maybe<Scalars['String']['output']>;
-  /** Product categories */
+  /** Active product categories the range belongs to. */
   product_categories: Maybe<Array<Maybe<ProductCategory>>>;
-  /** Product categories count */
+  /** Number of product categories the range belongs to. */
   product_categories_count: Maybe<Scalars['Int']['output']>;
-  /** Products */
+  /** Active products in the range. */
   products: Maybe<Array<Maybe<Product>>>;
-  /** Products count */
+  /** Number of products in the range. */
   products_count: Maybe<Scalars['Int']['output']>;
-  /** Related Product Range */
+  /** Related product ranges, in their saved order. */
   related_ranges: Maybe<Array<Maybe<ProductRange>>>;
-  /** Get only shop active products */
+  /** Active products in the range that are available in the online shop. */
   shop_active_products: Maybe<Array<Maybe<Product>>>;
   /** Show gallery */
   show_gallery: Maybe<Scalars['Boolean']['output']>;
   /** Product range slug */
   slug: Maybe<Scalars['String']['output']>;
-  /** Product range status */
+  /** The range status, for example `Active`. */
   status: Maybe<Scalars['String']['output']>;
   /** Product range sub_heading */
   sub_heading: Maybe<Scalars['String']['output']>;
-  /** Tribe customise website images */
+  /** Images a tribe has set to replace this record's own images on its pages. Null unless `images_tribe_slug` is given. */
   tribe_custom_images: Maybe<Array<MediaCollection>>;
-  /** Tribe customize data */
+  /** The wording a tribe has customised for this range, for the tribe given by `tribe_slug`. */
   tribe_product_ranges: Maybe<Array<Maybe<TribeProductRangeType>>>;
-  /** Product range url (deprecated) */
+  /** Always null. Build the URL from `slug` and the base paths in `websiteInfo`. */
   url: Maybe<Scalars['String']['output']>;
-  /** Related components */
+  /** Website components linked to the range. */
   websiteComponents: Maybe<Array<Maybe<Component>>>;
 };
 
 
-/** A product range */
+/** A product range, with its page copy, SEO fields, images and the products and categories in it. */
 export type ProductRangeComponentTypesArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A product range */
+/** A product range, with its page copy, SEO fields, images and the products and categories in it. */
 export type ProductRangeHas_Tribe_Custom_DataArgs = {
   tribe_slug: InputMaybe<Scalars['String']['input']>;
   website_id: InputMaybe<Scalars['Int']['input']>;
 };
 
 
-/** A product range */
+/** A product range, with its page copy, SEO fields, images and the products and categories in it. */
 export type ProductRangeMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A product range */
+/** A product range, with its page copy, SEO fields, images and the products and categories in it. */
 export type ProductRangeProductsArgs = {
   limit: InputMaybe<Scalars['Int']['input']>;
   loadMedia: InputMaybe<Scalars['Boolean']['input']>;
@@ -1776,7 +1799,7 @@ export type ProductRangeProductsArgs = {
 };
 
 
-/** A product range */
+/** A product range, with its page copy, SEO fields, images and the products and categories in it. */
 export type ProductRangeTribe_Custom_ImagesArgs = {
   images_tribe_slug: InputMaybe<Scalars['String']['input']>;
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -1784,226 +1807,226 @@ export type ProductRangeTribe_Custom_ImagesArgs = {
 };
 
 
-/** A product range */
+/** A product range, with its page copy, SEO fields, images and the products and categories in it. */
 export type ProductRangeTribe_Product_RangesArgs = {
   tribe_slug: Scalars['String']['input'];
 };
 
-/** Product Sku */
+/** A stock keeping unit (SKU) of a product, with its price and shipping details. */
 export type ProductSku = {
   __typename?: 'ProductSku';
   /** Barcode */
   barcode: Maybe<Scalars['String']['output']>;
-  /** Compare price */
+  /** The comparison price, such as the price before a discount, in major currency units (for example dollars). */
   compare_price: Maybe<Scalars['Float']['output']>;
-  /** SKU ID */
+  /** The SKU id. */
   id: Maybe<Scalars['Int']['output']>;
-  /** Installation cost */
+  /** The installation cost, in major currency units (for example dollars). Null when installation is not offered. */
   installation_cost: Maybe<Scalars['Float']['output']>;
   /** Measurement unit */
   measurement_unit: Maybe<Scalars['String']['output']>;
-  /** price */
+  /** The SKU price, in major currency units (for example dollars). Uses the tribe's own price when the organisation publishes tribe pricing and the query asks for a tribe. */
   price: Maybe<Scalars['Float']['output']>;
   /** Price description */
   price_description: Maybe<Scalars['String']['output']>;
-  /** Primary sku */
+  /** Whether this is the product's main SKU. */
   primary_sku: Maybe<Scalars['Boolean']['output']>;
-  /** requires shipping */
+  /** Whether the SKU needs shipping. */
   requires_shipping: Maybe<Scalars['Boolean']['output']>;
-  /** Sku */
+  /** The SKU code. */
   sku: Maybe<Scalars['String']['output']>;
   /** Weight */
   weight: Maybe<Scalars['Int']['output']>;
 };
 
-/** A product store addition cost type */
+/** An extra charge customers can add to a product in the online store. */
 export type ProductStoreAdditionalCost = {
   __typename?: 'ProductStoreAdditionalCost';
-  /** Active */
+  /** Whether the charge is currently offered. */
   active: Maybe<Scalars['Boolean']['output']>;
-  /** ID */
+  /** The additional cost id. */
   id: Maybe<Scalars['Int']['output']>;
-  /** Name */
+  /** The name of the charge. */
   name: Maybe<Scalars['String']['output']>;
-  /** Optional */
+  /** Whether customers can choose not to add the charge. */
   optional: Maybe<Scalars['Boolean']['output']>;
-  /** Retail setup price */
+  /** The one-off setup price, in cents. */
   retail_setup_price: Maybe<Scalars['Int']['output']>;
-  /** Retail unit price */
+  /** The price per unit, in cents. */
   retail_unit_price: Maybe<Scalars['Int']['output']>;
 };
 
-/** A product store colour type */
+/** A set of colours customers can choose from for a product in the online store. */
 export type ProductStoreColour = {
   __typename?: 'ProductStoreColour';
-  /** Colours */
+  /** The colours in the set, as JSON. */
   colours: Maybe<Scalars['JsonParser']['output']>;
-  /** Comment */
+  /** A comment about the colours. */
   comment: Maybe<Scalars['String']['output']>;
-  /** ID */
+  /** The colour set id. */
   id: Maybe<Scalars['Int']['output']>;
-  /** Name */
+  /** The name of the colour set. */
   name: Maybe<Scalars['String']['output']>;
-  /** Product ID */
+  /** The id of the product the colours belong to. */
   product_id: Maybe<Scalars['Int']['output']>;
 };
 
-/** A product store customisation type */
+/** A customisation, such as printing or embroidery, that customers can add to a product in the online store. */
 export type ProductStoreCustomisation = {
   __typename?: 'ProductStoreCustomisation';
-  /** Description */
+  /** A description of the customisation. */
   description: Maybe<Scalars['String']['output']>;
-  /** Full colour */
+  /** Whether the customisation is in full colour. */
   full_colour: Maybe<Scalars['Boolean']['output']>;
-  /** ID */
+  /** The customisation id. */
   id: Maybe<Scalars['Int']['output']>;
-  /** Maximum colours */
+  /** The most colours allowed. */
   maximum_colours: Maybe<Scalars['Int']['output']>;
-  /** Maximum positions */
+  /** The most positions the customisation can be applied to. */
   maximum_positions: Maybe<Scalars['Int']['output']>;
-  /** Multiple setup price per colour */
+  /** Whether the setup price is charged once per colour. */
   multiple_setup_price_per_colour: Maybe<Scalars['Boolean']['output']>;
-  /** Multiple unit price per colour */
+  /** Whether the unit price is charged once per colour. */
   multiple_unit_price_per_colour: Maybe<Scalars['Boolean']['output']>;
-  /** Name */
+  /** The customisation name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Retail setup price */
+  /** The one-off setup price, in cents. */
   retail_setup_price: Maybe<Scalars['Int']['output']>;
-  /** Retail unit price */
+  /** The price per unit, in cents. */
   retail_unit_price: Maybe<Scalars['Int']['output']>;
 };
 
-/** A product store price bracket type */
+/** A quantity price bracket for a product in the online store. */
 export type ProductStorePriceBracket = {
   __typename?: 'ProductStorePriceBracket';
-  /** Active */
+  /** Whether the bracket is in use. */
   active: Maybe<Scalars['Boolean']['output']>;
-  /** ID */
+  /** The price bracket id. */
   id: Maybe<Scalars['Int']['output']>;
-  /** Minimum units */
+  /** The smallest quantity the bracket applies to. */
   minimum_units: Maybe<Scalars['Int']['output']>;
-  /** Retail unit price */
+  /** The price per unit in this bracket, in cents. */
   retail_unit_price: Maybe<Scalars['Float']['output']>;
 };
 
-/** Product store settings */
+/** Online store settings for a product. */
 export type ProductStoreSetting = {
   __typename?: 'ProductStoreSetting';
-  /** ID */
+  /** The settings id. */
   id: Maybe<Scalars['Int']['output']>;
-  /** Enable less than minimum purchases */
+  /** Whether customers can order fewer than the minimum quantity. */
   less_than_minimum_enabled: Maybe<Scalars['Boolean']['output']>;
-  /** Less than minimum purchase surcharge */
+  /** The surcharge added to orders below the minimum quantity, in cents. */
   less_than_minimum_surcharge: Maybe<Scalars['Int']['output']>;
-  /** Multiple customisation options */
+  /** Whether customers can choose more than one customisation option. */
   multiple_branding: Maybe<Scalars['Boolean']['output']>;
-  /** Product ID */
+  /** The id of the product the settings belong to. */
   product_id: Maybe<Scalars['Int']['output']>;
 };
 
-/** ProductSupplier */
+/** The supplier a product comes from. */
 export type ProductSupplier = {
   __typename?: 'ProductSupplier';
-  /** Product supplier code */
+  /** The supplier's code. */
   code: Maybe<Scalars['String']['output']>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed, so it cannot be used to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Product supplier name */
+  /** The supplier's name. */
   name: Maybe<Scalars['String']['output']>;
 };
 
-/** A product type */
+/** A product type, which defines the custom fields its products carry. */
 export type ProductType = {
   __typename?: 'ProductType';
-  /** Product type description */
+  /** The product type's description. */
   description: Maybe<Scalars['String']['output']>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed, so it cannot be used to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Product type meta */
+  /** The definitions of the custom fields for products of this type, as JSON. */
   meta: Maybe<Scalars['JsonParser']['output']>;
-  /** Product type name */
+  /** The product type's name. */
   name: Maybe<Scalars['String']['output']>;
 };
 
-/** A product variant type */
+/** One variant of a product, such as a size and colour combination, with its SKU and price. */
 export type ProductVariant = {
   __typename?: 'ProductVariant';
-  /** Variant Price */
+  /** The variant's price. */
   price: Maybe<Scalars['Int']['output']>;
-  /** Variant Text */
+  /** The variant's option values joined with ` / `, for example `Large / Red`. */
   variant: Maybe<Scalars['String']['output']>;
-  /** Variant SKU */
+  /** The variant's SKU code. */
   variantSku: Maybe<Scalars['String']['output']>;
 };
 
-/** A promotion type */
+/** A promotion, such as a competition, with its dates, terms, entry fields and website content. */
 export type Promotion = {
   __typename?: 'Promotion';
-  /** Promotion banner */
+  /** The banner content: the `Promotion URL`, `Promotion Banner` and `Promotion Banner Heading` entries from `website_content`. */
   banner: Maybe<Array<Maybe<PromotionBanner>>>;
-  /** Promotion end date */
+  /** When the promotion ends. */
   end_date: Maybe<Scalars['String']['output']>;
-  /** Promotion fields */
+  /** The entry form fields for the promotion, as JSON. */
   fields: Maybe<Scalars['JsonParser']['output']>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed, so it cannot be used to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
   /** Promotion name */
   name: Maybe<Scalars['String']['output']>;
   /** Promotion slug */
   slug: Maybe<Scalars['String']['output']>;
-  /** Promotion start date */
+  /** When the promotion starts. */
   start_date: Maybe<Scalars['String']['output']>;
-  /** Promotion status */
+  /** The promotion's status. */
   status: Maybe<Scalars['String']['output']>;
-  /** Promotion terms */
+  /** The promotion's terms and conditions. */
   terms: Maybe<Scalars['String']['output']>;
-  /** tribe types */
+  /** The tribe types the promotion is open to. */
   tribe_types: Maybe<Array<Maybe<TribeType>>>;
-  /** Promotion type */
+  /** The promotion type, for example `Competition`. */
   type: Maybe<Scalars['String']['output']>;
-  /** promotion vue component */
+  /** The name of the front-end component the website uses to show the promotion. */
   vue_component: Maybe<Scalars['String']['output']>;
-  /** Promotion website content */
+  /** The promotion's website content. */
   website_content: Maybe<Array<Maybe<PromotionWebsiteContent>>>;
 };
 
-/** A promotion banner */
+/** One piece of a promotion's banner content: its URL, banner image or banner heading. */
 export type PromotionBanner = {
   __typename?: 'PromotionBanner';
-  /** Component content media */
+  /** Images for this content, grouped into named collections. Each image includes absolute CDN URLs for every size, including `default` for the original file. */
   media_collection: Array<MediaCollection>;
-  /** Component content name */
+  /** The content name: `Promotion URL`, `Promotion Banner` or `Promotion Banner Heading`. */
   name: Maybe<Scalars['String']['output']>;
-  /** Component content type */
+  /** The content type. */
   type: Maybe<Scalars['String']['output']>;
-  /** Component content value */
+  /** The content value. Structured values are returned as a JSON string. */
   value: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A promotion banner */
+/** One piece of a promotion's banner content: its URL, banner image or banner heading. */
 export type PromotionBannerMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A promotion website content */
+/** One piece of website content for a promotion, such as text, an image or a selection of products. */
 export type PromotionWebsiteContent = {
   __typename?: 'PromotionWebsiteContent';
-  /** Component content media */
+  /** Images for this content, grouped into named collections. Each image includes absolute CDN URLs for every size, including `default` for the original file. */
   media_collection: Array<MediaCollection>;
-  /** Component content name */
+  /** The content name. */
   name: Maybe<Scalars['String']['output']>;
-  /** products */
+  /** For `Products Selector` content, the selected products as a list of objects with `id`, `name`, `slug` and `photo` (an absolute CDN URL, or null). Null for other content types. */
   products: Maybe<Scalars['JsonParser']['output']>;
-  /** Component content type */
+  /** The content type, for example `Products Selector`. */
   type: Maybe<Scalars['String']['output']>;
-  /** Component content value */
+  /** The content value. Structured values are returned as a JSON string. */
   value: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A promotion website content */
+/** One piece of website content for a promotion, such as text, an image or a selection of products. */
 export type PromotionWebsiteContentMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -2011,136 +2034,137 @@ export type PromotionWebsiteContentMedia_CollectionArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  /** A Exit Factor Webinar Events query */
+  /** Returns a paginated list of upcoming webinar events for one tribe, read from the tribe components of the named tribe component type in the organisation of the authenticated website. Only components assigned to the tribe in `tribe_slug` whose `Date (mm/dd/yyyy) mm 01-12, dd 01-31` field is today or later are included, soonest first. Returns an error when the component type is not found. */
   EFTribeWebinarEvents: Maybe<TribeComponentPagination>;
-  /** A Exit Factor Webinar Events query */
+  /** Returns a paginated list of upcoming webinar events read from components, soonest first. Without `tribe_slug` the events come from the component type of the authenticated website named in `name`; with `tribe_slug` they come from a tribe component type belonging to that tribe, and `name` is not used. Only components with the given status whose `Date (mm/dd/yyyy) mm 01-12, dd 01-31` field is today or later are included, and an error is returned when no component type is found. */
   EFWebinarEvents: Maybe<ComponentPagination>;
-  /** appointment available time */
+  /** Returns the appointment time slots a tribe offers on one date for one appointment type. Slots are built from the opening hours of the tribe for that weekday, in steps of the appointment type interval, and a slot is marked as not enabled when an existing appointment already covers it. Returns an error when the tribe or the appointment type is not found in the organisation of the authenticated website. */
   appointmentAvailableTime: Maybe<AppointmentAvailableTime>;
-  /** A article query */
+  /** Returns one article from the organisation of the authenticated website. With `tribe_slug` the article must be assigned to that tribe; without it, only organisation-level articles that are not assigned to any tribe are considered. When several articles match, the most recently created one is returned, and null is returned when none match. */
   article: Maybe<Article>;
+  /** Returns the distinct business names tagged on the published articles of the organisation of the authenticated website, sorted alphabetically. Only organisation-level articles that are not assigned to a tribe are counted, and names longer than four words are left out. Pass the slug form of a name to `articlesPagination` as `businessSlug` to list the matching articles. */
   articleBusinessCloud: Array<Scalars['String']['output']>;
-  /** A article categories query */
+  /** Returns the article categories of the organisation of the authenticated website, sorted by name. Returns an empty list when no category matches. */
   articleCategories: Maybe<Array<Maybe<ArticleCategory>>>;
-  /** The articles query */
+  /** Returns every article of the organisation of the authenticated website that matches the filters, newest first, without pagination. By default the list includes both organisation-level articles and articles assigned to tribes; set `only_organisation` to leave out tribe articles. Returns an empty list when nothing matches. */
   articles: Array<Article>;
-  /** A article query */
+  /** Returns a paginated list of the organisation-level articles of the organisation of the authenticated website, newest first. Articles assigned to a tribe are never included; use `tribeArticlesPagination` for those. Returns an empty page when nothing matches. */
   articlesPagination: Maybe<ArticlePagination>;
-  /** A product categories query */
+  /** Returns the product categories of the organisation that owns the authenticated website, as a single unpaginated list. Only categories with the status Active are included, and an empty list is returned when nothing matches. */
   categories: Maybe<Array<Maybe<ProductCategory>>>;
-  /** A child websites information query */
+  /** Returns the default website of each child organisation of the organisation of the authenticated website, with the organisation id, website URL and tribe base path. Child organisations without a default website are left out, and an empty list is returned when there are none. */
   childWebsites: Maybe<Array<ChildWebsite>>;
-  /** A enquiry form query */
+  /** Returns the enquiry form with the given name from the organisation of the authenticated website. Returns an error when no form has that name. */
   enquiryForm: Maybe<EnquiryForm>;
-  /** A query */
+  /** Checks whether a food coupon code can be used at a tribe for an order of the given amount, and returns the coupon with the discount and new total calculated. The tribe must have the status `Active` or `Testing`, and the coupon must be active, within its start and end dates in the tribe timezone, have a minimum spend no greater than `amount`, and be either available to every tribe or assigned to this one. Returns an error when the tribe or a usable coupon is not found. */
   foodCouponAvailable: FoodCouponAvailable;
-  /** A food menu query */
+  /** Returns the food menu with the given name from the organisation of the authenticated website. Returns an error when no menu has that name. Pass `locale` to receive translated text in the menu where a translation exists. */
   foodMenu: FoodMenu;
-  /** The food menu item attributes query */
+  /** Returns the food menu item attributes of the organisation of the authenticated website, sorted by name. Returns an empty list when none match. */
   foodMenuItemAttributes: Array<FoodMenuItemAttribute>;
-  /** A food menu list item query */
+  /** Returns one list item from a section of a food menu in the organisation of the authenticated website, located by menu name, section slug and item slug. Returns an error when no item matches. */
   foodMenuListItem: FoodMenuListItem;
-  /** A food menu section query */
+  /** Returns one section of a food menu in the organisation of the authenticated website, located by menu name and section slug. Returns an error when no section matches. Pass `locale` to receive translated text where a translation exists. */
   foodMenuSection: FoodMenuSection;
-  /** A food ordering portal */
+  /** Returns the food ordering portal with the given slug from the organisation of the authenticated website. Returns an error when no portal matches, or when the portal has an access code and `access_code` is omitted or does not match it. */
   foodOrderingPortal: Maybe<FoodOrderingPortal>;
-  /** A food ordering portal locations */
+  /** Returns the active locations of the food ordering portal with the given slug in the organisation of the authenticated website, sorted by name. A location is only included when its tribe also has the status `Active`, and an empty list is returned when the portal is not found or has no active locations. */
   foodOrderingPortalAvailableLocation: Array<FoodOrderingPortalLocation>;
-  /** A query */
+  /** Returns the food shopping cart for a session in the organisation of the authenticated website, as long as it is still open or awaiting payment. Returns null when there is no such cart, which includes a cart that has already been submitted. */
   foodShoppingCart: Maybe<FoodShoppingCart>;
-  /** A query */
+  /** Returns the active store settings of a tribe in the organisation of the authenticated website, as used for food ordering. Settings that belong to a branded store or an online store are not considered. Returns an error when the tribe is not found, and null when the tribe has no active store settings. */
   foodStoreSetting: Maybe<StoreSetting>;
-  /** A query */
+  /** Returns the pickup or delivery time slots a tribe can offer for food orders on a date, in 15-minute steps in the tribe timezone, starting no earlier than the current time plus the minimum preparation time. When the store settings limit orders to opening hours, the slots follow the opening hours of the tribe for that day (or its custom hours for that date) and end 15 minutes before closing; otherwise they run until 23:45. Returns an error when the tribe is not found, and an empty `times` list when the tribe has no store settings. */
   foodTribeAvailableTime: Maybe<FoodTribeAvailableTime>;
-  /** A login user by token query */
+  /** Returns the website member account that a login token belongs to, using the token returned by `logins`. Returns an error when the token is unknown or has expired, belongs to an account in another organisation, or belongs to a disabled or cancelled account. */
   getUserByToken: LoginUserByToken;
-  /** A query */
+  /** Returns the date and time content such as products, product categories, articles, our work entries and components last changed in the organisation of the authenticated website, or null when no change has been recorded. Compare it with a value you stored earlier to decide whether your site needs to fetch content again. */
   lastUpdatedAt: Maybe<Scalars['String']['output']>;
-  /** A login exists query */
+  /** Returns true when a website member account with the given email address exists in the organisation of the authenticated website, and false otherwise. */
   loginExists: Scalars['Boolean']['output'];
-  /** A logins query */
+  /** Signs a website member in with an email address and password from the organisation of the authenticated website, and returns a login token that stays valid for one year. Returns an error when the email address or password is wrong, or when the account has been cancelled or disabled. Pass the token to `getUserByToken` and to the member mutations that take a `token` argument. */
   logins: Maybe<LoginToken>;
-  /** Get website menus */
+  /** Returns the menus of the authenticated website as a single unpaginated list, in every language. Without `tribe_slug` only organisation-level menus are returned, and with it only the menus of that tribe are returned. Returns an empty list when nothing matches; use `websiteMenu` to pick a menu for one language. */
   menus: Maybe<Array<Maybe<WebsiteMenu>>>;
-  /** A website pages by org chart person query */
+  /** Returns the top-level pages of the authenticated website that are linked to the org chart person with the given slug. Child pages are not included, and an empty list is returned when no page matches. */
   orgChartPersonWebsitePages: Maybe<Array<WebsitePage>>;
-  /** Qrganisation query */
+  /** Returns the organisation that owns the authenticated website. */
   organisation: Maybe<Organisation>;
-  /** A query */
+  /** Returns one organisation-level our work entry, meaning one that is not assigned to a tribe, from the organisation of the authenticated website. The entry is matched by slug whatever its status or publish date, and an error is returned when no entry matches. Pass `locale` to receive translated text and to match a translated slug. */
   organisationOurWork: OurWork;
-  /** A query */
+  /** Returns a paginated list of organisation-level our work entries, meaning those not assigned to a tribe, from the organisation of the authenticated website, most recently published first. Only entries with the status `Published` and a publish date in the past are included. Pass `locale` to receive translated text where a translation exists. */
   organisationOurWorks: Maybe<OurWorkPagination>;
-  /** A query */
+  /** Returns one our work entry assigned to the given tribe in the organisation of the authenticated website. The entry is matched by slug whatever its status or publish date, and an error is returned when no entry matches. Pass `locale` to receive translated text and to match a translated slug. */
   ourWork: OurWork;
-  /** A query */
+  /** Returns a paginated list of the our work entries assigned to the given tribe in the organisation of the authenticated website, most recently published first. Only entries with the status `Published` and a publish date in the past are included, and an empty page is returned when the tribe has none. Pass `locale` to receive translated text where a translation exists. */
   ourWorks: Maybe<OurWorkPagination>;
-  /** A product query */
+  /** Returns one product of the organisation that owns the authenticated website, matched by slug. Only a product with the status Active is returned, unless `only_shop_active` is `true`, and the query returns an error when no product matches. */
   product: Product;
-  /** A product category query */
+  /** Returns one active product category of the organisation that owns the authenticated website, matched by slug. Returns an error when no category with the status Active matches. */
   productCategory: ProductCategory;
-  /** A product components query */
+  /** Returns product components for the organisation that owns the authenticated website. When `componentType` names one of the organisation component types, every component of that type is returned in the order saved for the type; otherwise the result is the components attached to at least one of the organisation products. Returns an empty list when nothing matches. */
   productComponents: Maybe<Array<Maybe<Component>>>;
-  /** A product suppliers query */
+  /** Returns every product supplier of the organisation that owns the authenticated website, whatever its status. The list is not filtered, ordered or paginated, and is empty when the organisation has no suppliers. */
   productSuppliers: Maybe<Array<Maybe<ProductSupplier>>>;
-  /** A product type query */
+  /** Returns a list of every product type of the organisation that owns the authenticated website, despite the singular field name. The list is not filtered, ordered or paginated, and is empty when the organisation has no product types. */
   productType: Maybe<Array<Maybe<ProductType>>>;
-  /** A products query */
+  /** Returns the products of the organisation that owns the authenticated website, as a single unpaginated list. By default only products with the status Active are included; pass `onlyShopActive` to list products enabled for the online shop instead. Returns an empty list when nothing matches. */
   products: Maybe<Array<Maybe<Product>>>;
-  /** A promotion query */
+  /** Returns one promotion of the organisation that owns the authenticated website, matched by slug. The promotion must have the status Active or Pending and today must fall between its start and end dates (compared by calendar date only); otherwise the query returns an error. */
   promotion: Promotion;
-  /** A promotion banner query */
+  /** Returns the promotion to show as a site banner: an `Active` promotion of the organisation of the authenticated website whose start and end dates include today. When several promotions match, the one with the earliest start date is returned, and null is returned when none match. */
   promotionBanner: Maybe<Promotion>;
-  /** A promotions query */
+  /** Returns a list containing at most one promotion of the organisation that owns the authenticated website, matched by slug. Unlike `promotion`, it does not check the promotion status or date range, so paused, finished and deleted promotions can be returned. Returns null when no promotion matches. */
   promotions: Maybe<Array<Maybe<Promotion>>>;
-  /** A product range query */
+  /** Returns the product ranges of the organisation that owns the authenticated website. Only ranges with the status Active are included, the list is not paginated, and an empty list is returned when nothing matches. */
   ranges: Maybe<Array<Maybe<ProductRange>>>;
-  /** A region query */
+  /** Returns active geographic regions (countries, states, cities and areas), for one country when `country_iso` is sent. Regions are shared reference data and are not specific to the organisation. Returns an empty list when nothing matches. */
   regions: Array<Region>;
-  /** A review query */
+  /** Returns reviews for the organisation that owns the authenticated website, newest first by default. Reviews can be narrowed to one tribe and to featured reviews, and `count` caps the list because the query is not paginated. Returns an empty list when nothing matches. */
   reviews: Maybe<Array<Maybe<Review>>>;
-  /** A query */
+  /** Store finder: returns up to 10 active tribes of the organisation that owns the authenticated website near a location, sorted by distance. Tribes whose service territory contains the location or its postcode come first, followed by the nearest other tribes. When the address cannot be located, a single fallback tribe for the organisation is returned instead of an error. */
   searchStores: Array<Tribe>;
-  /** A shipping zone query */
+  /** Returns the active shipping zones of a tribe online store that cover a delivery address, and whether the order amount qualifies for free shipping in any of them. When the tribe store is set to show only one delivery option, only the zone with the cheapest base rate is returned. Returns no zones and `free` false when the address is empty or cannot be located (the tribe is not checked in that case), and an error when a located address is sent for a tribe that is not found. */
   shippingZones: Maybe<ShippingZoneWithFree>;
-  /** A shopping query */
+  /** Returns the variants of the first active product, in the organisation that owns the authenticated website, that has the given SKU. Returns an empty list when no active product matches. */
   shopping: Maybe<Array<Maybe<ProductVariant>>>;
-  /** A tribe query */
+  /** Returns one tribe of the organisation that owns the authenticated website, usually matched by `slug`, or the nearest matching tribe when `lat` and `lng` are passed. Only tribes with the status Active are considered unless `status` says otherwise, and the query returns an error when no tribe matches. Pass `locale` to receive translated headings, introductions and meta text where translations exist. */
   tribe: Tribe;
-  /** tribe articles query */
+  /** Returns every article a tribe should show, newest first, as a single unpaginated list: the articles linked to the tribe plus the organisation-wide articles not linked to any tribe, leaving out any organisation article that the tribe has replaced with its own version. Articles of every status are included unless `status` is passed. Returns an empty list when nothing matches; use `tribeArticlesPagination` for large sets. */
   tribeArticles: Array<Article>;
-  /** tribe articles query */
+  /** Returns one page of the articles a tribe should show, newest first: the articles linked to the tribe plus the organisation-wide articles not linked to any tribe, leaving out any organisation article that the tribe has replaced with its own version. Articles of every status are included unless `status` is passed. Returns an empty page when nothing matches. */
   tribeArticlesPagination: Maybe<ArticlePagination>;
-  /** A tribe component */
+  /** Returns one tribe component, matched by slug, whose component type belongs to the organisation that owns the authenticated website and which is assigned to the given tribe. Returns an error when no such component exists. */
   tribeComponent: Maybe<TribeComponent>;
-  /** A tribe component type */
+  /** Returns one tribe component type of the organisation that owns the authenticated website, matched by name, with its `components` limited to those assigned to a tribe. Returns null when no type with that name exists or when none of its components match. */
   tribeComponentType: Maybe<TribeComponentType>;
-  /** A tribe list query */
+  /** Returns the tribes of the organisation that owns the authenticated website, as a single unpaginated list sorted by name unless `orderBy` is passed. Only tribes with the status Active are included unless `status` says otherwise. Returns an empty list when nothing matches. */
   tribes: Array<Tribe>;
-  /** A website component query */
+  /** Returns one website component, matched by slug, whose component type belongs to the authenticated website. Components of any status are returned unless `status` is passed, and the query returns an error when no component matches. */
   websiteComponent: Component;
-  /** A website components query */
+  /** Returns the website component types of the authenticated website, each with its components, as a single unpaginated list. Types and components of any status are returned unless `status` is passed, and an empty list is returned when nothing matches. */
   websiteComponents: Array<ComponentType>;
-  /** A website faq query */
+  /** Returns the FAQs of the authenticated website as a single unpaginated list, with no status filter. Tribe placeholders in each question and answer are filled from the tribe named by `assign_store_slug`. Returns an empty list when nothing matches. */
   websiteFaq: Maybe<Array<Maybe<WebsiteFaq>>>;
-  /** A website faq category query */
+  /** Returns the FAQ categories of the authenticated website as a single unpaginated list, with no status filter. Returns an empty list when nothing matches. */
   websiteFaqCategory: Maybe<Array<Maybe<WebsiteFaqCategory>>>;
-  /** A website information query */
+  /** Returns the authenticated website itself: its settings and details, as identified by the access token. It never returns null. Its `last_updated_at` field moves when the website settings are saved or when its pages, page content, sections, section content or menus are edited, so poll it together with `lastUpdatedAt` (which covers products, articles, reviews, components and other organisation content) to decide when to refresh cached content. */
   websiteInfo: Maybe<Website>;
-  /** Get website menu */
+  /** Returns one menu of the authenticated website, matched by `name` or `id`. Without `tribe_slug` only organisation-level menus are searched, and with it only the menus of that tribe are searched, with no fallback to the organisation menu. When `locale` is passed, a menu for that language is preferred over a menu with no language; returns null when no menu matches. */
   websiteMenu: Maybe<WebsiteMenu>;
-  /** A website page query */
+  /** Returns one website page of the authenticated website, used to render a page. Matching pages are looked up in order: the page of the team member named by `agent_slug`, then the page of the tribe named by `tribe_slug`, then the organisation-level page, and the first page in menu order at the first level that has a match is returned. Deleted pages are never returned, and the query returns null when no page matches. */
   websitePage: Maybe<WebsitePage>;
-  /** A website page template query */
+  /** Returns the page templates of the authenticated website as a single unpaginated list, with no status filter and no particular order. Returns an empty list when nothing matches. */
   websitePageTemplates: Maybe<Array<WebsitePageTemplate>>;
-  /** A website page list query */
+  /** Returns website pages of the authenticated website in menu order, as a single unpaginated list. When `tribe_slug` names an Active tribe that has matching pages, the pages of that tribe are returned; otherwise the matching organisation-level pages are returned instead. Deleted pages are never included, and an empty list is returned when nothing matches. */
   websitePages: Maybe<Array<WebsitePage>>;
-  /** A website page list query */
+  /** Returns the website pages that belong to one tribe and use one of the given page templates, in menu order, for building a tribe menu. Only pages of the tribe itself are returned, with no fallback to organisation-level pages, and tribe placeholders in the page text are filled from that tribe. Returns an empty list when the tribe does not exist in the organisation, is not Active, or has no matching pages. */
   websitePagesInTribeMenu: Maybe<Array<WebsitePage>>;
-  /** A website redirect query */
+  /** Returns every redirect configured for the authenticated website as a single unpaginated list, leaving out any redirect that has been detected as part of a redirect loop. Each redirect carries its `from` and `to` values but no HTTP status code, so the client decides whether to answer with a 301 or a 302. Returns an empty list when the website has no redirects. */
   websiteRedirects: Array<WebsiteRedirect>;
-  /** A website section query */
+  /** Returns one website section of the authenticated website, matched by name. When `tribe_slug` is passed and that tribe has its own section with this name, the tribe section is returned; otherwise the organisation-level section is returned. The query returns an error when neither exists. */
   websiteSection: Maybe<WebsiteSection>;
-  /** A website sections query */
+  /** Returns website sections of the authenticated website as a single unpaginated list. Organisation-level sections and the sections of every tribe are returned together, because this query cannot be limited to one tribe; use `websiteSection` with `tribe_slug` for that. Returns an empty list when nothing matches. */
   websiteSections: Maybe<Array<Maybe<WebsiteSection>>>;
 };
 
@@ -2565,229 +2589,229 @@ export type QueryWebsiteSectionsArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A job posting type */
+/** A job advertisement, with its role, region, salary and description. */
 export type RecruitmentPosting = {
   __typename?: 'RecruitmentPosting';
-  /** About Role */
+  /** A description of the role. */
   about_role: Maybe<Scalars['String']['output']>;
-  /** Benefits And Perks */
+  /** The benefits and perks of the job. */
   benefits_and_perks: Maybe<Scalars['String']['output']>;
-  /** Close Datetime */
+  /** When the posting closes. */
   close_date: Maybe<Scalars['String']['output']>;
-  /** Posting Heading */
+  /** The heading of the job advertisement. */
   heading: Maybe<Scalars['String']['output']>;
-  /** Hours */
+  /** The working hours. */
   hours: Maybe<Scalars['String']['output']>;
-  /** Posting ID */
+  /** The posting id. */
   id: Maybe<Scalars['Int']['output']>;
-  /** Job Summary */
+  /** A short summary of the job. */
   job_summary: Maybe<Scalars['String']['output']>;
-  /** Organisation ID */
+  /** The id of the organisation the posting belongs to. */
   organisation_id: Maybe<Scalars['Int']['output']>;
-  /** Permanency */
+  /** Whether the job is permanent, fixed-term or casual. */
   permanency: Maybe<Scalars['String']['output']>;
-  /** Publish Datetime */
+  /** When the posting is published. */
   publish_date: Maybe<Scalars['String']['output']>;
-  /** Region */
+  /** The region the job is in. */
   region: Maybe<Region>;
-  /** Role */
+  /** The job role the posting is for. */
   role: Maybe<RecruitmentRole>;
-  /** Salary From */
+  /** The lowest salary for the job, as entered. */
   salary_from: Maybe<Scalars['String']['output']>;
-  /** Salary To */
+  /** The highest salary for the job, as entered. */
   salary_to: Maybe<Scalars['String']['output']>;
-  /** Selling Point 1 */
+  /** The first selling point of the job. */
   selling_point_1: Maybe<Scalars['String']['output']>;
-  /** Selling Point 2 */
+  /** The second selling point of the job. */
   selling_point_2: Maybe<Scalars['String']['output']>;
-  /** Selling Point 3 */
+  /** The third selling point of the job. */
   selling_point_3: Maybe<Scalars['String']['output']>;
-  /** Show Salary */
+  /** Whether the salary should be shown to applicants. The salary fields are returned either way. */
   show_salary: Maybe<Scalars['Boolean']['output']>;
-  /** Skills And Experience */
+  /** The skills and experience needed. */
   skills_and_experience: Maybe<Scalars['String']['output']>;
-  /** Posting Status */
+  /** The posting status, for example `Active`. */
   status: Maybe<Scalars['String']['output']>;
-  /** Url */
+  /** Absolute URL of the posting on the organisation's careers site. */
   url: Maybe<Scalars['String']['output']>;
 };
 
-/** A job role type */
+/** A job role, with the standard copy used by job postings for it. */
 export type RecruitmentRole = {
   __typename?: 'RecruitmentRole';
-  /** About Role */
+  /** A description of the role. */
   about_role: Maybe<Scalars['String']['output']>;
-  /** Benefits And Perks */
+  /** The benefits and perks of the role. */
   benefits_and_perks: Maybe<Scalars['String']['output']>;
-  /** Job Summary */
+  /** A short summary of the role. */
   job_summary: Maybe<Scalars['String']['output']>;
-  /** Role Heading */
+  /** The role name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Skills And Experience */
+  /** The category the role belongs to. */
   role_category: Maybe<RecruitmentRoleCategory>;
-  /** Selling Point 1 */
+  /** The first selling point of the role. */
   selling_point_1: Maybe<Scalars['String']['output']>;
-  /** Selling Point 2 */
+  /** The second selling point of the role. */
   selling_point_2: Maybe<Scalars['String']['output']>;
-  /** Selling Point 3 */
+  /** The third selling point of the role. */
   selling_point_3: Maybe<Scalars['String']['output']>;
-  /** Skills And Experience */
+  /** The skills and experience needed. */
   skills_and_experience: Maybe<Scalars['String']['output']>;
-  /** Role Status */
+  /** The role status. */
   status: Maybe<Scalars['String']['output']>;
 };
 
-/** A job role category type */
+/** A category that groups job roles. */
 export type RecruitmentRoleCategory = {
   __typename?: 'RecruitmentRoleCategory';
-  /** Name */
+  /** The category name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Status */
+  /** The category status. */
   status: Maybe<Scalars['String']['output']>;
 };
 
-/** A region type */
+/** A geographic region, such as a state, with its centre point and boundary. */
 export type Region = {
   __typename?: 'Region';
-  /** Country Short Code */
+  /** The two-letter ISO code of the region's country, for example `US`. */
   country_iso: Maybe<Scalars['String']['output']>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed, so it cannot be used to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** center latitude */
+  /** The latitude of the region's centre. */
   latitude: Maybe<Scalars['Float']['output']>;
-  /** center longitude */
+  /** The longitude of the region's centre. */
   longitude: Maybe<Scalars['Float']['output']>;
-  /** Name */
+  /** The region name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Abbreviated Code */
+  /** The region's short name, for example `CA`. */
   name_abbreviated: Maybe<Scalars['String']['output']>;
-  /** Boundary */
+  /** The region's boundary polygons, as JSON. */
   polygons: Maybe<Scalars['JsonParser']['output']>;
-  /** Status */
+  /** The region status. */
   status: Maybe<Scalars['String']['output']>;
-  /** zoom */
+  /** A suggested map zoom level for showing the whole region. */
   zoom: Maybe<Scalars['Int']['output']>;
 };
 
-/** A review */
+/** A customer review of the organisation or one of its tribes. */
 export type Review = {
   __typename?: 'Review';
-  /** Review business name */
+  /** The reviewer's business name, when they have one. */
   business_name: Maybe<Scalars['String']['output']>;
-  /** Review created at */
+  /** When the review was created. */
   created_at: Maybe<Scalars['String']['output']>;
-  /** Review featured */
+  /** Whether the review is featured. */
   featured: Maybe<Scalars['Boolean']['output']>;
-  /** Review ID */
+  /** The review id. */
   id: Maybe<Scalars['Int']['output']>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed. Use the `lastUpdatedAt` query to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Review */
+  /** The reviewer's name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Review rating */
+  /** The star rating given. */
   rating: Maybe<Scalars['Int']['output']>;
-  /** Review */
+  /** The review text. */
   review: Maybe<Scalars['String']['output']>;
-  /** Review source */
+  /** Where the review came from: `Google`, `Facebook`, `Yelp` or `Website`. */
   review_source: Maybe<Scalars['String']['output']>;
-  /** Review type */
+  /** Whether the review is `Public` or `Internal`. */
   review_type: Maybe<Scalars['String']['output']>;
-  /** Social author url */
+  /** A link to the reviewer's profile on the site the review came from. */
   social_author_url: Maybe<Scalars['String']['output']>;
-  /** Social message */
+  /** The review text as posted on the site it came from. */
   social_message: Maybe<Scalars['String']['output']>;
-  /** Social rating */
+  /** The rating given on the site the review came from. */
   social_rating: Maybe<Scalars['Int']['output']>;
-  /** Review status */
+  /** The review status: `Pending` or `Responded`. */
   status: Maybe<Scalars['String']['output']>;
-  /** Tribe */
+  /** The tribe the review is for. */
   tribe: Maybe<Tribe>;
-  /** Review created at */
+  /** When the review was last updated. */
   updated_at: Maybe<Scalars['String']['output']>;
 };
 
-/** A shipping area type */
+/** An area a shipping zone covers, defined by country, state or map polygons. */
 export type ShippingArea = {
   __typename?: 'ShippingArea';
-  /** Shipping area administrative area level 1 */
+  /** The states or provinces in the area, as JSON. */
   administrative_area_level_1: Maybe<Scalars['JsonParser']['output']>;
-  /** Shipping area center */
+  /** The centre point of the area, as JSON. */
   center: Maybe<Scalars['JsonParser']['output']>;
-  /** Shipping area name */
+  /** The area name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Shipping area polygons */
+  /** The map polygons that outline the area, as JSON. */
   polygons: Maybe<Scalars['JsonParser']['output']>;
-  /** Shipping area radius */
+  /** The radius around `center`, as JSON. */
   radius: Maybe<Scalars['JsonParser']['output']>;
-  /** Shipping area type */
+  /** How the area is defined: `Country`, `State` or `Polygons`. */
   type: Maybe<Scalars['String']['output']>;
 };
 
-/** A shipping rate type */
+/** A shipping rate charged within a shipping zone. */
 export type ShippingRate = {
   __typename?: 'ShippingRate';
-  /** Shipping rate base */
+  /** The flat base charge, in major currency units (for example dollars). */
   base_rate: Maybe<Scalars['Float']['output']>;
-  /** Shipping rate currency */
+  /** The currency the rate is charged in. */
   currency: Maybe<Scalars['String']['output']>;
-  /** Shipping rate free */
+  /** The order amount at which shipping becomes free, in major currency units (for example dollars). */
   free_shipping_price: Maybe<Scalars['Float']['output']>;
   /** Shipping rate id */
   id: Scalars['Int']['output'];
-  /** Maximum order price */
+  /** The largest order amount the rate applies to, in major currency units (for example dollars). */
   maximum_order_price: Maybe<Scalars['Float']['output']>;
-  /** Minimum order price */
+  /** The smallest order amount the rate applies to, in major currency units (for example dollars). */
   minimum_order_price: Maybe<Scalars['Float']['output']>;
   /** Shipping rate name */
   name: Scalars['String']['output'];
-  /** Shipping rate weight */
+  /** The charge per unit of weight, in major currency units (for example dollars). */
   weight_rate: Maybe<Scalars['Float']['output']>;
 };
 
-/** A shipping zone type */
+/** A shipping zone, with the areas it covers and the rates charged there. */
 export type ShippingZone = {
   __typename?: 'ShippingZone';
   /** Shipping zone id */
   id: Scalars['Int']['output'];
   /** Shipping zone name */
   name: Scalars['String']['output'];
-  /** Shipping areas */
+  /** The areas the zone covers. */
   shippingAreas: Array<ShippingArea>;
-  /** Shipping rates */
+  /** The rates charged in the zone. */
   shippingRates: Array<ShippingRate>;
   /** Shipping zone status */
   status: Scalars['String']['output'];
 };
 
-/** A shipping zone with free type */
+/** The shipping zones that cover a delivery address, and whether the order qualifies for free shipping. */
 export type ShippingZoneWithFree = {
   __typename?: 'ShippingZoneWithFree';
-  /** Free shipping */
+  /** Whether the order amount qualifies for free shipping in any of the zones. */
   free: Scalars['Boolean']['output'];
-  /** Shipping zones */
+  /** The shipping zones that cover the address. */
   shipping_zones: Maybe<Array<ShippingZone>>;
 };
 
-/** A team member */
+/** A team member at a tribe, with their role and photo. */
 export type TeamMember = {
   __typename?: 'TeamMember';
-  /** About */
+  /** The team member's profile text. */
   about: Maybe<Scalars['String']['output']>;
-  /** Avatar */
+  /** Absolute URL of the square version of the team member's photo. */
   avatar: Maybe<Scalars['String']['output']>;
-  /** Email */
+  /** The team member's email address. */
   email: Maybe<Scalars['String']['output']>;
-  /** First name */
+  /** The team member's first name. */
   first_name: Maybe<Scalars['String']['output']>;
-  /** Last name */
+  /** The team member's last name. */
   last_name: Maybe<Scalars['String']['output']>;
-  /** Role */
+  /** The team member's job title. */
   role: Maybe<Scalars['String']['output']>;
-  /** Tribe */
+  /** The tribe the team member works at. */
   tribe: Maybe<Tribe>;
 };
 
-/** A team member custom field type */
+/** A team member custom field defined by the organisation, with one person's value for it. */
 export type TeamMemberCustomField = {
   __typename?: 'TeamMemberCustomField';
   /** Custom field id */
@@ -2796,132 +2820,133 @@ export type TeamMemberCustomField = {
   media_collection: Array<MediaCollection>;
   /** Custom field name */
   name: Maybe<Scalars['String']['output']>;
-  /** Custom field type */
+  /** The field type, which decides how to read `value`. Image fields hold their images in `media_collection`. */
   type: Maybe<Scalars['String']['output']>;
   /** The team member's value for this custom field */
   value: Maybe<Scalars['JsonParser']['output']>;
 };
 
 
-/** A team member custom field type */
+/** A team member custom field defined by the organisation, with one person's value for it. */
 export type TeamMemberCustomFieldMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A tribe */
+/** A tribe, one location of the organisation, with its address, contact details, opening hours and page content. */
 export type Tribe = {
   __typename?: 'Tribe';
-  /** Tribe address_1 */
+  /** The first line of the tribe's street address. Uses the organisation's address instead when the tribe is set to use it. */
   address_1: Maybe<Scalars['String']['output']>;
-  /** Tribe address_2 */
+  /** The second line of the tribe's street address. Uses the organisation's address instead when the tribe is set to use it. */
   address_2: Maybe<Scalars['String']['output']>;
-  /** All Tribe media */
+  /** Items in the tribe's media library, 20 by default. */
   all_media: Maybe<Array<Maybe<OriginMedia>>>;
-  /** Answer number */
+  /** The number that tracked calls to the tribe are answered on, as entered. */
   answer_number: Maybe<Scalars['String']['output']>;
-  /** Articles */
+  /** Articles written for the tribe. */
   articles: Maybe<Array<Maybe<Article>>>;
-  /** caption */
+  /** A short caption for the tribe. */
   caption: Maybe<Scalars['String']['output']>;
-  /** Tribe component type */
+  /** Component types used on the tribe's pages, each with the tribe's components of that type. */
   component_types: Maybe<Array<Maybe<TribeComponentType>>>;
-  /** Tribe content */
+  /** Named content for the tribe's pages. */
   contents: Maybe<Array<Maybe<TribeContent>>>;
-  /** Tribe country */
+  /** The tribe's country. Uses the organisation's address instead when the tribe is set to use it. */
   country: Maybe<Scalars['String']['output']>;
-  /** Tribe country ISO */
+  /** The two-letter ISO code of the tribe's country. */
   country_iso: Maybe<Scalars['String']['output']>;
-  /** Custom opening hours */
+  /** Special opening hours for the next seven days, starting today in the tribe's timezone. */
   custom_opening_hours: Maybe<Array<Maybe<CustomOpeningHour>>>;
-  /** Enable Inventory on Website */
+  /** Whether stock levels are shown on the website. */
   enable_inventory: Maybe<Scalars['Boolean']['output']>;
   /** Facebook Pixel ID */
   facebook_pixel_id: Maybe<Scalars['String']['output']>;
-  /** Facebook Review Link */
+  /** The link customers use to leave a Facebook review. */
   facebook_review_link: Maybe<Scalars['String']['output']>;
-  /** Food Shop Active */
+  /** Whether the tribe can take online food orders, either through an online ordering link or its own online store. */
   food_shop_active: Maybe<Scalars['Boolean']['output']>;
-  /** Google Place ID */
+  /** The tribe's Google Place ID. */
   google_place_id: Maybe<Scalars['String']['output']>;
-  /** Google Review URL */
+  /** The link customers use to leave a Google review. */
   google_review_url: Maybe<Scalars['String']['output']>;
-  /** heading */
+  /** The tribe page heading, with placeholders such as the tribe name filled in. */
   heading: Maybe<Scalars['String']['output']>;
-  /** introduction */
+  /** The tribe introduction, with placeholders such as the tribe name filled in. */
   introduction: Maybe<Scalars['String']['output']>;
-  /** introduction_bold */
+  /** The bold opening of the tribe introduction, with placeholders such as the tribe name filled in. */
   introduction_bold: Maybe<Scalars['String']['output']>;
-  /** Introduction team */
+  /** The introduction to the team section, with placeholders such as the tribe name filled in. */
   introduction_team: Maybe<Scalars['String']['output']>;
+  /** Whether the tribe uses an alternative address. False when not set. */
   is_alternate_address: Maybe<Scalars['Boolean']['output']>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed, so it cannot be used to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Tribe latitude */
+  /** The tribe's latitude. Uses the organisation's address instead when the tribe is set to use it. */
   latitude: Maybe<Scalars['String']['output']>;
-  /** Tribe locality */
+  /** The tribe's suburb, town or city. Uses the organisation's address instead when the tribe is set to use it. */
   locality: Maybe<Scalars['String']['output']>;
-  /** Tribe longitude */
+  /** The tribe's longitude. Uses the organisation's address instead when the tribe is set to use it. */
   longitude: Maybe<Scalars['String']['output']>;
-  /** main_telephone */
+  /** The tribe's main telephone number, as entered. */
   main_telephone: Maybe<Scalars['String']['output']>;
-  /** Tribe media */
+  /** Images attached to this record, grouped into named collections such as `main`, `gallery` or `banner`. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
-  /** Tribe meta description */
+  /** The tribe page meta description, with placeholders such as the tribe name filled in. */
   meta_description: Maybe<Scalars['String']['output']>;
-  /** Tribe meta title */
+  /** The tribe page meta title, with placeholders such as the tribe name filled in. */
   meta_title: Maybe<Scalars['String']['output']>;
-  /** Tribe name */
+  /** The tribe's name. */
   name: Scalars['String']['output'];
-  /** Opening hours */
+  /** Regular opening hours as a list of objects with `day`, `open` and `close`, one for each weekday and one for holidays, as entered. */
   opening_hours: Maybe<Scalars['JsonParser']['output']>;
-  /** Opening hours */
+  /** Opening hours as an object keyed by day (`Monday` to `Sunday`, and `Holiday`), each a list of periods with `open` and `close`. Times are 24-hour `HH:MM`, or 12-hour such as `9:00 am` when the tribe uses 12-hour time, and can be `Closed`. */
   opening_hours_array: Maybe<Scalars['JsonParser']['output']>;
-  /** Opening hours message */
+  /** A message to show with the opening hours. */
   opening_hours_message: Maybe<Scalars['String']['output']>;
-  /** organic_cid */
+  /** The call tracking provider's code for `organic_number`. */
   organic_cid: Maybe<Scalars['String']['output']>;
-  /** Organic number */
+  /** The call tracking number shown to visitors from organic search, formatted from E.164 to the national format of its country, for example `(02) 9876 5432`. */
   organic_number: Maybe<Scalars['String']['output']>;
-  /** Organisation Id */
+  /** The id of the organisation the tribe belongs to. */
   organisation_id: Scalars['Int']['output'];
-  /** OurWorks */
+  /** Published examples of the tribe's work, newest first. */
   ourWorks: Maybe<Array<Maybe<OurWork>>>;
-  /** page_heading */
+  /** The heading at the top of the tribe page, with placeholders such as the tribe name filled in. */
   page_heading: Maybe<Scalars['String']['output']>;
-  /** page_sub_heading */
+  /** The sub heading at the top of the tribe page, with placeholders such as the tribe name filled in. */
   page_sub_heading: Maybe<Scalars['String']['output']>;
-  /** paid_cid */
+  /** The call tracking provider's code for `paid_number`. */
   paid_cid: Maybe<Scalars['String']['output']>;
-  /** Paid number */
+  /** The call tracking number shown to visitors from paid search, formatted from E.164 to the national format of its country, for example `(02) 9876 5432`. */
   paid_number: Maybe<Scalars['String']['output']>;
-  /** phone extension */
+  /** The extension for `main_telephone`. */
   phone_extension: Maybe<Scalars['String']['output']>;
-  /** Tribe postal_code */
+  /** The tribe's postal code. Uses the organisation's address instead when the tribe is set to use it. */
   postal_code: Maybe<Scalars['String']['output']>;
-  /** public email */
+  /** The tribe's public email address. */
   public_email: Maybe<Scalars['String']['output']>;
-  /** Job Postings */
+  /** Active, published job postings at the tribe. */
   recruitment_postings: Maybe<Array<Maybe<RecruitmentPosting>>>;
-  /** Tribe Active Shop */
+  /** Whether the tribe has an active online store. */
   shop_active: Maybe<Scalars['Boolean']['output']>;
-  /** Show opening hours message */
+  /** Whether the opening hours message should be shown. */
   show_opening_hours: Maybe<Scalars['Boolean']['output']>;
-  /** Tribe Shop Price */
+  /** Whether the tribe's online store shows prices. */
   show_price: Maybe<Scalars['Boolean']['output']>;
-  /** Tribe slug */
+  /** The tribe's URL slug. */
   slug: Scalars['String']['output'];
-  /** SMS Label */
+  /** The label for the SMS consent checkbox. Null unless `sms_legal_message_enabled` is true. */
   sms_checkbox_label: Maybe<Scalars['String']['output']>;
-  /** SMS Legal Message */
+  /** The SMS consent legal message. Null unless `sms_legal_message_enabled` is true. */
   sms_legal_message: Maybe<Scalars['String']['output']>;
-  /** SMS Legal Message Enabled */
+  /** Whether an SMS consent message should be shown on the tribe's forms. */
   sms_legal_message_enabled: Scalars['Boolean']['output'];
-  /** SMS Legal Message Mode */
+  /** How SMS consent is collected on forms. Null unless `sms_legal_message_enabled` is true. */
   sms_legal_message_mode: Maybe<Scalars['String']['output']>;
-  /** SMS Radio No */
+  /** The label for the 'no' SMS consent option. Null unless `sms_legal_message_enabled` is true. */
   sms_radio_no_label: Maybe<Scalars['String']['output']>;
-  /** SMS Radio Yes */
+  /** The label for the 'yes' SMS consent option. Null unless `sms_legal_message_enabled` is true. */
   sms_radio_yes_label: Maybe<Scalars['String']['output']>;
   /** Facebook URL */
   social_facebook_url: Maybe<Scalars['String']['output']>;
@@ -2941,44 +2966,44 @@ export type Tribe = {
   social_yelp_url: Maybe<Scalars['String']['output']>;
   /** Youtube URL */
   social_youtube_url: Maybe<Scalars['String']['output']>;
-  /** Tribe state */
+  /** The tribe's state or province. Uses the organisation's address instead when the tribe is set to use it. */
   state: Maybe<Scalars['String']['output']>;
-  /** Tribe state abbreviated */
+  /** The short form of the tribe's state, for example `NSW`. Always the tribe's own value. */
   state_abbreviated: Maybe<Scalars['String']['output']>;
-  /** Tribe status */
+  /** The tribe status: `Active`, `Opening Soon`, `Testing`, `Paused` or `Deleted`. */
   status: Maybe<Scalars['String']['output']>;
-  /** Stripe public key */
+  /** The Stripe publishable key for the tribe's online store. Null when the tribe has no active Stripe store. */
   stripe_public_key: Maybe<Scalars['String']['output']>;
-  /** sub_heading */
+  /** The tribe page sub heading, with placeholders such as the tribe name filled in. */
   sub_heading: Maybe<Scalars['String']['output']>;
-  /** Team members */
+  /** People from the organisation chart who work at the tribe, in their saved order. */
   teamMembers: Maybe<Array<Maybe<OrgChartPerson>>>;
-  /** Url Triggers */
+  /** Rules for swapping the displayed telephone number based on the page URL, as JSON, with numbers formatted from E.164 to national format. */
   telephone_url_triggers: Maybe<Scalars['JsonParser']['output']>;
-  /** Timezone */
+  /** The tribe's timezone, for example `Australia/Sydney`. */
   timezone: Maybe<Scalars['String']['output']>;
-  /** Tracking code */
+  /** Tracking code to add to the tribe's pages. */
   tracking_code: Maybe<Scalars['String']['output']>;
-  /** Menus */
+  /** Navigation menus for the tribe's pages. */
   tribe_menus: Maybe<Array<Maybe<TribeMenu>>>;
-  /** Opening hours */
+  /** The same value as `opening_hours_array`. */
   tribe_opening_hours: Maybe<Scalars['JsonParser']['output']>;
-  /** Tribe Sort Order */
+  /** The sort position of the tribe in tribe lists. */
   tribe_sort_order: Maybe<Scalars['Int']['output']>;
-  /** Belong to tribe types */
+  /** The tribe types the tribe belongs to. */
   tribe_types: Maybe<Array<Maybe<TribeType>>>;
   /** Whether the website may swap displayed phone numbers by traffic source (organisation master switch AND tribe opt-in) */
   website_number_swap_enabled: Scalars['Boolean']['output'];
-  /** website pages */
+  /** Website pages created for the tribe. */
   website_pages: Maybe<Array<Maybe<WebsitePage>>>;
-  /** Whatsapp number */
+  /** The tribe's WhatsApp number, as entered. */
   whats_app_number: Maybe<Scalars['String']['output']>;
-  /** Yelp Review URL */
+  /** The link customers use to leave a Yelp review. */
   yelp_review_url: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A tribe */
+/** A tribe, one location of the organisation, with its address, contact details, opening hours and page content. */
 export type TribeAll_MediaArgs = {
   count: InputMaybe<Scalars['Int']['input']>;
   desc: InputMaybe<Scalars['Boolean']['input']>;
@@ -2989,13 +3014,13 @@ export type TribeAll_MediaArgs = {
 };
 
 
-/** A tribe */
+/** A tribe, one location of the organisation, with its address, contact details, opening hours and page content. */
 export type TribeComponent_TypesArgs = {
   componentTypeName: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A tribe */
+/** A tribe, one location of the organisation, with its address, contact details, opening hours and page content. */
 export type TribeContentsArgs = {
   name: InputMaybe<Scalars['String']['input']>;
   names: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -3003,25 +3028,25 @@ export type TribeContentsArgs = {
 };
 
 
-/** A tribe */
+/** A tribe, one location of the organisation, with its address, contact details, opening hours and page content. */
 export type TribeMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A tribe */
+/** A tribe, one location of the organisation, with its address, contact details, opening hours and page content. */
 export type TribeOurWorksArgs = {
   slug: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A tribe */
+/** A tribe, one location of the organisation, with its address, contact details, opening hours and page content. */
 export type TribeTeamMembersArgs = {
   active: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
-/** A tribe */
+/** A tribe, one location of the organisation, with its address, contact details, opening hours and page content. */
 export type TribeTribe_MenusArgs = {
   locale: InputMaybe<Scalars['String']['input']>;
   menus: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -3029,49 +3054,49 @@ export type TribeTribe_MenusArgs = {
 };
 
 
-/** A tribe */
+/** A tribe, one location of the organisation, with its address, contact details, opening hours and page content. */
 export type TribeWebsite_PagesArgs = {
   slug: InputMaybe<Scalars['String']['input']>;
   website_id: InputMaybe<Scalars['Int']['input']>;
 };
 
-/** A tribe component */
+/** A component used on tribes' pages, with its contents and the tribes it is active for. */
 export type TribeComponent = {
   __typename?: 'TribeComponent';
-  /** Tribes */
+  /** The active tribes that use the component. */
   activeTribes: Maybe<Array<Maybe<Tribe>>>;
-  /** Component contents */
+  /** The component's contents. */
   contents: Maybe<Array<Maybe<TribeComponentContent>>>;
   /** Component name */
   name: Maybe<Scalars['String']['output']>;
   /** Component slug */
   slug: Maybe<Scalars['String']['output']>;
-  /** Component Type */
+  /** The component's type. */
   type: Maybe<TribeComponentType>;
 };
 
 
-/** A tribe component */
+/** A component used on tribes' pages, with its contents and the tribes it is active for. */
 export type TribeComponentContentsArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   type: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A tribe component content */
+/** One named value inside a tribe component, such as a heading or an image. */
 export type TribeComponentContent = {
   __typename?: 'TribeComponentContent';
-  /** Component content media */
+  /** Images attached to this record, grouped into named collections such as `main`, `gallery` or `banner`. Each image includes absolute CDN URLs for every size. */
   media_collection: Maybe<Array<MediaCollection>>;
   /** Component content name */
   name: Maybe<Scalars['String']['output']>;
   /** Component content type */
   type: Maybe<Scalars['String']['output']>;
-  /** Component content value */
+  /** The text value, as stored. It is not translated. */
   value: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A tribe component content */
+/** One named value inside a tribe component, such as a heading or an image. */
 export type TribeComponentContentMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -3097,10 +3122,10 @@ export type TribeComponentPagination = {
   total: Scalars['Int']['output'];
 };
 
-/** A tribe component type */
+/** A type of component used on a tribe's pages, with the components of that type. */
 export type TribeComponentType = {
   __typename?: 'TribeComponentType';
-  /** Components */
+  /** The components of this type, in their saved order. */
   components: Maybe<Array<Maybe<TribeComponent>>>;
   /** Component type name */
   name: Maybe<Scalars['String']['output']>;
@@ -3109,202 +3134,203 @@ export type TribeComponentType = {
 };
 
 
-/** A tribe component type */
+/** A type of component used on a tribe's pages, with the components of that type. */
 export type TribeComponentTypeComponentsArgs = {
   name: InputMaybe<Scalars['String']['input']>;
   slug: InputMaybe<Scalars['String']['input']>;
 };
 
-/** A tribe content */
+/** A named piece of content on a tribe's pages, such as a heading, text block or image. */
 export type TribeContent = {
   __typename?: 'TribeContent';
-  /** Website content media */
+  /** Images held by this content, grouped into named collections, using the requested locale's images when a translation has its own. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
-  /** Website content name */
+  /** The content name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Website content type */
+  /** The content type, for example `Short Text` or `Single Image`. */
   type: Maybe<Scalars['String']['output']>;
-  /** Website content value */
+  /** The text value in the requested locale, with tribe placeholders filled in. Null for image content; read `media_collection` instead. */
   value: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A tribe content */
+/** A named piece of content on a tribe's pages, such as a heading, text block or image. */
 export type TribeContentMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A tribe menus */
+/** A navigation menu for a tribe's pages. */
 export type TribeMenu = {
   __typename?: 'TribeMenu';
-  /** Menu json */
+  /** The menu structure, as JSON. */
   data: Maybe<Scalars['JsonParser']['output']>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed, so it cannot be used to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
+  /** The menu name. An empty string when the menu has no data. */
   name: Maybe<Scalars['String']['output']>;
 };
 
-/** A tribe type */
+/** A tribe type, used to group tribes that share menus, content and promotions. */
 export type TribeType = {
   __typename?: 'TribeType';
-  /** Tribe type name */
+  /** The tribe type's name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Tribe type short code */
+  /** A short code for the tribe type. */
   short_code: Maybe<Scalars['String']['output']>;
 };
 
-/** A website content */
+/** A named piece of content in a website section, such as a heading, text block or image. */
 export type WebsiteContent = {
   __typename?: 'WebsiteContent';
-  /** Last Updated At */
+  /** The start of the current day, not when the record changed. Use `last_updated_at` on the `websiteInfo` query to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Website content media */
+  /** Images held by this content, grouped into named collections, using the requested locale's images when a translation has its own. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
-  /** Website content name */
+  /** The content name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Website content type */
+  /** The content type, for example `Short Text`, `Rich Text` or `Gallery`. */
   type: Maybe<Scalars['String']['output']>;
-  /** Website content value */
+  /** The text value in the requested locale. Null for image content; read `media_collection` instead. */
   value: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A website content */
+/** A named piece of content in a website section, such as a heading, text block or image. */
 export type WebsiteContentMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A website menu */
+/** A navigation menu on the website. */
 export type WebsiteMenu = {
   __typename?: 'WebsiteMenu';
-  /** Last Updated At */
+  /** The time of the request, not when the record changed. Use `last_updated_at` on the `websiteInfo` query to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Website menu json */
+  /** The menu structure, as JSON. */
   menu_json: Maybe<Scalars['JsonParser']['output']>;
-  /** Website menu name */
+  /** The menu name. */
   name: Maybe<Scalars['String']['output']>;
 };
 
-/** A website redirect type */
+/** A redirect rule that sends visitors from one address on the website to another. */
 export type WebsiteRedirect = {
   __typename?: 'WebsiteRedirect';
-  /** From url */
+  /** The address to redirect from. */
   from: Scalars['String']['output'];
-  /** Last Updated At */
+  /** The time of the request, not when the record changed, so it cannot be used to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** To url */
+  /** The address to redirect to. */
   to: Scalars['String']['output'];
 };
 
-/** A website section */
+/** A named section of the website, such as a header or footer, holding shared content. */
 export type WebsiteSection = {
   __typename?: 'WebsiteSection';
-  /** Website content list */
+  /** The content in the section. */
   contents: Maybe<Array<Maybe<WebsiteContent>>>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed. Use `last_updated_at` on the `websiteInfo` query to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Website section name */
+  /** The section name. */
   name: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A website section */
+/** A named section of the website, such as a header or footer, holding shared content. */
 export type WebsiteSectionContentsArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A article field type */
+/** A custom field on an article, defined by the article's page template. */
 export type ArticleFields = {
   __typename?: 'articleFields';
-  /** Article field media */
+  /** Images held by this content, grouped into named collections, using the requested locale's images when a translation has its own. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
   /** Article field name */
   name: Maybe<Scalars['String']['output']>;
-  /** Article field source */
+  /** Where the field comes from, for example `template`. */
   source: Maybe<Scalars['String']['output']>;
-  /** Article field type */
+  /** The field type, for example `Short Text`, `Rich Text` or `Single Image`. */
   type: Maybe<Scalars['String']['output']>;
-  /** Article field value */
+  /** The field value in the requested locale. Null for image fields; read `media_collection` instead. */
   value: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A article field type */
+/** A custom field on an article, defined by the article's page template. */
 export type ArticleFieldsMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A child website */
+/** A website that belongs to a child organisation of this website's organisation. */
 export type ChildWebsite = {
   __typename?: 'childWebsite';
-  /** Website base tribe path */
+  /** Path prefix for tribe pages on the child website; a tribe's path is this prefix followed by its slug. */
   base_tribes_path: Maybe<Scalars['String']['output']>;
-  /** Organisation Id */
+  /** The id of the child organisation that owns the website. */
   organisation_id: Maybe<Scalars['Int']['output']>;
-  /** Website url */
+  /** The child website's public base URL. */
   website_url: Maybe<Scalars['String']['output']>;
 };
 
-/** A login user data by type */
+/** The customer a login token belongs to, with their contact details and stored attributes. */
 export type LoginUserByToken = {
   __typename?: 'loginUserByToken';
-  /** Address 1 */
+  /** The first line of the street address. */
   address_1: Maybe<Scalars['String']['output']>;
   /** Country */
   country: Maybe<Scalars['String']['output']>;
-  /** Email */
+  /** The customer's email address. */
   email: Scalars['String']['output'];
   /** First name */
   first_name: Scalars['String']['output'];
   /** Last name */
   last_name: Scalars['String']['output'];
-  /** Locality */
+  /** The suburb, town or city. */
   locality: Maybe<Scalars['String']['output']>;
-  /** attributes */
+  /** Values stored against the login for one platform. */
   loginAttributes: Maybe<Array<LoginAttribute>>;
-  /** Mobile dail code */
+  /** The dialling code of the mobile number, for example `+61`. */
   mobile_code: Maybe<Scalars['String']['output']>;
-  /** Mobile country code */
+  /** The two-letter country code of the mobile number, for example `AU`. */
   mobile_country: Maybe<Scalars['String']['output']>;
-  /** Mobile Display */
+  /** The mobile number formatted for display. */
   mobile_display: Maybe<Scalars['String']['output']>;
-  /** Mobile E164 */
+  /** The mobile number in E.164 format, for example `+61412345678`. */
   mobile_e164: Maybe<Scalars['String']['output']>;
-  /** postal code */
+  /** The postal code. */
   postal_code: Maybe<Scalars['String']['output']>;
-  /** State */
+  /** The state or province. */
   state: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A login user data by type */
+/** The customer a login token belongs to, with their contact details and stored attributes. */
 export type LoginUserByTokenLoginAttributesArgs = {
   attribute_names: Array<InputMaybe<Scalars['String']['input']>>;
   platform: Scalars['String']['input'];
 };
 
-/** A organisation type */
+/** The organisation that owns the website, with its currency, public contact details and media library. */
 export type Organisation = {
   __typename?: 'organisation';
-  /** All Organisation Media */
+  /** Items in the organisation's media library, 20 by default. */
   all_media: Maybe<Array<Maybe<OriginMedia>>>;
-  /** Currency */
+  /** The organisation's currency code, for example `AUD` or `USD`. */
   currency: Maybe<Scalars['String']['output']>;
-  /** Currency symbol */
+  /** The symbol to show beside prices, for example `$`. */
   currency_symbol: Maybe<Scalars['String']['output']>;
-  /** Public Email Address */
+  /** The organisation's public email address. */
   email_address: Maybe<Scalars['String']['output']>;
-  /** Media name */
+  /** The organisation's name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Tel E164 */
+  /** The organisation's public telephone number in E.164 format, for example `+61412345678`. */
   tel_e164: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A organisation type */
+/** The organisation that owns the website, with its currency, public contact details and media library. */
 export type OrganisationAll_MediaArgs = {
   count: InputMaybe<Scalars['Int']['input']>;
   desc: InputMaybe<Scalars['Boolean']['input']>;
@@ -3314,140 +3340,140 @@ export type OrganisationAll_MediaArgs = {
   star: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-/** A store setting */
+/** Online store settings, such as tax, pricing, preparation time and pickup rules. */
 export type StoreSetting = {
   __typename?: 'storeSetting';
-  /** Store active */
+  /** Whether the store is active. */
   active: Scalars['Boolean']['output'];
-  /** Business legal name */
+  /** The legal name of the business. */
   business_legal_name: Maybe<Scalars['String']['output']>;
-  /** Business tax number */
+  /** The business's tax number. */
   business_tax_number: Maybe<Scalars['String']['output']>;
-  /** Delivery only open hours */
+  /** Whether delivery and pickup times are limited to the tribe's opening hours. */
   delivery_only_open_hours: Maybe<Scalars['Boolean']['output']>;
-  /** Early pickup message */
+  /** A message shown to customers about early pickup. */
   early_pickup_message: Maybe<Scalars['String']['output']>;
-  /** Early pickup minimum */
+  /** The minimum order amount for early pickup, in major currency units (for example dollars). */
   early_pickup_minimum: Maybe<Scalars['Float']['output']>;
-  /** Enable early pickup */
+  /** Whether early pickup is offered. */
   enable_early_pickup: Maybe<Scalars['Boolean']['output']>;
-  /** Enable tribe pricing */
+  /** Whether tribes can set their own prices. */
   enable_tribe_pricing: Maybe<Scalars['Boolean']['output']>;
-  /** Minimum installation fee */
+  /** The minimum installation fee, in major currency units (for example dollars). */
   min_installation_fee: Maybe<Scalars['Float']['output']>;
-  /** Minimum preparation time */
+  /** The minimum time needed to prepare an order, in minutes. */
   minimum_preparation_time: Maybe<Scalars['Int']['output']>;
-  /** Job Postings */
+  /** The organisation the store belongs to. */
   organisation: Organisation;
-  /** Show price */
+  /** Whether prices are shown in the store. */
   show_price: Maybe<Scalars['Boolean']['output']>;
-  /** Store tax rate */
+  /** The store's tax rate. Zero when no rate is set. */
   store_tax_rate: Scalars['Float']['output'];
-  /** Store tax settings */
+  /** How tax is applied: `No Tax`, `Included in price` or `Added to total`. An empty string when not set. */
   store_tax_settings: Scalars['String']['output'];
 };
 
-/** A tribe product category */
+/** A tribe's customised wording for a product category. */
 export type TribeProductCategoryType = {
   __typename?: 'tribeProductCategoryType';
-  /** Tribe Customize data */
+  /** The customised values, as JSON keyed by field name, for example `heading`. */
   data: Maybe<Scalars['JsonParser']['output']>;
-  /** Product category customize data id */
+  /** The customisation id. */
   id: Maybe<Scalars['Int']['output']>;
-  /** Product category tribe id */
+  /** The id of the tribe that made the customisation. */
   tribe_id: Maybe<Scalars['Int']['output']>;
 };
 
-/** A tribe product range */
+/** A tribe's customised wording for a product range. */
 export type TribeProductRangeType = {
   __typename?: 'tribeProductRangeType';
-  /** Tribe Customize data */
+  /** The customised values, as JSON keyed by field name, for example `heading`. */
   data: Maybe<Scalars['JsonParser']['output']>;
-  /** Product range customize data id */
+  /** The customisation id. */
   id: Maybe<Scalars['Int']['output']>;
 };
 
-/** A website */
+/** A website managed in Gorilla Dash, with its base URL, path settings, organisation and theme. */
 export type Website = {
   __typename?: 'website';
-  /** Website base category path */
+  /** The path prefix for product category pages; a category path is this prefix followed by the category `slug`. */
   base_categories_path: Maybe<Scalars['String']['output']>;
-  /** Website base product path */
+  /** The path prefix for product pages; a product path is this prefix followed by the product `slug`. */
   base_products_path: Maybe<Scalars['String']['output']>;
-  /** Website base range path */
+  /** The path prefix for product range pages; a range path is this prefix followed by the range `slug`. */
   base_ranges_path: Maybe<Scalars['String']['output']>;
-  /** Website base tribe path */
+  /** The path prefix for tribe pages; a tribe path is this prefix followed by the tribe `slug`. */
   base_tribes_path: Maybe<Scalars['String']['output']>;
-  /** Last Updated At */
+  /** When the website's pages, page content, sections, section content or menus last changed, or its settings were saved. Use it to detect changes to website content. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Website name */
+  /** The website name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Organisation */
+  /** The organisation that owns the website. */
   organisation: Maybe<Organisation>;
   /** Theme tokens for this website */
   style: Maybe<WebsiteStyle>;
-  /** Website url */
+  /** The website's public base URL, for example `https://www.example.com`. */
   url: Maybe<Scalars['String']['output']>;
 };
 
-/** A website faq */
+/** A frequently asked question and its answer. */
 export type WebsiteFaq = {
   __typename?: 'websiteFaq';
-  /** Answer */
+  /** The answer. */
   answer: Maybe<Scalars['String']['output']>;
-  /** Faq category */
+  /** The category the question belongs to. */
   faq_category: Maybe<WebsiteFaqCategory>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed, so it cannot be used to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Question */
+  /** The question. */
   question: Maybe<Scalars['String']['output']>;
-  /** Slug */
+  /** The question's URL slug. */
   slug: Maybe<Scalars['String']['output']>;
-  /** Sort */
+  /** The sort position within the category. */
   sort: Maybe<Scalars['Int']['output']>;
 };
 
-/** A website faq category */
+/** A group of frequently asked questions on the website. */
 export type WebsiteFaqCategory = {
   __typename?: 'websiteFaqCategory';
-  /** Last Updated At */
+  /** The time of the request, not when the record changed, so it cannot be used to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Name */
+  /** The category name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Sort */
+  /** The sort position of the category. */
   sort: Maybe<Scalars['Int']['output']>;
-  /** Website faqs */
+  /** The questions in the category. */
   website_faqs: Maybe<Array<Maybe<WebsiteFaq>>>;
 };
 
-/** A website page type */
+/** A page on the website, with its content, SEO fields, template and related records. */
 export type WebsitePage = {
   __typename?: 'websitePage';
-  /** Page html body */
+  /** The page body HTML, in the requested locale. */
   body: Maybe<Scalars['String']['output']>;
-  /** Website page component type */
+  /** Component types used on the page, with their components. */
   componentTypes: Maybe<Array<Maybe<ComponentType>>>;
-  /** Website page contents */
+  /** The page's named content. Content placed with the page builder is not included. */
   contents: Maybe<Array<Maybe<WebsitePageContent>>>;
   /** Website page related food menu list items */
   foodMenuListItems: Maybe<Array<Maybe<FoodMenuListItem>>>;
-  /** Is tribe page */
+  /** Whether the page belongs to a tribe. */
   is_tribe_page: Maybe<Scalars['Boolean']['output']>;
-  /** Last Updated At */
+  /** The time of the request, not when the record changed. Use `last_updated_at` on the `websiteInfo` query to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Menu label */
+  /** The label to use for the page in menus. */
   menu_label: Maybe<Scalars['String']['output']>;
-  /** Order Number */
+  /** The sort position of the page in menus. */
   menu_order: Maybe<Scalars['Int']['output']>;
-  /** Menu Section */
+  /** The menu section the page appears under. */
   menu_section: Maybe<Scalars['String']['output']>;
-  /** Meta description */
+  /** The page meta description in the requested locale, with placeholders such as the tribe name filled in. */
   meta_description: Maybe<Scalars['String']['output']>;
-  /** Meta title */
+  /** The page meta title in the requested locale, with placeholders such as the tribe name filled in. */
   meta_title: Maybe<Scalars['String']['output']>;
-  /** Website page name */
+  /** The page name, in the requested locale. */
   name: Maybe<Scalars['String']['output']>;
-  /** No index */
+  /** Whether search engines should be told not to index the page. */
   no_index: Maybe<Scalars['Boolean']['output']>;
   /** Website page related product categories */
   productCategories: Maybe<Array<Maybe<ProductCategory>>>;
@@ -3455,70 +3481,70 @@ export type WebsitePage = {
   productRanges: Maybe<Array<Maybe<ProductRange>>>;
   /** Website page related products */
   products: Maybe<Array<Maybe<Product>>>;
-  /** Show in menu */
+  /** Whether the page should appear in navigation menus. */
   show_in_menu: Maybe<Scalars['Boolean']['output']>;
-  /** Website page slug */
+  /** The page's URL slug, in the requested locale. */
   slug: Maybe<Scalars['String']['output']>;
-  /** Website page template name */
+  /** The name of the template the page uses. */
   template_name: Maybe<Scalars['String']['output']>;
-  /** Website page template slug */
+  /** The slug of the template the page uses. */
   template_slug: Maybe<Scalars['String']['output']>;
-  /** tracking parameters */
+  /** Tracking parameters configured for the page, as JSON. */
   tracking_parameters: Maybe<Scalars['JsonParser']['output']>;
-  /** Website page tribe */
+  /** The tribe the page belongs to, for tribe pages. */
   tribe: Maybe<Tribe>;
   /** Website page related tribes */
   tribes: Maybe<Array<Maybe<Tribe>>>;
-  /** Vue route name */
+  /** The front-end route name for the page, taken from its template when the page does not set one. */
   vue_route_name: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A website page type */
+/** A page on the website, with its content, SEO fields, template and related records. */
 export type WebsitePageComponentTypesArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** A website page type */
+/** A page on the website, with its content, SEO fields, template and related records. */
 export type WebsitePageFoodMenuListItemsArgs = {
   status: InputMaybe<Scalars['String']['input']>;
 };
 
-/** A website page content type */
+/** A named piece of content on a website page, such as a heading, text block or image. */
 export type WebsitePageContent = {
   __typename?: 'websitePageContent';
-  /** Last Updated At */
+  /** The start of the current day, not when the record changed. Use `last_updated_at` on the `websiteInfo` query to detect changes. */
   last_updated_at: Maybe<Scalars['String']['output']>;
-  /** Website page media */
+  /** Images held by this content, grouped into named collections, using the requested locale's images when a translation has its own. Each image includes absolute CDN URLs for every size. */
   media_collection: Array<MediaCollection>;
-  /** Website page content name */
+  /** The content name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Website page content source */
+  /** Where the content comes from: `single` for content entered on this page, or `template` for a field from the page template. */
   source: Maybe<Scalars['String']['output']>;
-  /** Website page content type */
+  /** The content type, for example `Short Text`, `Rich Text` or `Single Image`. */
   type: Maybe<Scalars['String']['output']>;
-  /** Website page content value */
+  /** The text value in the requested locale. Null for image content; read `media_collection` instead. */
   value: Maybe<Scalars['String']['output']>;
 };
 
 
-/** A website page content type */
+/** A named piece of content on a website page, such as a heading, text block or image. */
 export type WebsitePageContentMedia_CollectionArgs = {
   name: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   size: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A website page template type */
+/** A page template that website pages are built from. */
 export type WebsitePageTemplate = {
   __typename?: 'websitePageTemplate';
-  /** Website page name */
+  /** The template name. */
   name: Maybe<Scalars['String']['output']>;
-  /** Website page organisation template */
+  /** Whether the template is for organisation-level pages. */
   organisation_template: Maybe<Scalars['Boolean']['output']>;
-  /** Website page slug */
+  /** The template slug. */
   slug: Maybe<Scalars['String']['output']>;
-  /** Website page tribe template */
+  /** Whether the template is for tribe pages. */
   tribe_template: Maybe<Scalars['Boolean']['output']>;
 };
 

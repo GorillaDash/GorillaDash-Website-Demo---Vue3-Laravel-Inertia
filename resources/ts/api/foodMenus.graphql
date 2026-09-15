@@ -1,0 +1,57 @@
+fragment FoodModifierGroupInfo on FoodModifierGroup {
+  id
+  name
+  label
+  minimum_selection
+  maximum_selection
+  no_minimum
+  no_maximum
+  foodModifiers {
+    id
+    label
+    price
+  }
+}
+
+# `default_price` must be selected alongside `price`: the price resolver falls back to
+# it, and Gorilla Dash only loads the columns a query asks for.
+fragment FoodMenuItemInfo on FoodMenuItem {
+  id
+  name
+  description
+  default_price
+  price
+  allergy_statement
+  foodModifierGroups {
+    ...FoodModifierGroupInfo
+  }
+}
+
+fragment FoodMenuListItemInfo on FoodMenuListItem {
+  id
+  name
+  slug
+  description
+  type
+  sort
+  foodMenuItems {
+    ...FoodMenuItemInfo
+  }
+}
+
+# A whole organisation food menu by name: sections, the cards in each, and the
+# sellable items (one per size) behind every card.
+query getFoodMenu($name: String!, $locale: String) {
+  foodMenu(name: $name, locale: $locale) {
+    name
+    foodMenuSections {
+      name
+      slug
+      description
+      sort
+      foodMenuListItems {
+        ...FoodMenuListItemInfo
+      }
+    }
+  }
+}

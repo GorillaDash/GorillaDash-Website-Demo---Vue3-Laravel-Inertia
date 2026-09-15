@@ -1,0 +1,13 @@
+query getReviews($tribeSlug: String, $featured: Boolean, $count: Int) {
+  reviews(tribe_slug: $tribeSlug, featured: $featured, count: $count, sort_by: "newest") {
+    id
+    name
+    rating
+    review
+    created_at
+    tribe {
+      name
+      slug
+    }
+  }
+}

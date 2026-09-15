@@ -14,7 +14,7 @@ import {
  * plus a page number, not its own API.
  */
 export type ArticlePaginationType = {
-  categories: string[]
+  categories: string[] | null
   itemsPerPage: number
   page: number
 }

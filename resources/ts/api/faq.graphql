@@ -1,0 +1,12 @@
+query getFaqs {
+  websiteFaqCategory {
+    name
+    sort
+    website_faqs {
+      question
+      answer
+      slug
+      sort
+    }
+  }
+}
