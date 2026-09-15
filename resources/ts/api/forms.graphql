@@ -1,0 +1,70 @@
+# The appointment types come from Gorilla Dash by name, so the stepper's first
+# step is only the labels the site shows; the slots are generated from the tribe's
+# opening hours.
+query getAppointmentTimes($slug: String!, $type: String!, $date: String!) {
+  appointmentAvailableTime(slug: $slug, type: $type, date: $date) {
+    type
+    date
+    times
+  }
+}
+
+mutation submitAppointment(
+  $slug: String!
+  $type: String!
+  $datetime: String!
+  $firstName: String!
+  $lastName: String!
+  $email: String!
+  $phone: String!
+  $comments: String
+  $data: String
+) {
+  submitAppointment(
+    slug: $slug
+    type: $type
+    datetime: $datetime
+    first_name: $firstName
+    last_name: $lastName
+    email: $email
+    phone: $phone
+    comments: $comments
+    data: $data
+  )
+}
+
+query getEnquiryForm($name: String!) {
+  enquiryForm(name: $name) {
+    name
+    fields {
+      name
+      type
+      value
+    }
+  }
+}
+
+# `slug` names the enquiry form; `fields` are {name, value} objects matched to the
+# form's fields by name.
+mutation submitEnquiry(
+  $slug: String!
+  $firstName: String!
+  $lastName: String
+  $email: String!
+  $mobile: String
+  $fields: [JsonParser]!
+  $tribes: [String]
+  $submitUrl: String
+) {
+  submitEnquiry(
+    slug: $slug
+    first_name: $firstName
+    last_name: $lastName
+    email: $email
+    mobile: $mobile
+    fields: $fields
+    tribes: $tribes
+    submit_url: $submitUrl
+    source: "Website"
+  )
+}

@@ -14,8 +14,9 @@ const props = withDefaults(
     external?: boolean
     type?: 'button' | 'submit'
     disabled?: boolean
+    form?: string
   }>(),
-  { href: undefined, variant: 'primary', size: 'md', external: false, type: 'button', disabled: false }
+  { href: undefined, variant: 'primary', size: 'md', external: false, type: 'button', disabled: false, form: undefined }
 )
 
 const variantClasses = {
@@ -50,6 +51,7 @@ const tag = computed(() => {
     :href="tag === 'button' ? undefined : href"
     :type="tag === 'button' ? type : undefined"
     :disabled="tag === 'button' ? disabled : undefined"
+    :form="tag === 'button' ? form : undefined"
     v-bind="external ? { target: '_blank', rel: 'noopener noreferrer' } : {}"
     :class="[
       'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-50',
