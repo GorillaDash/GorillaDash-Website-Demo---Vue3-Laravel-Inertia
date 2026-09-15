@@ -47,6 +47,9 @@ describe('with the default CMS slugs', function () {
             fn (AssertableInertia $page) => $page
             ->where('cmsRoutes', [
                 'locations.show' => ['uri' => '/{page}/{slug}', 'page' => 'locations'],
+                'menu.item' => ['uri' => '/{page}/{section}/{item}', 'page' => 'menu'],
+                'ourWork.show' => ['uri' => '/{page}/{work}', 'page' => 'our-work'],
+                'blog.show' => ['uri' => '/{page}/{article}', 'page' => 'blog'],
             ])
         );
     });
@@ -232,6 +235,9 @@ describe('on a multilingual deployment with per-locale slugs', function () {
             fn (AssertableInertia $page) => $page
             ->where('cmsRoutes', [
                 'locations.show' => ['uri' => '/{page}/{slug}', 'page' => 'locations'],
+                'menu.item' => ['uri' => '/{page}/{section}/{item}', 'page' => 'menu'],
+                'ourWork.show' => ['uri' => '/{page}/{work}', 'page' => 'our-work'],
+                'blog.show' => ['uri' => '/{page}/{article}', 'page' => 'blog'],
             ])
         );
     });

@@ -217,5 +217,11 @@ function fakeTribe(?string $slug): void
         'postal_code' => '35216',
     ];
 
-    fakeGraphql(['tribe' => ['tribe' => $tribe]]);
+    // `tribes` first: the directory query also contains the word `tribe`. The store page
+    // checks its slug against that list (App\Services\Catalogue\TribeDirectory), the
+    // bound-store lookup reads the single tribe.
+    fakeGraphql([
+        'tribes' => ['tribes' => $slug === null ? [] : [['slug' => $slug]]],
+        'tribe' => ['tribe' => $tribe],
+    ]);
 }
