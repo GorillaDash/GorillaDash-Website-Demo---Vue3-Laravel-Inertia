@@ -3,57 +3,60 @@ import { computed } from 'vue'
 import LocaleLink from '@/components/core/LocaleLink.vue'
 
 /**
- * Pill-shaped CTA used across marketing sections (Figma "Button" component).
- * Renders a <LocaleLink> (Inertia's <Link>, locale-prefixed) for internal hrefs, a
- * plain anchor for external — and for an empty href, since Inertia's <Link> resolves
- * "" to "/" on the client but leaves it "" during SSR, which hydration-mismatches;
- * a plain <a> renders the attribute verbatim on both sides. Both render an <a>, so
- * the node type is stable.
- *
- * An absolute URL (https:, mailto:, tel:, …) is always a plain <a>, same tab — an
- * Inertia <Link> cannot visit another origin, so any off-site CTA (a store's ordering
- * URL, a franchise site) has to bypass it. `external` additionally opens a new tab.
- *
- * Omit `href` altogether for a <button> and bind @click — a CTA that opens something
- * rather than navigating. Passing "" instead renders <a href="">, which reloads the
- * current page on click.
+ * The site's one button. Renders a LocaleLink for internal paths, an <a> for
+ * absolute URLs and a <button> when there is no href.
  */
 const props = withDefaults(
-    defineProps<{
-        href?: string | null;
-        variant?: 'primary' | 'light';
-        external?: boolean;
-    }>(),
-    { href: undefined, variant: 'primary', external: false },
-);
+  defineProps<{
+    href?: string | null
+    variant?: 'primary' | 'dark' | 'outline' | 'light' | 'ghost'
+    size?: 'sm' | 'md' | 'lg'
+    external?: boolean
+    type?: 'button' | 'submit'
+    disabled?: boolean
+  }>(),
+  { href: undefined, variant: 'primary', size: 'md', external: false, type: 'button', disabled: false }
+)
 
 const variantClasses = {
-    primary: 'bg-brand-accent text-white hover:bg-brand-accent-600',
-    light: 'bg-white text-brand-primary hover:bg-brand-tint',
-};
+  primary: 'bg-brand-accent text-brand-on-accent hover:bg-brand-accent-600',
+  dark: 'bg-brand-primary text-white hover:bg-brand-primary-700',
+  outline: 'border border-current text-brand-primary hover:bg-brand-primary hover:text-white',
+  light: 'bg-white text-brand-primary hover:bg-brand-tint',
+  ghost: 'text-brand-primary underline-offset-4 hover:underline'
+}
 
-const isAbsolute = (url: string | null) => url && /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(url);
+const sizeClasses = {
+  sm: 'px-4 py-2 text-sm',
+  md: 'px-6 py-3 text-base',
+  lg: 'px-8 py-4 text-lg'
+}
+
+const isAbsolute = (url: string | null | undefined) =>
+  !!url && /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(url)
 
 const tag = computed(() => {
-    if (props.href === undefined) {
-        return 'button';
-    }
+  if (props.href === undefined || props.href === null) {
+    return 'button'
+  }
 
-    return props.external || !props.href || isAbsolute(props.href) ? 'a' : LocaleLink;
-});
+  return props.external || isAbsolute(props.href) ? 'a' : LocaleLink
+})
 </script>
 
 <template>
-    <component
-        :is="tag"
-        :href="tag === 'button' ? undefined : href"
-        :type="tag === 'button' ? 'button' : undefined"
-        v-bind="external ? { target: '_blank', rel: 'noopener noreferrer' } : {}"
-        :class="[
-            'inline-flex cursor-pointer items-center justify-center gap-3 rounded-full px-8 py-3.5 text-base font-serif font-bold tracking-wider whitespace-nowrap transition-colors sm:px-10 sm:py-4 sm:text-lg',
-            variantClasses[variant],
-        ]"
-    >
-        <slot />
-    </component>
+  <component
+    :is="tag"
+    :href="tag === 'button' ? undefined : href"
+    :type="tag === 'button' ? type : undefined"
+    :disabled="tag === 'button' ? disabled : undefined"
+    v-bind="external ? { target: '_blank', rel: 'noopener noreferrer' } : {}"
+    :class="[
+      'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-50',
+      variantClasses[variant],
+      sizeClasses[size]
+    ]"
+  >
+    <slot />
+  </component>
 </template>

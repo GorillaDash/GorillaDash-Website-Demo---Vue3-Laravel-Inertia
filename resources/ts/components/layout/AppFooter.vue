@@ -1,122 +1,91 @@
 <script setup lang="ts">
-import LocaleLink from '@/components/core/LocaleLink.vue'
-import { useTranslate } from '@tolgee/vue'
 import { computed } from 'vue'
-import IconFacebook from '@/components/icons/IconFacebook.vue'
-import IconInstagram from '@/components/icons/IconInstagram.vue'
+import { useTranslate } from '@tolgee/vue'
+import LocaleLink from '@/components/core/LocaleLink.vue'
+import CmsBlock from '@/components/demo/CmsBlock.vue'
 import BrandLogo from '@/components/layout/BrandLogo.vue'
-import { socialLinks } from '@/constants/navigation'
+import { useSiteSection } from '@/composables/useSiteSection'
+import { STRUCTURE } from '@/constants/structure'
 import { useFooterMenuService } from '@/services/websiteMenus/footerMenuService'
 
 const { t } = useTranslate()
+const { value } = useSiteSection('Site Footer')
+const { footerColumns, legalLinks } = useFooterMenuService()
 
-const socialIcons = { instagram: IconInstagram, facebook: IconFacebook }
-
+const links = computed(() => footerColumns.value.flatMap((column) => column.links))
 const year = computed(() => new Date().getFullYear())
-
-// footerColumns (Top group) and legalLinks (Bottom group) come from the API
-// "Footer Menu"; socialLinks stays a constant — it isn't part of the menu.
-const { loading, footerColumns, legalLinks } = useFooterMenuService()
+const isExternal = (href: string) => /^https?:\/\//.test(href)
 </script>
 
 <template>
-  <footer class="bg-brand-primary text-white">
-    <div class="container py-12 lg:py-16">
-      <!-- Brand + link columns -->
-      <div class="flex flex-col gap-10 lg:flex-row lg:gap-16">
-        <BrandLogo class="h-11 lg:h-12" />
+  <CmsBlock
+    :info="STRUCTURE.footer"
+    as="footer"
+    class="bg-brand-primary pb-24 text-white"
+  >
+    <div class="container grid gap-12 py-16 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <BrandLogo class="text-white" />
+        <p class="mt-5 max-w-md leading-relaxed text-white/75">
+          {{ value('About Text') }}
+        </p>
+        <dl class="mt-6 space-y-1 text-sm text-white/75">
+          <div v-if="value('Head Office Phone')">
+            <dt class="sr-only">{{ t('Phone', 'Phone') }}</dt>
+            <dd>{{ value('Head Office Phone') }}</dd>
+          </div>
+          <div v-if="value('Head Office Email')">
+            <dt class="sr-only">{{ t('Email', 'Email') }}</dt>
+            <dd>{{ value('Head Office Email') }}</dd>
+          </div>
+        </dl>
+      </div>
 
-        <div class="grid flex-1 grid-cols-2 gap-8 sm:grid-cols-3 lg:gap-12">
-          <!-- Skeleton placeholders while the menu loads -->
-          <template v-if="loading && !footerColumns.length">
-            <div
-              v-for="col in 3"
-              :key="col"
-              class="flex flex-col gap-3"
-            >
-              <span
-                v-for="row in 4"
-                :key="row"
-                class="h-4 w-24 animate-pulse rounded bg-white/20"
-                aria-hidden="true"
-              />
-            </div>
-          </template>
-
-          <nav
-            v-for="(column, index) in footerColumns"
-            v-else
-            :key="index"
-            class="flex flex-col gap-3 font-serif text-base font-bold tracking-wide"
-            :aria-label="t('Footer', 'Footer')"
+      <nav
+        class="lg:col-span-7"
+        :aria-label="t('Footer', 'Footer')"
+      >
+        <ul class="grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3">
+          <li
+            v-for="link in links"
+            :key="link.label"
           >
             <LocaleLink
-              v-for="link in column.links"
-              :key="link.label"
               :href="link.href"
               class="text-white/80 transition-colors hover:text-white"
             >
               {{ link.label }}
             </LocaleLink>
-          </nav>
-        </div>
-      </div>
-
-      <hr class="my-8 border-brand-primary-700 lg:my-10" />
-
-      <!-- Bottom bar -->
-      <div
-        class="flex flex-col items-center gap-6 text-center text-sm md:flex-row md:justify-between md:gap-4 md:text-left"
-      >
-        <p class="font-serif font-bold text-white/70">
-          {{
-            t('footer.copyright', '© {year} Juniper Table. All rights reserved.', {
-              year: String(year)
-            })
-          }}
-        </p>
-
-        <ul class="flex items-center gap-5">
-          <li
-            v-for="social in socialLinks"
-            :key="social.label"
-          >
-            <a
-              :href="social.href"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-white/80 transition-colors hover:text-white"
-              :aria-label="social.label"
-            >
-              <component
-                :is="socialIcons[social.icon]"
-                class="h-5 w-5"
-              />
-            </a>
           </li>
         </ul>
-
-        <div class="flex items-center gap-2 font-serif font-bold text-white/70">
-          <template
-            v-for="(link, index) in legalLinks"
-            :key="link.label"
-          >
-            <a
-              :href="link.href"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="transition-colors hover:text-white"
-            >
-              {{ link.label }}
-            </a>
-            <span
-              v-if="index < legalLinks.length - 1"
-              aria-hidden="true"
-              >|</span
-            >
-          </template>
-        </div>
-      </div>
+      </nav>
     </div>
-  </footer>
+
+    <div
+      class="container flex flex-col gap-3 border-t border-brand-primary-700 py-6 text-sm text-white/60 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>
+        {{
+          t('footer.copyright', '© {year} Juniper Table. A fictional brand.', {
+            year: String(year)
+          })
+        }}
+      </p>
+      <ul class="flex flex-wrap gap-5">
+        <li
+          v-for="link in legalLinks"
+          :key="link.label"
+        >
+          <a
+            :href="link.href"
+            :target="isExternal(link.href) ? '_blank' : undefined"
+            rel="noopener noreferrer"
+            class="hover:text-white"
+          >
+            {{ link.label }}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </CmsBlock>
 </template>

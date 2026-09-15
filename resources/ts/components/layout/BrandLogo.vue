@@ -1,29 +1,40 @@
 <script setup lang="ts">
 import LocaleLink from '@/components/core/LocaleLink.vue'
-import { logoPath } from '@/lib/gcs'
-
-const logoWhite = `${logoPath}/logo-white.png`
 
 /**
- * The brand wordmark, linked back to the homepage.
- * Sized by height so the 300×69 source keeps its aspect ratio; pass an
- * `h-*` class to override the default per placement (header vs footer).
+ * The Juniper Table wordmark: a juniper sprig and the name, drawn in currentColor
+ * with the theme's display face, so it re-skins with the demo themes.
  */
-withDefaults(defineProps<{ class?: string }>(), { class: 'h-9' })
+withDefaults(defineProps<{ class?: string }>(), { class: '' })
 </script>
 
 <template>
   <LocaleLink
     href="/"
-    class="inline-flex shrink-0 items-center"
-    aria-label="Juniper Table"
+    :class="['inline-flex shrink-0 items-center gap-2.5', $props.class]"
+    aria-label="Juniper Table home"
   >
-    <img
-      :src="logoWhite"
-      alt="Juniper Table"
-      width="300"
-      height="69"
-      :class="['w-auto', $props.class]"
-    />
+    <svg
+      viewBox="0 0 40 40"
+      class="size-9 shrink-0"
+      aria-hidden="true"
+    >
+      <circle
+        cx="20"
+        cy="20"
+        r="19"
+        class="fill-brand-accent"
+      />
+      <path
+        d="M20 31V11M20 16l-5-4M20 16l5-4M20 22l-6-4M20 22l6-4M20 28l-6-4M20 28l6-4"
+        stroke="var(--color-brand-on-accent)"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        fill="none"
+      />
+    </svg>
+    <span class="heading-display text-xl leading-none whitespace-nowrap sm:text-2xl"
+      >Juniper Table</span
+    >
   </LocaleLink>
 </template>
