@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useTranslate } from '@tolgee/vue'
 import SeoHead from '@/components/core/SeoHead.vue'
 import CmsBlock from '@/components/demo/CmsBlock.vue'
@@ -10,6 +10,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import PageHero from '@/components/ui/PageHero.vue'
 import { useBoundLocation } from '@/composables/useBoundLocation'
 import { useCart } from '@/composables/useCart'
+import { useTribes } from '@/composables/useTribes'
 import { usePagePaths } from '@/composables/usePagePaths'
 import { STRUCTURE } from '@/constants/structure'
 import { photo } from '@/lib/demoImagery'
@@ -26,7 +27,22 @@ const field = (name: string) => getValueByName(name, page.value) ?? ''
 const { pagePath } = usePagePaths()
 const { sections, loading } = useFoodMenuService('Website Menu')
 const { slug: boundSlug } = useBoundLocation()
-const { init } = useCart()
+const { cafeSlug, count, loaded, init, clearCafe } = useCart()
+const { trading } = useTribes()
+
+// A cafe from the URL or an old visit that no longer takes orders is forgotten, as long
+// as nothing is in the cart for it.
+watch([trading, loaded], () => {
+  if (
+    trading.value.length &&
+    loaded.value &&
+    cafeSlug.value &&
+    count.value === 0 &&
+    !trading.value.some((tribe) => tribe.slug === cafeSlug.value)
+  ) {
+    clearCafe()
+  }
+})
 
 const hasSections = computed(() => sections.value.length > 0)
 

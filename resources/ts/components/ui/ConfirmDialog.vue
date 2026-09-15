@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref, watch } from 'vue'
+import { nextTick, ref, useId, watch } from 'vue'
 
 /**
  * A small modal confirmation. Cancel takes focus so Enter never confirms by accident,
@@ -9,6 +9,7 @@ const props = defineProps<{ title: string; text: string; confirmLabel: string; c
 const open = defineModel<boolean>('open', { default: false })
 const emit = defineEmits<{ confirm: [] }>()
 
+const titleId = useId()
 const dialog = ref<HTMLDialogElement | null>(null)
 const cancelButton = ref<HTMLButtonElement | null>(null)
 
@@ -31,11 +32,17 @@ const confirm = () => {
 <template>
   <dialog
     ref="dialog"
+    :aria-labelledby="titleId"
     class="m-auto w-[min(28rem,calc(100%-2rem))] rounded-card bg-white p-0 text-ink shadow-2xl backdrop:bg-black/40"
     @close="open = false"
   >
     <div class="p-6">
-      <h2 class="heading-display text-2xl text-brand-primary">{{ props.title }}</h2>
+      <h2
+        :id="titleId"
+        class="heading-display text-2xl text-brand-primary"
+      >
+        {{ props.title }}
+      </h2>
       <p class="mt-3 leading-relaxed text-muted">{{ props.text }}</p>
       <div class="mt-6 flex justify-end gap-2">
         <button

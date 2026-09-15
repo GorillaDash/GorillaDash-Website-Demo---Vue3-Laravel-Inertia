@@ -32,6 +32,8 @@ const sessionId = ref('')
 const cafeSlug = ref<string | null>(null)
 const lines = shallowRef<CartLine[]>([])
 const busy = ref(false)
+/** True once the saved cart has been read back, so a cafe switch can warn about items in it. */
+const loaded = ref(false)
 let client: ApolloClient | null = null
 let initialised = false
 
@@ -63,30 +65,45 @@ const startSession = (): void => {
   sessionId.value = newSessionId()
   storage.set(SESSION_KEY, sessionId.value)
   lines.value = []
+  // A brand-new session has nothing in it, so there is nothing left to load.
+  loaded.value = true
 }
 
 const refresh = async (): Promise<void> => {
   if (!client || !sessionId.value || !cafeSlug.value) {
     lines.value = []
+    loaded.value = true
     return
   }
+
+  // A slow response for a session or cafe the visitor has since switched away from
+  // must not overwrite the new, empty cart.
+  const requestedSession = sessionId.value
+  const requestedCafe = cafeSlug.value
 
   try {
     const { data } = await client.query({
       query: GetFoodShoppingCartDocument,
-      variables: { sessionId: sessionId.value, tribeSlug: cafeSlug.value },
+      variables: { sessionId: requestedSession, tribeSlug: requestedCafe },
       fetchPolicy: 'network-only'
     })
-    lines.value = [...(data?.foodShoppingCart?.foodShoppingCartItems ?? [])]
+    if (requestedSession === sessionId.value && requestedCafe === cafeSlug.value) {
+      lines.value = [...(data?.foodShoppingCart?.foodShoppingCartItems ?? [])]
+    }
   } catch {
     // No open cart for this session yet.
-    lines.value = []
+    if (requestedSession === sessionId.value) {
+      lines.value = []
+    }
+  } finally {
+    loaded.value = true
   }
 }
 
 export function useCart() {
+  // Browser only: under SSR the Apollo client belongs to one request.
   const injected = inject(APOLLO_CLIENT, null)
-  if (injected && !client) {
+  if (injected && !client && typeof window !== 'undefined') {
     client = injected
   }
 
@@ -128,6 +145,13 @@ export function useCart() {
     }
     cafeSlug.value = slug
     storage.set(CAFE_KEY, slug)
+    startSession()
+  }
+
+  /** Forget a saved cafe that no longer takes orders (closed, or never a trading tribe). */
+  const clearCafe = (): void => {
+    cafeSlug.value = null
+    storage.set(CAFE_KEY, null)
     startSession()
   }
 
@@ -187,7 +211,9 @@ export function useCart() {
   /**
    * Place the order as pickup. With no payment provider on the tribe Gorilla Dash
    * creates the order and returns empty Stripe values, which the demo treats as
-   * pay at pickup. Throws when Gorilla Dash rejects the order.
+   * pay at pickup. When the cafe does have Stripe keys Gorilla Dash returns a payment
+   * client secret instead; the demo has no card form, so it reports that and leaves
+   * the cart as it is. Throws when Gorilla Dash rejects the order.
    */
   const checkout = async (details: {
     firstName: string
@@ -197,13 +223,13 @@ export function useCart() {
     date: string
     time: string
     comments: string
-  }): Promise<void> => {
+  }): Promise<'placed' | 'payment-required'> => {
     if (!client || !cafeSlug.value) {
       throw new Error('Choose a cafe before checking out')
     }
     busy.value = true
     try {
-      await client.mutate({
+      const { data } = await client.mutate({
         mutation: SubmitFoodShoppingCartDocument,
         variables: {
           tribeSlug: cafeSlug.value,
@@ -220,7 +246,13 @@ export function useCart() {
           comments: details.comments || null
         }
       })
+      const [, clientSecret] = data?.submitFoodShoppingCart ?? []
+      if (clientSecret) {
+        return 'payment-required'
+      }
       startSession()
+
+      return 'placed'
     } finally {
       busy.value = false
     }
@@ -238,12 +270,14 @@ export function useCart() {
     cafeSlug: readonly(cafeSlug),
     lines,
     busy: readonly(busy),
+    loaded: readonly(loaded),
     count,
     subTotal,
     tax,
     total,
     init,
     setCafe,
+    clearCafe,
     add,
     remove,
     refresh,

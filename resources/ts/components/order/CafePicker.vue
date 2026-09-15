@@ -11,7 +11,7 @@ withDefaults(defineProps<{ inverted?: boolean }>(), { inverted: false })
 
 const { t } = useTranslate()
 const { trading } = useTribes()
-const { cafeSlug, count, setCafe } = useCart()
+const { cafeSlug, count, loaded, setCafe } = useCart()
 
 const pendingSlug = ref<string | null>(null)
 const confirmOpen = ref(false)
@@ -53,6 +53,7 @@ const pendingName = computed(
       <span class="whitespace-nowrap">{{ t('Ordering from', 'Ordering from') }}</span>
       <select
         v-model="selected"
+        :disabled="!loaded"
         class="cursor-pointer rounded-full border-0 bg-transparent py-1.5 pr-8 pl-1 font-semibold focus:ring-2 focus:ring-brand-accent"
         :class="inverted ? 'text-white [&>option]:text-ink' : 'text-brand-primary'"
       >
