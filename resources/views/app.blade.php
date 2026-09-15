@@ -9,16 +9,17 @@
              the CORS pool instead — nothing here uses it, so the LCP hero image was
              paying full DNS+TCP+TLS setup despite the hint. --}}
         <link rel="preconnect" href="https://cdn.gorilladash.com">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg">
         {{-- TODO: favicon.png not yet available on the CDN (path 404s). Restore these
              once the image file is uploaded to images/logos/favicon.png. --}}
-        {{-- <link rel="apple-touch-icon" href="https://cdn.gorilladash.com/static/clients/juniperTable_/images/logos/favicon.png">
-        <link rel="apple-touch-icon" sizes="128x128" href="https://cdn.gorilladash.com/static/clients/juniperTable_/images/logos/favicon.png">
-        <link rel="icon" type="image/png" href="https://cdn.gorilladash.com/static/clients/juniperTable_/images/logos/favicon.png">
-        <link rel="icon" sizes="192x192" type="image/png" href="https://cdn.gorilladash.com/static/clients/juniperTable_/images/logos/favicon.png">
-        <link rel="shortcut icon" href="https://cdn.gorilladash.com/static/clients/juniperTable_/images/logos/favicon.png"> --}}
+        {{-- <link rel="apple-touch-icon" href="https://cdn.gorilladash.com/static/clients/hungryGorilla_/images/logos/favicon.png">
+        <link rel="apple-touch-icon" sizes="128x128" href="https://cdn.gorilladash.com/static/clients/hungryGorilla_/images/logos/favicon.png">
+        <link rel="icon" type="image/png" href="https://cdn.gorilladash.com/static/clients/hungryGorilla_/images/logos/favicon.png">
+        <link rel="icon" sizes="192x192" type="image/png" href="https://cdn.gorilladash.com/static/clients/hungryGorilla_/images/logos/favicon.png">
+        <link rel="shortcut icon" href="https://cdn.gorilladash.com/static/clients/hungryGorilla_/images/logos/favicon.png"> --}}
         <meta name="msapplication-TileColor" content="#FFFFFF">
-        {{-- <meta name="msapplication-TileImage" content="https://cdn.gorilladash.com/static/clients/juniperTable_/images/logos/favicon.png"> --}}
-        <meta name="theme-color" content="#064d7b">
+        {{-- <meta name="msapplication-TileImage" content="https://cdn.gorilladash.com/static/clients/hungryGorilla_/images/logos/favicon.png"> --}}
+        <meta name="theme-color" content="#2A1968">
 
         @fonts
 

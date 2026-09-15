@@ -66,11 +66,20 @@ const isExternal = (href: string) => /^https?:\/\//.test(href)
     >
       <p>
         {{
-          t('footer.copyright', '© {year} Juniper Table. A fictional brand.', {
+          t('footer.copyright', '© {year} Hungry Gorilla. A fictional brand.', {
             year: String(year)
           })
         }}
       </p>
+      <a
+        href="https://gorilladash.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 font-medium text-white/80 hover:text-white"
+      >
+        {{ t('footer.builtOn', 'Built on Gorilla Dash') }}
+        <span aria-hidden="true">→</span>
+      </a>
       <ul class="flex flex-wrap gap-5">
         <li
           v-for="link in legalLinks"

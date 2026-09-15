@@ -181,7 +181,9 @@ onMounted(init)
           :title="`${option.label} theme`"
           class="size-6 cursor-pointer rounded-full ring-2 ring-offset-2 ring-offset-[#2A1968] transition"
           :class="theme === option.value ? 'ring-white' : 'ring-transparent hover:ring-white/40'"
-          :style="{ backgroundColor: option.swatch }"
+          :style="{
+            background: `linear-gradient(135deg, ${option.swatch} 0 55%, ${option.accent} 55% 100%)`
+          }"
           @click="setTheme(option.value)"
         >
           <span class="sr-only">{{ option.label }} theme</span>

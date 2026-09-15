@@ -25,8 +25,8 @@ export type CartLine = NonNullable<
 
 export type ModifierSelection = { groupId: number; modifierId: number }
 
-const SESSION_KEY = 'jt-cart-session'
-const CAFE_KEY = 'jt-order-cafe'
+const SESSION_KEY = 'hg-cart-session'
+const CAFE_KEY = 'hg-order-cafe'
 
 const sessionId = ref('')
 const cafeSlug = ref<string | null>(null)
@@ -59,7 +59,7 @@ const storage = {
 }
 
 const newSessionId = (): string =>
-  `jt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+  `hg-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
 
 const startSession = (): void => {
   sessionId.value = newSessionId()

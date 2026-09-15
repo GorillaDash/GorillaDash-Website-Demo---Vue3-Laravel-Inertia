@@ -54,24 +54,26 @@
 @theme {
   /* Brand roles. Components only ever name the ROLE, never a colour, so the
      demo's theme switcher can re-skin every page by redefining these variables
-     under [data-theme] below. The default is the Juniper Table cafe look. */
-  --color-brand-primary: #1f3a32; /* dominant dark surface: header bar, footer, bands */
-  --color-brand-primary-700: #2c4f44; /* hover/divider on that surface */
-  --color-brand-accent: #c65d3b; /* primary call-to-action */
-  --color-brand-accent-600: #a94a2c; /* CTA hover/active */
+     under [data-theme] below. The default is the Gorilla Dash look: the house navy
+     and red, with a bold sans-serif display face. */
+  --color-brand-primary: #2a1968; /* dominant dark surface: header bar, footer, bands */
+  --color-brand-primary-700: #3b2a85; /* hover/divider on that surface */
+  --color-brand-accent: #bf161b; /* primary call-to-action */
+  --color-brand-accent-600: #9c1116; /* CTA hover/active */
   --color-brand-on-accent: #ffffff; /* text on the accent colour */
-  --color-brand-secondary: #7e9c82; /* supporting colour: badges, icons */
-  --color-brand-tint: #f4eee3; /* light wash behind sections */
-  --color-brand-tint-strong: #e6dcc8; /* borders and rules on the wash */
-  --color-surface: #fbf8f2; /* page background */
-  --color-ink: #1f2421; /* body text */
-  --color-muted: #5e6560; /* secondary text */
+  --color-brand-secondary: #6e62b0; /* supporting colour: badges, icons */
+  --color-brand-tint: #f1f0f7; /* light wash behind sections */
+  --color-brand-tint-strong: #dcdce3; /* borders and rules on the wash */
+  --color-surface: #fbfbfd; /* page background */
+  --color-ink: #1a1a1a; /* body text */
+  --color-muted: #5b5b66; /* secondary text */
 
   /* Map marker — functional, not brand. */
   --color-map-pin: #d55341;
   --color-map-pin-border: #b32e23;
 
-  --font-display: Fraunces, 'Fraunces fallback', Georgia, 'Times New Roman', serif; /* headings */
+  --font-display:
+    'Instrument Sans', 'Instrument Sans fallback', ui-sans-serif, system-ui, sans-serif; /* headings */
   --font-condensed: Oswald, 'Arial Narrow', ui-sans-serif, system-ui, sans-serif;
   --font-serif: Fraunces, Georgia, 'Times New Roman', serif;
   --font-script: cursive;
@@ -109,6 +111,23 @@
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
   --display-transform: none;
+  --display-tracking: -0.035em;
+  --display-weight: 700;
+}
+
+[data-theme='cafe'] {
+  --color-brand-primary: #1f3a32;
+  --color-brand-primary-700: #2c4f44;
+  --color-brand-accent: #c65d3b;
+  --color-brand-accent-600: #a94a2c;
+  --color-brand-on-accent: #ffffff;
+  --color-brand-secondary: #7e9c82;
+  --color-brand-tint: #f4eee3;
+  --color-brand-tint-strong: #e6dcc8;
+  --color-surface: #fbf8f2;
+  --color-ink: #1f2421;
+  --color-muted: #5e6560;
+  --font-display: Fraunces, 'Fraunces fallback', Georgia, 'Times New Roman', serif;
   --display-tracking: -0.015em;
   --display-weight: 600;
 }

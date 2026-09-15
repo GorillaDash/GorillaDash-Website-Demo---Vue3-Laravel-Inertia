@@ -50,12 +50,13 @@ export default defineConfig(({ mode }) => {
           // metric-matched fallback with zero CLS. Preloading all three had
           // them competing with the LCP hero image on throttled mobile.
           fontsource('Instrument Sans', {
-            weights: [400, 500, 600],
-            preload: [{ weight: 400 }]
+            weights: [400, 500, 600, 700],
+            preload: [{ weight: 400 }, { weight: 700 }]
           }),
-          // Display faces for the demo's three themes: Fraunces (cafe, the default),
-          // Oswald (trade). Only the cafe heading weight is preloaded.
-          google('Fraunces', { weights: [500, 600], preload: [{ weight: 600 }] }),
+          // Display faces for the other demo themes: Fraunces (cafe) and Oswald
+          // (trade). The default Gorilla Dash theme's headings are Instrument Sans
+          // 700, preloaded above, so neither of these is.
+          google('Fraunces', { weights: [500, 600], preload: false }),
           fontsource('Oswald', { weights: [500, 600], preload: false })
           // Add the client's display/script faces alongside it — one fontsource()
           // per registry family, and give each a metric-matched fallback in

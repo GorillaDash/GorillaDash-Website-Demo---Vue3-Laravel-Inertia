@@ -16,13 +16,20 @@ import { readonly, ref } from 'vue'
  * toolbar and keeps Structure view and the theme in step with the outer page
  * through postMessage, in both directions.
  */
-export type DemoTheme = 'cafe' | 'trade' | 'retail'
+export type DemoTheme = 'gorilla' | 'cafe' | 'trade' | 'retail'
 export type DemoDevice = 'desktop' | 'tablet' | 'mobile'
 
-export const DEMO_THEMES: ReadonlyArray<{ value: DemoTheme; label: string; swatch: string }> = [
-  { value: 'cafe', label: 'Cafe', swatch: '#1f3a32' },
-  { value: 'trade', label: 'Trade', swatch: '#0f1b2d' },
-  { value: 'retail', label: 'Retail', swatch: '#2b1b3f' }
+/** The swatch pairs each theme's dark surface with its call-to-action colour. */
+export const DEMO_THEMES: ReadonlyArray<{
+  value: DemoTheme
+  label: string
+  swatch: string
+  accent: string
+}> = [
+  { value: 'gorilla', label: 'Gorilla Dash', swatch: '#2a1968', accent: '#bf161b' },
+  { value: 'cafe', label: 'Cafe', swatch: '#1f3a32', accent: '#c65d3b' },
+  { value: 'trade', label: 'Trade', swatch: '#0f1b2d', accent: '#f2a900' },
+  { value: 'retail', label: 'Retail', swatch: '#2b1b3f', accent: '#e4476a' }
 ]
 
 /** Screen sizes in CSS pixels: an iPad Air in portrait and an iPhone 15. */
@@ -37,8 +44,8 @@ export const DEMO_DEVICES: ReadonlyArray<{
   { value: 'mobile', label: 'Mobile', width: 390, height: 844 }
 ]
 
-const STORAGE_KEY = 'jt-demo-controls'
-const MESSAGE_TYPE = 'jt-demo-controls'
+const STORAGE_KEY = 'hg-demo-controls'
+const MESSAGE_TYPE = 'hg-demo-controls'
 
 type ControlsMessage =
   | { type: typeof MESSAGE_TYPE; kind: 'state'; structureView: boolean; theme: DemoTheme }
@@ -46,7 +53,7 @@ type ControlsMessage =
   | { type: typeof MESSAGE_TYPE; kind: 'url'; url: string }
 
 const structureView = ref(false)
-const theme = ref<DemoTheme>('cafe')
+const theme = ref<DemoTheme>('gorilla')
 const device = ref<DemoDevice>('desktop')
 /** True inside the device preview's iframe. */
 const embedded = ref(false)
@@ -82,7 +89,7 @@ const apply = (): void => {
   const root = document.documentElement
   root.classList.toggle('structure-view', structureView.value)
 
-  if (theme.value === 'cafe') {
+  if (theme.value === 'gorilla') {
     delete root.dataset.theme
   } else {
     root.dataset.theme = theme.value
