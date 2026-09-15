@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Shared, country-agnostic resources. Per-country values (namespace, image tag,
+# config.env, domain/Ingress) are layered on top in overlays/<country>.
+resources:
+  - serviceaccount.yaml # Workload Identity KSA for Cloud SQL
+  - deployment.yaml # web + ssr (sidecar)
+  - service.yaml
+  - backendconfig.yaml
+  - hpa.yaml
+  - scheduler.yaml # schedule:work (1 replica)
+  - worker.yaml # queue:work (scale as needed)
+
+# NOTE: migrate-job.yaml is intentionally NOT listed — it's a one-shot Job run
+# per release by deploy.sh (Jobs are immutable, so they don't belong in apply -k).

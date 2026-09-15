@@ -1,0 +1,23 @@
+fragment ComponentInfo on Component {
+  name
+  slug
+  status
+  slug
+  contents {
+    name
+    type
+    value
+    media_collection {
+      ...MediaCollectionInfo
+    }
+  }
+}
+
+query getWebsiteComponents($name: [String], $status: String, $locale: String) {
+  websiteComponents(name: $name, status: $status, locale: $locale) {
+    name
+    components {
+      ...ComponentInfo
+    }
+  }
+}

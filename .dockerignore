@@ -1,0 +1,36 @@
+# Rebuilt inside the image
+node_modules
+vendor
+public/build
+public/hot
+bootstrap/ssr
+bootstrap/cache/*.php
+
+# Secrets / local-only — provided via Kubernetes ConfigMap/Secret at runtime
+.env
+.env.*
+!.env.example
+database/*.sqlite
+# CI kubeconfig written into the workspace by google-github-actions/get-gke-credentials.
+# It embeds a live GCP access token, and the Dockerfile does `COPY . .` — never
+# let it into an image layer. The deploy workflow also orders the build BEFORE
+# that step; this is the second line of defence.
+gha-kubeconfig-*
+
+# VCS / tooling / IDE
+.git
+.github
+.idea
+.cursor
+.junie
+.claude
+
+# Local logs & caches
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Tests (not needed in the runtime image)
+tests
+phpunit.xml

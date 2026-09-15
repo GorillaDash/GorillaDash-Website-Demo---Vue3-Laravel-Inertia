@@ -1,0 +1,125 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - master
+      - workos
+  pull_request:
+    branches:
+      - develop
+      - main
+      - master
+      - workos
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Lightweight gate (GitHub API, no checkout, ~10s): does this PR touch anything
+  # other than markdown/docs? A job gated `if:` off this reports skipped == passing,
+  # so the check always shows up and unrelated (docs-only) PRs finish instantly.
+  # Push events (post-merge on main/develop) are never gated — they always run.
+  #
+  # This job is intentionally NOT php-only: the `Build Assets` step (pnpm run build)
+  # is the ONLY place CI compiles the frontend (the linter workflow runs no vue-tsc /
+  # build), so a frontend-only PR must still run here or a broken .vue/.ts would merge
+  # unchecked. Hence the filter is "anything but docs", not "php".
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: dorny/paths-filter@v4
+        id: filter
+        if: github.event_name == 'pull_request'
+        with:
+          # 'every' (not the default 'some'/OR): a file counts toward `code` only if
+          # it matches ALL patterns — i.e. it is NOT markdown and NOT under docs/.
+          # `code` is then 'true' iff the PR changed at least one such non-docs file.
+          # With the default 'some', the '**' catch-all always wins → nothing skips.
+          predicate-quantifier: 'every'
+          filters: |
+            code:
+              - '**'
+              - '!**/*.md'
+              - '!docs/**'
+
+  ci:
+    needs: changes
+    runs-on: ubuntu-latest
+    # Always on push; on PRs only when a non-docs file changed.
+    #
+    # Deliberately a STEP-level gate, not `if:` on the job. A matrix job that is
+    # skipped at job level reports ONE check run named `ci` — the matrix never
+    # expands — while a job that runs reports `ci (8.3)`, `ci (8.4)`, `ci (8.5)`.
+    # So the check NAMES would depend on what the PR touched, and the required
+    # status checks (`ci (8.x)`) would never report on a docs-only PR: the merge
+    # box sits on "Expected — waiting for status to be reported" forever.
+    #
+    # Gating the steps instead keeps the job — and therefore the three check
+    # names — present on every PR, at the cost of three runners idling for a few
+    # seconds when there is nothing to do. Do not "tidy" this back onto the job.
+    env:
+      RUN_TESTS: ${{ github.event_name != 'pull_request' || needs.changes.outputs.code == 'true' }}
+    strategy:
+      matrix:
+        php-version: ['8.3', '8.4', '8.5']
+
+    steps:
+      - name: Checkout code
+        if: env.RUN_TESTS == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        if: env.RUN_TESTS == 'true'
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+          coverage: xdebug
+
+      - name: Setup pnpm
+        if: env.RUN_TESTS == 'true'
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node
+        if: env.RUN_TESTS == 'true'
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install Node Dependencies
+        if: env.RUN_TESTS == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Dependencies
+        if: env.RUN_TESTS == 'true'
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Copy Environment File
+        if: env.RUN_TESTS == 'true'
+        run: cp .env.example .env
+
+      - name: Generate Application Key
+        if: env.RUN_TESTS == 'true'
+        run: php artisan key:generate
+
+      - name: Build Assets
+        if: env.RUN_TESTS == 'true'
+        run: pnpm run build
+
+      - name: Tests
+        if: env.RUN_TESTS == 'true'
+        run: ./vendor/bin/pest

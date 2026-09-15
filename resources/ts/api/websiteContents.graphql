@@ -1,0 +1,21 @@
+fragment WebsiteContentInfo on WebsiteContent {
+  name
+  type
+  value
+  media_collection {
+    ...MediaCollectionInfo
+  }
+}
+
+fragment WebsiteSectionInfo on WebsiteSection {
+  name
+  contents {
+    ...WebsiteContentInfo
+  }
+}
+
+query getWebsiteSection($name: String!, $locale: String) {
+  websiteSection(name: $name, locale: $locale) {
+    ...WebsiteSectionInfo
+  }
+}

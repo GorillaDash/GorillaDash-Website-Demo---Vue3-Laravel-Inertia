@@ -1,0 +1,103 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Deliberately near-empty: type, colour and layout tokens are the part of a
+   client site that is never reusable. What IS reusable is the shape below — a
+   webfont plus its metric-matched fallback, and brand tokens declared in
+   `@theme` so they become Tailwind utilities (`bg-brand-primary`, `font-display`).
+   Fill this in per client; don't add a tailwind.config.js (v4 is CSS-first).
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Webfonts are served through the Vite fonts pipeline — see `fonts: [...]` in
+   vite.config.ts and the `@fonts` Blade directive, which emits the @font-face
+   rules. Add a client's commercial brand faces via `local(...)` entries there
+   (subset masters first; keep them in a fonts-src/ dir). */
+
+/* Metric-matched local fallback face — reserves (almost) the same line boxes as
+   the webfont, so `font-display: swap` swaps in with no layout shift. One block
+   per webfont, kept here as the worked example. The numbers are per-font, NOT
+   generic: recompute them whenever a font file changes.
+
+   These SHOULD come from the fonts pipeline's `optimizedFallbacks`, but
+   laravel-vite-plugin passes a filesystem path to fontaine.readMetrics(), which
+   (fontaine 0.8) only accepts a file:// URL — it silently emits nothing. Until
+   that is fixed upstream, generate the rules statically with the plugin's own
+   math:
+
+     node --input-type=module -e "
+       import { readMetrics } from 'fontaine'
+       import { pathToFileURL } from 'node:url'
+       console.log(await readMetrics(pathToFileURL('<path-to>.woff2')))
+     "
+
+   then combine with fontaine's FALLBACK_METRICS for Arial (sans) or Times New
+   Roman (serif): ascent/descent/lineGap are the font's values ÷ unitsPerEm ÷
+   sizeAdjust, and sizeAdjust is the font's xHeight ratio ÷ the fallback's. */
+@font-face {
+  font-family: 'Instrument Sans fallback';
+  src: local('Arial');
+  ascent-override: 93.49%;
+  descent-override: 24.09%;
+  line-gap-override: 0%;
+  size-adjust: 103.76%;
+}
+
+@theme inline {
+  --font-sans:
+    Instrument Sans, 'Instrument Sans fallback', ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@theme {
+  /* Brand palette — PLACEHOLDER greys. Replace all seven with the client's
+     colours; nothing else needs to change, because the components only ever
+     name the ROLE. That is the point of these names: `brand-primary` survives a
+     rebrand, `brand-navy` does not. Each becomes a Tailwind utility, so
+     `bg-brand-primary` / `text-brand-accent` / `border-brand-tint` all work. */
+  --color-brand-primary: #1e293b; /* dominant surface — header, footer */
+  --color-brand-primary-700: #334155; /* hover/divider on that surface */
+  --color-brand-accent: #0284c7; /* primary call-to-action */
+  --color-brand-accent-600: #0369a1; /* CTA hover/active */
+  --color-brand-secondary: #475569; /* secondary surface — cards, banners */
+  --color-brand-tint: #e2e8f0; /* light wash behind sections */
+  --color-brand-tint-strong: #cbd5e1; /* accent borders, submenu rules */
+
+  /* Map marker — functional, not brand. Leave unless the design restyles pins. */
+  --color-map-pin: #d55341;
+  --color-map-pin-border: #b32e23;
+
+  /* Type slots the components already reference. They point at system stacks so
+     the starter renders with no webfont beyond --font-sans; swap in the client's
+     faces here (and register them in vite.config.ts `fonts`, each with a
+     metric-matched fallback above, or the swap costs CLS). */
+  --font-display: ui-sans-serif, system-ui, sans-serif; /* headings, nav */
+  --font-condensed: ui-sans-serif, system-ui, sans-serif; /* big uppercase headings */
+  --font-serif: ui-serif, Georgia, 'Times New Roman', serif; /* editorial copy */
+  --font-script: cursive; /* script accent */
+
+  /* Full desktop canvas width (1920px). Extends the built-in scale (7xl = 80rem);
+     drives max-w-8xl / w-8xl / min-w-8xl and caps the `container` below. */
+  --container-8xl: 120rem;
+}
+
+/* Tailwind v4's own `container` sets a max-width but neither centres nor pads,
+   so this override supplies both: a centred well capped at the 1920px desktop
+   canvas, with the responsive side gutters the designs use (1rem → 1.5rem → 2rem).
+   Lock the site chrome (header/footer bars) to it; a band whose design well is
+   narrower adds its own `max-w-*` on top (utilities with fewer declarations win). */
+@utility container {
+  margin-inline: auto;
+  max-width: var(--container-8xl);
+  padding-inline: 1rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+
+  @media (width >= 64rem) {
+    padding-inline: 2rem;
+  }
+}

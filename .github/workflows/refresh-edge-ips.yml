@@ -1,0 +1,99 @@
+name: refresh-edge-ips
+
+# Keep the Cloud Armor "edge-only" allowlist in sync with the published edge IP
+# ranges of every CDN in front of this origin (they rotate over time). Runs the
+# same idempotent script used for the initial setup — see
+# deploy/setup-cloud-armor.sh, whose EDGE_PROVIDERS decides which are fetched.
+#
+# Reuses the deploy WIF credentials. The github-deployer SA needs two roles
+# (one-time). securityAdmin lets the refresh step edit the policy; networkViewer
+# lets the verify step below read the origin's reserved address — securityAdmin
+# covers compute.securityPolicies.* but not compute.globalAddresses.get, and
+# without it the job fails *after* a successful refresh:
+#   gcloud projects add-iam-policy-binding gorilla-dash-178800 \
+#     --member="serviceAccount:github-deployer@gorilla-dash-178800.iam.gserviceaccount.com" \
+#     --role="roles/compute.securityAdmin"
+#   gcloud projects add-iam-policy-binding gorilla-dash-178800 \
+#     --member="serviceAccount:github-deployer@gorilla-dash-178800.iam.gserviceaccount.com" \
+#     --role="roles/compute.networkViewer" --condition=None
+
+on:
+  schedule:
+    # Weekly, Mondays 08:00 UTC. Edge IP changes are infrequent + announced.
+    - cron: '0 8 * * 1'
+  workflow_dispatch: {} # allow manual refresh on demand
+
+# Never let two refreshes edit the policy at once.
+concurrency:
+  group: refresh-edge-ips
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write # required for Workload Identity Federation (OIDC)
+
+env:
+  PROJECT_ID: gorilla-dash-178800
+  # Post-refresh lockdown check targets (acme-usa; the policy is project-global).
+  DOMAIN: acme-usa.gorilladashstaging.com
+  STATIC_IP_NAME: acme-usa-ip
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+        with:
+          persist-credentials: false
+
+      # A repo made from this template inherits the workflow long before its GCP
+      # side exists — no WIF secrets, no origin LB, no security policy. Without
+      # this guard the weekly cron just fails in google-github-actions/auth every
+      # Monday, in the starter and in every client repo cut from it. Mirrors the
+      # same skip in cloudflare-rules.yml.
+      - name: Preflight (skip when GCP isn't wired up yet)
+        id: targets
+        env:
+          GCP_WIF_PROVIDER: ${{ secrets.GCP_WIF_PROVIDER }}
+          GCP_SA_EMAIL: ${{ secrets.GCP_SA_EMAIL }}
+        run: |
+          if [ -z "${GCP_WIF_PROVIDER}" ] || [ -z "${GCP_SA_EMAIL}" ]; then
+            echo "::notice::GCP_WIF_PROVIDER/GCP_SA_EMAIL are not set — skipping the Cloud Armor refresh."
+            echo 'skip=true' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Authenticate to Google Cloud
+        if: steps.targets.outputs.skip != 'true'
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_EMAIL }}
+
+      - name: Set up gcloud
+        if: steps.targets.outputs.skip != 'true'
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Refresh Cloud Armor allowlist from the edge providers
+        if: steps.targets.outputs.skip != 'true'
+        run: ./deploy/setup-cloud-armor.sh
+
+      - name: Verify origin still denies non-edge traffic (403)
+        if: steps.targets.outputs.skip != 'true'
+        run: |
+          # GitHub runners are not edge IPs, so a direct hit to the origin LB
+          # must be denied. This catches a refresh that broke the policy, or a
+          # detached BackendConfig — i.e. the lockdown silently not enforcing.
+          IP="$(gcloud compute addresses describe "$STATIC_IP_NAME" \
+            --global --project="$PROJECT_ID" --format='value(address)')"
+          echo "origin $STATIC_IP_NAME = $IP"
+          code=000
+          for n in 1 2 3; do
+            code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 \
+              -H "Host: $DOMAIN" "http://${IP}/" || echo 000)"
+            echo "attempt $n: direct origin -> $code"
+            [ "$code" = "403" ] && exit 0
+            sleep 10
+          done
+          echo "::error::Origin lockdown NOT enforcing — direct access returned ${code}, expected 403"
+          exit 1

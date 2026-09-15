@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acme-worker
+  labels:
+    app: acme
+    role: worker
+spec:
+  # Workers are stateless consumers — scale this up as job volume grows. The
+  # database queue uses row locking, so multiple workers won't double-process.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: acme
+      role: worker
+  template:
+    metadata:
+      labels:
+        app: acme
+        role: worker
+    spec:
+      # queue:work catches SIGTERM and finishes the in-flight job before exiting;
+      # give it room to do so on rollout/scale-down.
+      serviceAccountName: acme
+      terminationGracePeriodSeconds: 90
+      initContainers:
+        # Cloud SQL Auth Proxy as a native sidecar — ready before queue:work, so
+        # the worker never starts before the DB connection is available.
+        - name: cloud-sql-proxy
+          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.1
+          restartPolicy: Always
+          args:
+            - "--structured-logs"
+            - "--port=3306"
+            - "--health-check"
+            - "--http-address=0.0.0.0"
+            - "$(CLOUD_SQL_INSTANCE)"
+          env:
+            - name: CLOUD_SQL_INSTANCE
+              valueFrom:
+                configMapKeyRef:
+                  name: acme-config
+                  key: CLOUD_SQL_INSTANCE
+          startupProbe:
+            httpGet:
+              path: /startup
+              port: 9090
+            periodSeconds: 2
+            failureThreshold: 30
+          securityContext:
+            runAsNonRoot: true
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "250m"
+              memory: "128Mi"
+      containers:
+        - name: worker
+          image: app-web # kustomize sets the tag
+          command:
+            - php
+            - artisan
+            - queue:work
+            - --tries=3
+            - --max-time=3600
+            - --sleep=3
+            - --rest=1
+          envFrom:
+            - configMapRef:
+                name: acme-config
+            - secretRef:
+                name: acme-secret
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "192Mi"
+            limits:
+              cpu: "1"
+              memory: "384Mi"

@@ -1,0 +1,7 @@
+resources/ts/components/ui/*
+resources/views/mail/*
+resources/ts/graphql/__generated__/
+resources/ts/api/*.generated.ts
+
+# Lockfile is managed by pnpm, not prettier
+pnpm-lock.yaml

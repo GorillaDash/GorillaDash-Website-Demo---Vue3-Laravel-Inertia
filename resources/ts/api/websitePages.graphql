@@ -1,0 +1,26 @@
+fragment WebsitePageContentInfo on websitePageContent {
+  name
+  source
+  type
+  value
+  media_collection {
+    ...MediaCollectionInfo
+  }
+}
+
+fragment WebsitePageInfo on websitePage {
+  name
+  slug
+  body
+  meta_title
+  meta_description
+  contents {
+    ...WebsitePageContentInfo
+  }
+}
+
+query getWebsitePage($slug: String!, $locale: String) {
+  websitePage(slug: $slug, locale: $locale) {
+    ...WebsitePageInfo
+  }
+}

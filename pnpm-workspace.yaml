@@ -1,0 +1,10 @@
+packages:
+  - '.'
+
+verifyDepsBeforeRun: false
+
+allowBuilds:
+  esbuild: true
+
+publicHoistPattern:
+  - '@inertiajs/core'

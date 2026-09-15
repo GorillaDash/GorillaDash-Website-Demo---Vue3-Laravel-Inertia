@@ -1,0 +1,10 @@
+{
+  "*.{ts,tsx,vue}": [
+    "node bin/tailwind-scale.mjs --fix",
+    "prettier --write",
+    "oxlint --fix"
+  ],
+  "*.{js,jsx,json,md,yml,yaml,css,scss}": [
+    "prettier --write"
+  ]
+}

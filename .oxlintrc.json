@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "vue", "unicorn"],
+  "env": {
+    "builtin": true,
+    "browser": true,
+    "es2024": true,
+    "node": true
+  },
+  "ignorePatterns": [
+    "node_modules",
+    "vendor",
+    "public",
+    "bootstrap/ssr",
+    "resources/ts/actions/**",
+    "resources/ts/routes/**",
+    "resources/ts/wayfinder/**",
+    "resources/ts/components/ui/**",
+    "resources/ts/graphql/__generated__/**",
+    "resources/ts/api/*.generated.ts",
+    "resources/ts/codegen.ts",
+    "resources/ts/graphqlLoader.ts"
+  ]
+}

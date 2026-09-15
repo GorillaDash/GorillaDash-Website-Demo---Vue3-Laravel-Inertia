@@ -1,0 +1,51 @@
+/.phpunit.cache
+/bootstrap/ssr
+/node_modules
+/public/build
+/public/fonts-manifest.dev.json
+/public/hot
+/public/storage
+/resources/ts/actions
+/resources/ts/routes
+/resources/ts/types/cmsRoutes.ts
+/resources/ts/wayfinder
+/storage/*.key
+/storage/pail
+/vendor
+.env
+.env.backup
+.env.production
+# Local-dev env layers composed into .env by `php artisan env:use` — they hold
+# APP_KEY, the local DB credentials and the per-country reCAPTCHA secret. Only
+# the .example templates are tracked.
+/.env.local.*
+!/.env.local.*.example
+# Real k8s Secret manifests — never commit; only the *.example.yaml templates
+/deploy/k8s/overlays/*/secret.yaml
+# Origin TLS material handed to `make origin-tls CERT=... KEY=...`. The private key
+# belongs to a wildcard certificate covering every host on its zone, so a leak is
+# never scoped to one site. Install it into the cluster Secret, then delete the
+# local copy — this only stops the accident, it is not somewhere to keep the key.
+/*.pem
+/*.key
+# CI kubeconfig (live access token) from google-github-actions/get-gke-credentials.
+# Also keeps it out of the Cloud Build source upload: with no .gcloudignore in the
+# repo, `gcloud builds submit` derives one from this file.
+gha-kubeconfig-*
+.phpactor.json
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/auth.json
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+
+**/caddy
+frankenphp
+frankenphp-worker.php
+.DS_Store

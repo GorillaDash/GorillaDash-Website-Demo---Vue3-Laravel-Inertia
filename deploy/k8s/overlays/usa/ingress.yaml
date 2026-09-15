@@ -1,0 +1,49 @@
+# TLS is terminated at Cloudflare (the CDN in front), which holds the public cert for
+# this host. The Cloudflare->origin leg is TLS TOO, and Cloudflare validates it: the
+# shared staging zone gorilladashstaging.com is on SSL mode "Full (strict)".
+#
+# That mode is a ZONE-WIDE switch shared with every other client on the zone, so a new
+# host cannot opt down to "Flexible" for itself. An origin that answers only :80 gets
+# 525 (handshake failed) on every request through the edge — while looking perfectly
+# healthy from inside the cluster: /up 200 on a port-forward, backends HEALTHY, pods
+# Ready. That is the shape this trap takes on a first go-live, so spec.tls is shipped
+# here rather than described as an option.
+#
+# The certificate is a Cloudflare Origin CA one, held in acme-origin-tls. Copy the
+# zone's shared *.gorilladashstaging.com certificate from a namespace that already has
+# it (`make origin-tls-copy COUNTRY=usa FROM_NS=<ns> FROM_SECRET=<name>`) rather than
+# issuing one per client: an Origin CA certificate is trusted on the origin leg only
+# and by no browser, so a stolen key buys nothing to anyone who cannot also make
+# Cloudflare connect to their server — and one certificate is one thing to rotate.
+# `make origin-tls CERT=… KEY=…` installs a per-host one where that trade differs.
+#
+# Cloud Armor (backendconfig.yaml) restricts BOTH legs to the edge's published IPs.
+#
+# APP_FORCE_HTTPS=true stays set in config.env (see AppServiceProvider). The GCE L7 LB
+# rewrites X-Forwarded-Proto to reflect the edge->origin leg, discarding what Cloudflare
+# sent, so anything reaching the origin over the :80 rule below would otherwise emit
+# http:// asset URLs that the https page blocks as mixed content. trustProxies stays on
+# for X-Forwarded-For.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: acme
+  annotations:
+    kubernetes.io/ingress.class: 'gce'
+    kubernetes.io/ingress.global-static-ip-name: 'acme-usa-ip'
+spec:
+  rules:
+    - host: acme-usa.gorilladashstaging.com
+      http:
+        paths:
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: acme
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - acme-usa.gorilladashstaging.com
+      secretName: acme-origin-tls

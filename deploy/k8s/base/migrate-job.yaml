@@ -1,0 +1,65 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: acme-migrate
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 600
+  template:
+    metadata:
+      labels:
+        app: acme
+        role: migrate
+    spec:
+      serviceAccountName: acme
+      restartPolicy: Never
+      initContainers:
+        # Native sidecar (restartPolicy: Always): the Cloud SQL proxy runs
+        # alongside `migrate` and is auto-terminated once migrate exits, so the
+        # Job can complete (a normal sidecar would keep the pod running forever).
+        - name: cloud-sql-proxy
+          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.1
+          restartPolicy: Always
+          args:
+            - "--structured-logs"
+            - "--port=3306"
+            - "--health-check"
+            - "--http-address=0.0.0.0"
+            - "$(CLOUD_SQL_INSTANCE)"
+          env:
+            - name: CLOUD_SQL_INSTANCE
+              valueFrom:
+                configMapKeyRef:
+                  name: acme-config
+                  key: CLOUD_SQL_INSTANCE
+          startupProbe:
+            httpGet:
+              path: /startup
+              port: 9090
+            periodSeconds: 2
+            failureThreshold: 30
+          securityContext:
+            runAsNonRoot: true
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "250m"
+              memory: "128Mi"
+      containers:
+        - name: migrate
+          image: app-web # same web image; deploy.sh substitutes the real tag
+          command: ["php", "artisan", "migrate", "--force"]
+          envFrom:
+            - configMapRef:
+                name: acme-config
+            - secretRef:
+                name: acme-secret
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"

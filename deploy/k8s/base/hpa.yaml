@@ -1,0 +1,41 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: acme
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: acme
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    # SSR is CPU-bound, so scale on CPU. Traffic is stable, but bot crawls
+    # (Googlebot, GPTBot, ClaudeBot, …) are spiky — this absorbs those bursts.
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+  behavior:
+    scaleUp:
+      # Ignore CPU spikes shorter than a minute. Without this (the default is 0, i.e.
+      # react instantly) the HPA treats a ROLLOUT as a load spike: every new pod runs
+      # config/route/view:cache and boots Octane on startup, which pins its CPU far
+      # above the 70% target while idle steady-state is only ~20%.
+      #
+      # Observed on a real rollout: 32s in, the HPA scaled 2 -> 3 ("cpu resource
+      # utilization above target"). The Deployment controller then scaled up BOTH
+      # ReplicaSets, so the OLD one created a pod that pulled the OLD image, booted,
+      # passed the NEG health check, joined the load balancer, and was deleted 8s
+      # later — entirely wasted work, competing for the same scarce node capacity the
+      # new pods were already queued for.
+      #
+      # Cost: a genuine traffic spike is now absorbed up to 60s later. Acceptable —
+      # the edge serves cached HTML, and 20% against a 70% target leaves ~3.5x
+      # headroom on the existing pods while the window elapses.
+      stabilizationWindowSeconds: 60
+    scaleDown:
+      # Don't thrash: wait 5 min of low load before scaling in.
+      stabilizationWindowSeconds: 300

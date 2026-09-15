@@ -1,0 +1,72 @@
+fragment ArticleInfo on Article {
+  heading
+  author
+  slug
+  abstract
+  created_at
+  media_collection {
+    ...MediaCollectionInfo
+  }
+}
+
+query getArticleCategories {
+  articleCategories(article_status: "Published") {
+    name
+    slug
+    articles_count
+  }
+}
+
+query getArticle($slug: String) {
+  article(slug: $slug, status: "Published") {
+    heading
+    sub_heading
+    author
+    slug
+    abstract
+    article
+    status
+    created_at
+    meta_title
+    meta_description
+    meta_canonical
+    no_index
+    editor_enabled
+    html
+    media_collection {
+      ...MediaCollectionInfo
+    }
+    articleFields {
+      name
+      value
+      media_collection {
+        ...MediaCollectionInfo
+      }
+    }
+    prev {
+      heading
+      slug
+    }
+    next {
+      heading
+      slug
+    }
+  }
+}
+
+query getArticlesByCategories($categories: [String!], $page: Int!, $itemsPerPage: Int!) {
+  articlesPagination(
+    status: "Published"
+    categories: $categories
+    page: $page
+    itemsPerPage: $itemsPerPage
+  ) {
+    data {
+      ...ArticleInfo
+    }
+    total
+    has_more_pages
+    last_page
+    current_page
+  }
+}

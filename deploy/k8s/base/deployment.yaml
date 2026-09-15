@@ -1,0 +1,226 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acme
+  labels:
+    app: acme
+spec:
+  # HPA manages the replica count (see hpa.yaml); this is the starting point.
+  replicas: 2
+  selector:
+    # MUST include role: web. `app: acme` alone also matches the scheduler, worker
+    # and migrate pods — they all carry that label — and the HPA resolves its pod
+    # set through this selector, so it would average web CPU together with idle
+    # scheduler/worker CPU: roughly halving the utilisation it sees and delaying
+    # scale-up under load. It also makes `kubectl exec deploy/acme` pick an
+    # arbitrary pod of any role.
+    #
+    # Pods are never actually stolen between Deployments — ReplicaSets add
+    # pod-template-hash to their own selectors — which is what keeps this latent
+    # until someone looks at an HPA that will not scale.
+    #
+    # spec.selector is IMMUTABLE, so fixing this on a LIVE deployment cannot be a
+    # plain apply: it needs a new Deployment name alongside the old one and a
+    # cutover. Which is exactly why it is right here in the template.
+    matchLabels:
+      app: acme
+      role: web
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      # Surge the whole replica set at once instead of one pod at a time: each new
+      # pod costs a full boot cycle (proxy startup + readiness), so rolling serially
+      # made deploy wall-clock scale with the replica count (measured 1m41s for 3,
+      # vs 30-85s at 100%).
+      #
+      # The surge does NOT always fit on existing nodes — most idle-looking nodes
+      # carry taints this workload doesn't tolerate, so a rollout can spend its first
+      # 20-30s in `FailedScheduling` while Autopilot provisions one. It is still the
+      # better setting: that wait is paid ONCE for the whole surge, where maxSurge: 1
+      # paid a full boot cycle per pod in series. Check with
+      # `kubectl get nodes -o json` filtered on NoSchedule/NoExecute taints, not raw
+      # allocatable CPU, before assuming headroom.
+      maxSurge: 100%
+  template:
+    metadata:
+      labels:
+        app: acme
+        role: web # the Service selects only these pods (not scheduler/worker)
+    spec:
+      serviceAccountName: acme # Workload Identity -> Cloud SQL client GSA
+      terminationGracePeriodSeconds: 30
+      initContainers:
+        # --- Cloud SQL Auth Proxy as a NATIVE sidecar (restartPolicy: Always):
+        #     k8s waits for its startup probe before starting web/ssr, so they
+        #     never race the DB connection. Reaches the DB via Google APIs + IAM
+        #     (VPC-independent). CLOUD_SQL_INSTANCE comes from the config.env. ---
+        - name: cloud-sql-proxy
+          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.1
+          restartPolicy: Always
+          args:
+            - '--structured-logs'
+            - '--port=3306'
+            - '--health-check'
+            - '--http-address=0.0.0.0'
+            - '$(CLOUD_SQL_INSTANCE)'
+          env:
+            - name: CLOUD_SQL_INSTANCE
+              valueFrom:
+                configMapKeyRef:
+                  name: acme-config
+                  key: CLOUD_SQL_INSTANCE
+          startupProbe:
+            httpGet:
+              path: /startup
+              port: 9090
+            periodSeconds: 2
+            failureThreshold: 30
+          securityContext:
+            runAsNonRoot: true
+          resources:
+            requests:
+              cpu: '50m'
+              memory: '64Mi'
+            limits:
+              cpu: '250m'
+              memory: '128Mi'
+      containers:
+        # --- Web: FrankenPHP serving the Laravel/Inertia app ---
+        - name: web
+          image: app-web # replaced at deploy time (kustomize: app-web)
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: acme-config
+            - secretRef:
+                name: acme-secret
+          # A startupProbe gates readiness+liveness until the app first answers,
+          # which is what lets readiness run on a tight interval without a slow boot
+          # ever tripping liveness. Budget: 2s x 45 = 90s to boot (the old liveness
+          # initialDelay 20 + 3 x 20 allowed ~80s, so this is no stricter) — after
+          # that k8s restarts the container.
+          #
+          # NOTE on timeoutSeconds: every probe below sets it EXPLICITLY. The default
+          # is 1s, and /up is served by the same Octane workers that serve traffic, so
+          # under load it queues behind real requests and blows a 1s budget. Measured
+          # in a k6 run against a staging deployment (25 VUs, ~4.6 req/s, p95 7.8s):
+          # readiness AND LIVENESS both failed with "context deadline exceeded" while
+          # the app was answering 100% of requests successfully — 0 failed out of
+          # 1,254.
+          #
+          # Readiness flapping under load is bad (the pod leaves the Service, so its
+          # traffic piles onto the remaining pods, which then flap too), but LIVENESS
+          # at 1s is the real hazard: 3 consecutive misses restarts the container, so
+          # a busy-but-healthy pod would restart itself at peak traffic and cascade
+          # across the ReplicaSet.
+          startupProbe:
+            httpGet:
+              path: /up # Laravel's built-in health endpoint
+              port: http
+            periodSeconds: 2
+            timeoutSeconds: 2
+            failureThreshold: 45
+          # Polled every 3s, not 10s. Measured: a pod that had booted by t=6s wasn't
+          # marked Ready until t=28s, purely because an initialDelay 5 + period 10
+          # schedule only probes at 5/15/25s.
+          readinessProbe:
+            httpGet:
+              path: /up
+              port: http
+            periodSeconds: 3
+            timeoutSeconds: 3
+            failureThreshold: 3 # ~9s of real failure before leaving the Service
+          livenessProbe:
+            httpGet:
+              path: /up
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3 # ~60s before a restart — never on a load spike
+          # Serves via Laravel Octane on FrankenPHP worker mode (see the image
+          # CMD in deploy/Dockerfile): the app is booted once and held in memory,
+          # so requests skip the framework bootstrap. The CMD pins --workers=4
+          # (NOT auto, which would count node cores and OOM). Each worker holds a
+          # booted app (~40-60MB), so if you raise --workers you must raise the
+          # memory limit here too — and if pods get OOMKilled, lower --workers or
+          # raise memory. Resource limits also contain the "noisy neighbour"
+          # blast radius on the node.
+          resources:
+            requests:
+              cpu: '250m'
+              memory: '256Mi'
+            limits:
+              cpu: '1'
+              memory: '512Mi'
+
+        # --- SSR: Node renderer, same pod so the web container reaches it on
+        #     127.0.0.1:13714. Same image tag as web → no version skew. ---
+        - name: ssr
+          image: app-ssr # replaced at deploy time (kustomize: app-ssr)
+          # SSR intentionally uses the PUBLIC GraphQL URL (page.props.graphqlURL):
+          # its APQ GETs ride the Cloud CDN on the public LB (~23ms hot hits, and
+          # the CDN is the AlloyDB shield under load). Setting GD_GRAPHQL_SSR_URL
+          # here would send SSR straight to the API's Cloud Run URL instead —
+          # measured 2026-07-03: no TTFB win, and every hot query gets ~200ms
+          # slower because direct Cloud Run has no CDN. Keep the env unset until
+          # SSR traffic no longer needs the CDN (e.g. edge HTML caching lands).
+          env:
+            # Shared secret matched by the Cloud Armor allow rule (priority 800,
+            # policy graphql-api-bot-protection) so SSR's GraphQL calls can never
+            # be caught by the UA-based bot-deny rules. Sent as x-gd-edge-key by
+            # apolloClient.ts under SSR. optional: pods still boot without it —
+            # SSR then just relies on the policy's default-allow.
+            - name: GD_SSR_EDGE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: acme-secret
+                  key: GD_SSR_EDGE_KEY
+                  optional: true
+          ports:
+            - name: ssr
+              containerPort: 13714
+          # Same startup-gated, fast-readiness shape as the web container above, and
+          # the same explicit timeouts for the same reason: /health shares the Node
+          # event loop with rendering, so it queues behind in-flight renders under
+          # load. SSR is the container that actually saturates here.
+          startupProbe:
+            httpGet:
+              path: /health
+              port: ssr
+            periodSeconds: 2
+            timeoutSeconds: 2
+            failureThreshold: 45
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: ssr
+            periodSeconds: 3
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: ssr
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          # SSR is the CPU-bound part. This ceiling is the hard cap that protects
+          # other workloads on the node when bots hammer SSR.
+          #
+          # NOTE: Inertia SSR cluster mode is wired in vite.config but currently
+          # OFF (cluster: false). If you enable it, it forks
+          # os.availableParallelism() workers — the NODE's core count, NOT this CPU
+          # limit — so turn it on together with bigger limits here (e.g. cpu "2-4"
+          # + memory "1Gi"), ideally a Guaranteed-QoS / CPU-pinned compute class so
+          # the worker count tracks the allocation. At cpu "1" / 256-512Mi the
+          # extra workers would OOM or throttle, which is why it's off for now.
+          resources:
+            requests:
+              cpu: '250m'
+              memory: '256Mi'
+            limits:
+              cpu: '1'
+              memory: '512Mi'

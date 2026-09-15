@@ -1,0 +1,76 @@
+# GUI git clients (Fork / Tower / SourceTree) launch hooks with a minimal PATH,
+# so pnpm/node may not be reachable. We probe common install locations here
+# so individual contributors don't need to set up ~/.config/husky/init.sh.
+#
+# If your toolchain lives somewhere unusual, you can still create
+# ~/.config/husky/init.sh with your own PATH export — Husky sources it first.
+
+if ! command -v pnpm >/dev/null 2>&1; then
+  for dir in \
+    "/opt/homebrew/bin" \
+    "/opt/homebrew/sbin" \
+    "/usr/local/bin" \
+    "$HOME/Library/pnpm" \
+    "$HOME/.local/share/pnpm" \
+    "$HOME/.volta/bin" \
+    "$HOME/.bun/bin"; do
+    [ -d "$dir" ] && PATH="$dir:$PATH"
+  done
+
+  # nvm-managed node (including Herd's bundled nvm). pnpm refuses to run on an
+  # unsupported Node, so we can't just grab whichever version sorts first — we
+  # pick the one pinned in .nvmrc when it's installed, else the highest version,
+  # and prepend only that. (Ordering by install time would let a stale Node win
+  # and crash pnpm, e.g. "No such built-in module: node:sqlite" on Node 20.)
+  want=""
+  [ -f .nvmrc ] && want=$(sed 's/^v//; s/[[:space:]]//g' .nvmrc)
+  want_esc=$(printf '%s' "$want" | sed 's/[.]/\\./g')
+  for nvm_dir in \
+    "$HOME/.nvm/versions/node" \
+    "$HOME/Library/Application Support/Herd/config/nvm/versions/node"; do
+    [ -d "$nvm_dir" ] || continue
+    pick=""
+    [ -n "$want" ] && pick=$(ls "$nvm_dir" 2>/dev/null | grep -E "^v${want_esc}([.]|$)" | sort -V | tail -1)
+    [ -z "$pick" ] && pick=$(ls "$nvm_dir" 2>/dev/null | grep -E '^v[0-9]' | sort -V | tail -1)
+    if [ -n "$pick" ] && [ -d "$nvm_dir/$pick/bin" ]; then
+      PATH="$nvm_dir/$pick/bin:$PATH"
+      break
+    fi
+  done
+
+  export PATH
+fi
+
+if ! command -v pnpm >/dev/null 2>&1; then
+  echo "✘ pnpm not found. Add its directory to ~/.config/husky/init.sh, e.g.:" >&2
+  echo "    export PATH=\"\$HOME/Library/pnpm:\$PATH\"" >&2
+  exit 1
+fi
+
+# `|| exit 1` because this is no longer the last command — without it a
+# lint-staged failure would be masked by the type check's exit code. (We can't
+# use `set -e` here: the PATH probing above relies on `[ -d … ] && …` returning
+# non-zero on a miss.)
+pnpm lint-staged || exit 1
+
+# Type check. Nothing else in this repo reads types — oxlint has no type
+# information and vite/esbuild is transpile-only, so a renamed field or a wrong
+# prop type sails through both `pnpm lint` and `pnpm run build`. vue-tsc can't be
+# scoped to staged files (it type-checks the whole project), so skip it outright
+# when the commit touches no TS/Vue. A PHP-only commit that changes a route still
+# slips past here — CI's `types` job covers that case.
+git diff --cached --name-only --diff-filter=ACMR | grep -qE '\.(ts|tsx|vue)$' || exit 0
+
+# Wayfinder's routes/actions and types/cmsRoutes.ts are gitignored and normally
+# emitted by the vite plugins on build/dev. Without them vue-tsc drowns in
+# unresolved `@/routes/*` imports, so generate them if a fresh checkout has none.
+if [ ! -d resources/ts/routes ] || [ ! -f resources/ts/types/cmsRoutes.ts ]; then
+  if ! php artisan wayfinder:generate --path=resources/ts >/dev/null 2>&1 ||
+    ! php artisan cms-routes:types >/dev/null 2>&1; then
+    echo "✘ Could not generate route types (is php on PATH?)." >&2
+    echo "  Run 'pnpm run build' once, then commit again." >&2
+    exit 1
+  fi
+fi
+
+pnpm run types:check

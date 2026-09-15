@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/Users/casper.lai/Library/Application Support/Herd/bin/php83",
+            "args": [
+                "/Users/casper.lai/Develop/gd-client-inertia-starter/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}

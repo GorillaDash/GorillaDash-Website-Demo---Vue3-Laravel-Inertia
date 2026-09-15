@@ -1,0 +1,80 @@
+fragment TribeInfo on Tribe {
+  name
+  slug
+  public_email
+  main_telephone
+  organic_number
+  paid_number
+  telephone_url_triggers
+  address_1
+  address_2
+  locality
+  state
+  country
+  postal_code
+  latitude
+  longitude
+  social_google_url
+  social_twitter_url
+  social_facebook_url
+  social_linkedin_url
+  social_instagram_url
+  google_place_id
+  meta_title
+  meta_description
+  whats_app_number
+  page_heading
+  introduction
+  opening_hours
+  contents(name: "Online Ordering URL") {
+    name
+    value
+    type
+  }
+}
+
+query getTribe($slug: String!, $locale: String) {
+  tribe(slug: $slug, locale: $locale) {
+    ...TribeInfo
+  }
+}
+
+# Store list for the locations pages — enough to group by state (directory) and to
+# plot each store on the state page's map/list (address + geo). Full per-store data
+# still comes from getTribe/TribeInfo.
+query getTribes($tribeType: String, $order: [String]) {
+  tribes(name: $tribeType, orderBy: $order) {
+    name
+    slug
+    state
+    address_1
+    address_2
+    locality
+    postal_code
+    latitude
+    longitude
+  }
+}
+
+# Stores near a point, ranked by distance — powers the location search. Returns just
+# the fields the result list renders. Run imperatively via the Apollo client (see
+# useSearchStores): the project's useQuery is for mount-time data, not on-demand
+# searches, and there's no useLazyQuery in this app.
+query searchStores(
+  $tribe_type: String!
+  $address: String!
+  $lat: Float!
+  $lng: Float!
+  $radius: Float!
+) {
+  searchStores(tribe_type: $tribe_type, address: $address, lat: $lat, lng: $lng, radius: $radius) {
+    name
+    slug
+    address_1
+    address_2
+    locality
+    postal_code
+    latitude
+    longitude
+  }
+}

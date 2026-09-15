@@ -1,0 +1,19 @@
+fragment MediaCollectionInfo on MediaCollection {
+  name
+  description
+  media {
+    ...MediaInfo
+  }
+}
+
+fragment MediaInfo on Media {
+  default
+  thumbnail
+  banner
+  square
+  rectangle
+  original_cropped
+  portrait
+  alt_tag
+  approved
+}

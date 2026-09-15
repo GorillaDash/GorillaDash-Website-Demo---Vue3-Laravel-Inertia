@@ -1,0 +1,162 @@
+name: deploy
+
+# Manually triggered Cloud Build + GKE deploy (runs `make ship-cloud`).
+#
+# Required secrets (Workload Identity Federation — no long-lived keys). Both are
+# GorillaDash ORG secrets, so a repo in the org normally inherits them:
+#   GCP_WIF_PROVIDER  projects/<NUMBER>/locations/global/workloadIdentityPools/github/providers/github-oidc
+#   GCP_SA_EMAIL      github-deployer@gorilla-dash-178800.iam.gserviceaccount.com
+#
+# Secrets alone are not enough: the repo must also be admitted to the SHARED
+# OIDC provider and bound to that service account, which is per-repo and is what
+# `make ci-sa` (once per project) + `make ci-bind` (once per repo, and part of
+# `make bootstrap`) do. Skip it and the Authenticate step below fails with
+# `unauthorized_client: the given credential is rejected by the attribute
+# condition`. See deploy/README.md → CI deploy → One-time GCP setup.
+
+on:
+  workflow_dispatch:
+    inputs:
+      country:
+        description: 'Country to deploy'
+        type: choice
+        required: true
+        default: usa
+        options:
+          - usa
+          # Add a new country here once its overlay + secret + WI binding exist.
+      force_build:
+        description: 'Rebuild even if this commit is already in Artifact Registry'
+        type: boolean
+        required: false
+        default: false
+
+# Don't let two deploys of the same country race; queue them instead.
+concurrency:
+  group: deploy-${{ github.event.inputs.country }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write # required for Workload Identity Federation (OIDC)
+
+env:
+  PROJECT_ID: gorilla-dash-178800
+  REGION: us-west1
+  REPO: acme
+  CLUSTER: gorilladash-cluster
+
+jobs:
+  ship:
+    runs-on: ubuntu-latest
+    # Optional: gives per-country deployment history + lets you require approval
+    # in Settings → Environments. Auto-created on first run if it doesn't exist.
+    environment: ${{ github.event.inputs.country }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+        with:
+          persist-credentials: false
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_EMAIL }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Install kustomize (only if missing)
+        run: |
+          # ubuntu-24.04 ships kustomize (5.8.1 as of image 20260720), so this
+          # normally no-ops. Kept as the fallback for a runner image that drops it.
+          # Only `kustomize edit set image` (deploy.sh) uses the binary, so tracking
+          # the runner's version rather than a pin is not a meaningful risk.
+          if command -v kustomize >/dev/null 2>&1; then
+            echo "kustomize: already present ($(kustomize version)), skipping install"
+          else
+            KUSTOMIZE_VERSION=5.4.3
+            curl -sLo kustomize.tar.gz \
+              "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
+            tar -xzf kustomize.tar.gz
+            sudo mv kustomize /usr/local/bin/
+          fi
+
+      # Pinned once and reused by both halves below, so the image the guard
+      # looks for is definitely the image the deploy asks for. Same value the
+      # Makefile would derive on its own; it is explicit here because skipping
+      # the build makes that tag a contract rather than a default.
+      - name: Resolve image tag
+        run: echo "TAG=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+
+      # `make ship-cloud` is split into its two halves here ON PURPOSE, so that
+      # `Get GKE credentials` can sit BETWEEN them. See the security note on that
+      # step for why the order matters. It also lets the build be skipped on its
+      # own, and gives the run separate build-vs-rollout timings without digging
+      # through the log.
+      #
+      # TAG is the commit sha and carries no country, so a second country
+      # deployed from the same commit rebuilds byte-identical images and pushes
+      # them to the same path. Skip when they are already there.
+      #
+      # Both must exist: web and ssr are built in parallel, so a run that pushed
+      # one and then failed must not read as complete. Skipping leaves
+      # cache:builder and the :latest tags unrefreshed, which costs nothing — a
+      # hit means this exact tag was built before, so :latest is already it.
+      #
+      # force_build covers the case this cannot see: a tag whose content is not
+      # what the commit would produce today (a rebuilt base image, a rerun after
+      # a partial push that somehow got both tags up).
+      - name: Build + push images (Cloud Build)
+        env:
+          FORCE_BUILD: ${{ github.event.inputs.force_build }}
+        run: |
+          IMG="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}"
+
+          if [ "$FORCE_BUILD" != "true" ] \
+            && gcloud artifacts docker images describe "$IMG/web:$TAG" >/dev/null 2>&1 \
+            && gcloud artifacts docker images describe "$IMG/ssr:$TAG" >/dev/null 2>&1; then
+            echo "web:$TAG and ssr:$TAG are already in Artifact Registry — skipping the build."
+            exit 0
+          fi
+
+          make build-cloud TAG="$TAG"
+
+      # Writes a kubeconfig whose credentials are a short-lived access token
+      # embedded directly (use_auth_provider defaults to false), so kubectl never
+      # invokes gke-gcloud-auth-plugin. That is what lets us drop the
+      # `gcloud components install gke-gcloud-auth-plugin` this used to run on
+      # EVERY deploy — measured at 32s there against ~2s here.
+      #
+      # context_name is passed explicitly rather than relying on the action's
+      # default: deploy.sh looks for gke_<project>_<region>_<cluster> and falls back
+      # to `gcloud container clusters get-credentials` (which needs the plugin we no
+      # longer install) if it can't find it. Spelling it out here keeps that contract
+      # visible and immune to an upstream default change.
+      #
+      # MUST run AFTER the Cloud Build step: the action writes the kubeconfig to
+      # $GITHUB_WORKSPACE as gha-kubeconfig-<random> (upstream src/main.ts), i.e.
+      # into the repo directory. `gcloud builds submit .` uploads that whole
+      # directory and the Dockerfile does `COPY . .`, so running this first would
+      # bake a live access token into the web image and push it to Artifact
+      # Registry. The .gitignore/.dockerignore entries alongside this are the second
+      # line of defence — do not rely on either one alone.
+      - name: Get GKE credentials
+        uses: google-github-actions/get-gke-credentials@3da1e46a907576cefaa90c484278bb5b259dd395 # v3.0.0
+        with:
+          cluster_name: ${{ env.CLUSTER }}
+          location: ${{ env.REGION }}
+          project_id: ${{ env.PROJECT_ID }}
+          context_name: gke_${{ env.PROJECT_ID }}_${{ env.REGION }}_${{ env.CLUSTER }}
+
+      - name: Deploy to GKE
+        env:
+          # Lets deploy.sh converge the edge cache rules + purge cached HTML after
+          # the rollout (step 5; non-fatal when absent). The non-secret per-country
+          # ids come from the country's overlay config.env; only the token comes from
+          # here. deploy.sh reads it from the environment first and falls back to the
+          # repo .env, which exists on a developer's machine but never in CI — so a
+          # token missing here is a silent SKIP, not a failure.
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: make deploy COUNTRY=${{ github.event.inputs.country }} TAG="$TAG"

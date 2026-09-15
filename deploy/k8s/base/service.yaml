@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: acme
+  annotations:
+    # Container-native load balancing (NEG) — the GKE Ingress LB sends traffic
+    # straight to pods instead of via kube-proxy. Recommended on GKE.
+    cloud.google.com/neg: '{"ingress": true}'
+    # Use the BackendConfig below for the L7 health check.
+    cloud.google.com/backend-config: '{"default": "acme-backendconfig"}'
+spec:
+  type: ClusterIP
+  selector:
+    app: acme
+    role: web # only the web pods — never scheduler/worker
+  ports:
+    - name: http
+      port: 80
+      targetPort: http # -> web container's :8080

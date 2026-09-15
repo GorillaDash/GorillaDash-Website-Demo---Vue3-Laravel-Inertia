@@ -1,0 +1,28 @@
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: acme-backendconfig
+spec:
+  # The GCE L7 load balancer health-checks the web pods at /up (HTTP 200 when
+  # the app has booted), independent of the kubelet readiness probe.
+  healthCheck:
+    type: HTTP
+    requestPath: /up
+    port: 8080
+  timeoutSec: 30
+  # Cloud Armor: only the CDN edge's IPs may reach this origin (TLS is terminated
+  # at the edge; the origin serves plain http, so without this anyone hitting the
+  # static IP bypasses the edge). The policy + its allow rules are managed OUT OF
+  # BAND by deploy/setup-cloud-armor.sh (and refreshed weekly by the GitHub Action)
+  # — it must exist BEFORE this attaches, or the default-deny rule blocks all
+  # traffic. Renaming the policy means running that script with the new POLICY
+  # FIRST, then changing the name here and deploying.
+  #
+  # `cloudflare-only` is PROJECT-WIDE, not this client's alone — the other client
+  # sites on the cluster attach the same policy, and its rules (allow chunks at
+  # 1000+, GCP LB at 900, default deny) are the exact shape setup-cloud-armor.sh
+  # converges, so the two agree. Do not fork a per-client copy: a duplicate needs
+  # its own weekly refresh and is the one that silently goes stale when Cloudflare
+  # rotates its ranges. A Fastly-fronted site points at `fastly-only` instead.
+  securityPolicy:
+    name: cloudflare-only

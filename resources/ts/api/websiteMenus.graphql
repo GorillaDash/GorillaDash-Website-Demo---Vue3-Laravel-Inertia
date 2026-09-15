@@ -1,0 +1,6 @@
+query getWebsiteMenu($name: String!, $locale: String) {
+  websiteMenu(name: $name, locale: $locale) {
+    name
+    menu_json
+  }
+}
