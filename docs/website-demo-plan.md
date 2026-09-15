@@ -235,6 +235,9 @@ Estimates are working days for one developer with agent help. They are an estima
 8. **Subdomain and hosting.** Deploy on GKE like Great Greek (the starter's default), or on the Forge client fleet? A Tolgee project is also needed per the starter checklist, or the demo can be pinned to English only.
 9. **Forms post from the browser.** The order, booking and enquiry mutations are sent straight from the browser with the website token the starter already shares with the page. The starter's `docs/public-forms.md` recommends a server route with Precognition and reCAPTCHA; that should be added before the demo is public, or bots can fill the demo organisation with enquiries.
 
+10. **Rich text is not sanitised.** Articles, Our Work posts, the about story and FAQ answers are rendered as HTML straight from Gorilla Dash. Anyone who can edit that content can put script into the page. Sanitising it needs a library such as DOMPurify, which is a new dependency and needs approval.
+11. **Menu prices ignore tribe price overrides.** The menu shows organisation prices while the cart uses a tribe's own price when one exists. The demo tribes have no overrides, so the two agree today.
+
 ---
 
 ## 9. Running it locally
