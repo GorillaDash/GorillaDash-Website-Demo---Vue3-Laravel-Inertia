@@ -2,26 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\BoundLocation;
+use App\Services\Catalogue\TribeDirectory;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class LocationController extends Controller
 {
     /**
-     * The location detail page. The slug is passed as a prop for the page's
-     * <Head>/SSR identity. Binding the store to the session happens after mount
-     * via the beacon (POST /bound-location) — not here — so this GET stays a pure
-     * read that the edge can cache (see EdgeCacheGuestPage).
-     *
-     * A definitive miss (no such store) is a 404; a lookup failure is tolerated
-     * so an API hiccup doesn't block the page.
+     * One tribe's page. The tribe's content is fetched client-side; this only checks
+     * the slug is a tribe the finder lists (see TribeDirectory).
      */
-    public function show(string $slug, BoundLocation $boundLocation): Response
+    public function show(string $slug, TribeDirectory $tribes): Response
     {
-        $office = rescue(fn () => $boundLocation->find($slug), false, report: false);
-
-        abort_if($office === null, 404);
+        abort_unless($tribes->exists($slug), 404);
 
         return Inertia::render('LocationDetail', [
             'slug' => $slug,

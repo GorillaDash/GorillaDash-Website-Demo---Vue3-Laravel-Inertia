@@ -38,7 +38,17 @@ class WebsitePages
      */
     public const FALLBACK = [
         'homepage' => 'homepage',
+        'about' => 'about',
+        'menu' => 'menu',
+        'order' => 'order',
+        'catering' => 'catering',
+        'book' => 'book',
         'locations' => 'locations',
+        'our-work' => 'our-work',
+        'blog' => 'blog',
+        'franchise' => 'franchise',
+        'contact' => 'contact',
+        'faq' => 'faq',
     ];
 
     /**

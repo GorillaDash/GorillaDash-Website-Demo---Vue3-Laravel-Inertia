@@ -28,7 +28,17 @@ class WebsitePageController extends Controller
      * (home() below), so its slug must not ALSO serve it at `/homepage`.
      */
     private const COMPONENTS = [
+        'about' => 'About',
+        'menu' => 'Menu',
+        'order' => 'Order',
+        'catering' => 'Catering',
+        'book' => 'Book',
         'locations' => 'Locations',
+        'our-work' => 'OurWork',
+        'blog' => 'Blog',
+        'franchise' => 'Franchise',
+        'contact' => 'Contact',
+        'faq' => 'Faq',
     ];
 
     public function __construct(private readonly WebsitePages $pages)

@@ -1,7 +1,10 @@
 <?php
 
 use App\Enums\Locale;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\MenuItemController;
+use App\Http\Controllers\OurWorkController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\WebsitePageController;
 use App\Http\Middleware\RedirectToDefaultLocale;
@@ -62,8 +65,11 @@ $pagePattern = '(?!(?:'.implode('|', array_map(preg_quote(...), $reserved)).')(?
 // an un-reloaded rename, the stale slugs.
 $websitePages = app(WebsitePages::class);
 $locationsPattern = $websitePages->slugPattern('locations');
+$menuPattern = $websitePages->slugPattern('menu');
+$ourWorkPattern = $websitePages->slugPattern('our-work');
+$blogPattern = $websitePages->slugPattern('blog');
 
-$pages = function () use ($pagePattern, $locationsPattern): void {
+$pages = function () use ($pagePattern, $locationsPattern, $menuPattern, $ourWorkPattern, $blogPattern): void {
     Route::get('/', [WebsitePageController::class, 'home'])->name('home');
 
     // Single-store detail, and the starter's worked example of a CMS SUB-route: the
@@ -85,6 +91,25 @@ $pages = function () use ($pagePattern, $locationsPattern): void {
         ->where('page', $locationsPattern)
         ->middleware('page:locations')
         ->name('locations.show');
+
+    // Juniper Table demo sub-routes. Each matches only its own page's baked slugs. The
+    // two-segment ones also need a distinct parameter NAME: Laravel keys its route
+    // collection by method + URI string, so a second `{page}/{slug}` would silently
+    // replace locations.show instead of sitting beside it.
+    Route::get('{page}/{section}/{item}', [MenuItemController::class, 'show'])
+        ->where('page', $menuPattern)
+        ->middleware('page:menu')
+        ->name('menu.item');
+
+    Route::get('{page}/{work}', [OurWorkController::class, 'show'])
+        ->where('page', $ourWorkPattern)
+        ->middleware('page:our-work')
+        ->name('ourWork.show');
+
+    Route::get('{page}/{article}', [ArticleController::class, 'show'])
+        ->where('page', $blogPattern)
+        ->middleware('page:blog')
+        ->name('blog.show');
 
     // Every top-level CMS page (/locations, or whatever the CMS renames it to), resolved and
     // dispatched to its Inertia component by the controller. Registered last in the
