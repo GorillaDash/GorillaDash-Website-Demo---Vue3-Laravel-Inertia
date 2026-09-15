@@ -266,3 +266,5 @@ The site reads the local Gorilla Dash over plain HTTP at `http://localhost.test`
    ```
 
 Structure view is the switch at the bottom left, or the S key. `?structure=1` and `?theme=trade` / `?theme=retail` set them from a link.
+
+The desktop, tablet and mobile buttons in the same control show the site at that device's width. Tablet (820 × 1180) and mobile (390 × 844) load the site again inside a device frame, because the site's responsive breakpoints follow the browser width and only a genuinely narrower frame shows the real tablet and phone layouts. Structure view and the theme stay in step between the frame and the control, and choosing Desktop returns to whichever page was opened inside the frame. `?device=tablet` or `?device=mobile` opens a preview from a link, and the last choice is remembered in that browser.
