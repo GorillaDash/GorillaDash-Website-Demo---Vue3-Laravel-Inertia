@@ -1,7 +1,6 @@
 {
   "$schema": "https://docs.tolgee.io/cli-schema.json",
   "projectId": 10,
-  "apiKey": "tgpat_12o87d655mr77le252o09epdpq73q4o1mb4otg2blg8djqc35q4q",
   "format": "YAML_ICU",
   "apiUrl": "https://multilingual.gorilladash.com",
   "parser": "vue",

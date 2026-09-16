@@ -14,6 +14,7 @@
     "lint:check": "node bin/tailwind-scale.mjs --check && oxlint",
     "types:check": "vue-tsc --noEmit",
     "codegen": "NODE_OPTIONS=\"--import tsx\" graphql-codegen --require dotenv/config --config ./resources/ts/codegen.ts dotenv_config_path=.env",
+    "tolgee": "sh bin/tolgee.sh",
     "prepare": "husky",
     "tw:scale": "node bin/tailwind-scale.mjs --fix",
     "tw:scale:check": "node bin/tailwind-scale.mjs"

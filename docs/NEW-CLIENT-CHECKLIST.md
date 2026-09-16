@@ -53,6 +53,10 @@ way, so nothing looks wrong until a translator asks where the strings are.
       `TOLGEE_CDN_URL` (per-country `config.env`). Copy an existing client's
       content-delivery settings: JSON + ICU, auto-publish, states
       TRANSLATED/REVIEWED.
+- [ ] **The Tolgee API key is in `.env.local.shared`, not `.tolgeerc`.** `.tolgeerc`
+      is tracked, so a key committed there ships with the repository — this is how a
+      live token reached a public repo in September 2026. The CLI reads it from the
+      environment instead: run it as `pnpm run tolgee -- sync --yes`.
 - [ ] **`.tolgeerc` → `projectId` changed to this client's project.** It ships
       carrying another client's id, so any `tolgee` command run before you change it
       creates this site's keys inside THAT project — it succeeds, prints nothing
