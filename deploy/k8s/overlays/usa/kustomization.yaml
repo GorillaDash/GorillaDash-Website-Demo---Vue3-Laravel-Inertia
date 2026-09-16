@@ -7,12 +7,16 @@ resources:
   - namespace.yaml
   - ../../base
   - ingress.yaml
-  - managedcertificate.yaml
-  - frontendconfig.yaml
 
-# No CDN sits in front of demo.gorilladash.com, so the base's Cloudflare-only Cloud
-# Armor policy would block every visitor. GKE only detaches a policy when its name is
-# set to an empty string; deleting the field would leave the old one attached.
+# Fastly fronts demo.gorilladash.com (see ingress.yaml), so the origin has to refuse
+# anyone who is not Fastly — the base's `cloudflare-only` policy would refuse every
+# visitor instead, since none of them arrive from a Cloudflare IP.
+#
+# `fastly-only` is PROJECT-WIDE and already exists: TheGreatGreek created it and its
+# weekly refresh converges it over the fastly + cloudflare ranges. This site is a
+# second consumer of that one policy, not a second copy — a per-client fork is the one
+# that silently goes stale when an edge rotates its ranges. Keep the two repos'
+# EDGE_PROVIDERS lists identical (see .github/workflows/refresh-edge-ips.yml).
 patches:
   - target:
       kind: BackendConfig
@@ -20,7 +24,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/securityPolicy/name
-        value: ''
+        value: 'fastly-only'
 
 # Same image for every country, built once. deploy.sh sets the tag here.
 images:
