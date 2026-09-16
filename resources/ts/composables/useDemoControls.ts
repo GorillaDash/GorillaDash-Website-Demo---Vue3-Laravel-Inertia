@@ -88,6 +88,9 @@ const persist = (): void => {
 const apply = (): void => {
   const root = document.documentElement
   root.classList.toggle('structure-view', structureView.value)
+  // The preview covers the page rather than replacing it, so the page behind it
+  // must not scroll with the wheel or the keyboard.
+  root.classList.toggle('device-preview', device.value !== 'desktop' && !embedded.value)
 
   if (theme.value === 'gorilla') {
     delete root.dataset.theme
@@ -172,6 +175,7 @@ const setDevice = (value: DemoDevice): void => {
   const enteringPreview = device.value === 'desktop'
   const leavingPreview = value === 'desktop'
   device.value = value
+  apply()
   persist()
 
   // Return to whatever page the visitor had clicked through to inside the preview.

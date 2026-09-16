@@ -299,3 +299,10 @@ html {
     animation: none !important;
   }
 }
+
+/* While a device preview covers the page (see DevicePreview.vue), the page behind
+   it must not scroll. */
+.device-preview,
+.device-preview body {
+  overflow: hidden;
+}

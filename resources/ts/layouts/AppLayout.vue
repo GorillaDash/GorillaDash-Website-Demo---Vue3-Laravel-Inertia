@@ -13,9 +13,12 @@ import { useDemoControls } from '@/composables/useDemoControls'
  * onBeforeMount is the only thing that calls `tolgee.run()`. It renders nothing of
  * its own.
  *
- * In the tablet and mobile previews the page is not drawn here. DevicePreview loads
- * it again inside a device-sized iframe, and the copy inside that iframe renders
- * normally with its own demo control hidden.
+ * DevicePreview covers the page in the tablet and mobile previews rather than
+ * replacing it. Inertia hands this layout the page as a persistent slot, and a
+ * slot vnode that has been unmounted cannot be mounted a second time: taking the
+ * page out of the tree with v-else left the main area empty on the way back to
+ * desktop. Covering it keeps the page mounted, so returning to desktop is just the
+ * overlay going away.
  */
 const { device, embedded, init } = useDemoControls()
 
@@ -26,10 +29,10 @@ onMounted(init)
 
 <template>
   <TolgeeProvider>
-    <DevicePreview v-if="previewing" />
     <div
-      v-else
       class="flex min-h-screen flex-col bg-surface text-ink"
+      :inert="previewing"
+      :aria-hidden="previewing || undefined"
     >
       <AppHeader />
 
@@ -39,6 +42,7 @@ onMounted(init)
 
       <AppFooter />
     </div>
+    <DevicePreview v-if="previewing" />
     <DemoToolbar v-if="!embedded" />
     <WelcomePanel v-if="!embedded" />
   </TolgeeProvider>
