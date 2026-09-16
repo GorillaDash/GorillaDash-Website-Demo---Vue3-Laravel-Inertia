@@ -27,6 +27,18 @@
 #   * Something must stop a direct hit on the static IP from bypassing Fastly's cache,
 #     WAF and TLS. kustomization.yaml attaches the `fastly-only` Cloud Armor policy.
 #
+# Dropping the managed-certificates annotation is NOT enough to take the certificate
+# down, and the gap is silent. The ManagedCertificate controller writes a second
+# annotation of its own, `ingress.gcp.kubernetes.io/pre-shared-cert`, which is absent
+# from last-applied-configuration — so `kubectl apply` leaves it in place and it goes
+# on pinning the certificate to the load balancer after the CR is deleted. What is
+# left is a managed certificate with no owner: it serves until it expires and cannot
+# renew, which is where `greatgreek-cert` has been. Remove it by hand, and only once
+# the edge is off :443, because the https listener goes within seconds of it:
+#
+#   kubectl -n hungry-gorilla-usa annotate ingress hungry-gorilla \
+#     ingress.gcp.kubernetes.io/pre-shared-cert-
+#
 # To put this host back on the load balancer directly (no CDN), restore the A record
 # to the static IP, re-add managedcertificate.yaml + frontendconfig.yaml, and detach
 # the policy — budget 15-60 minutes for the managed certificate to provision.
