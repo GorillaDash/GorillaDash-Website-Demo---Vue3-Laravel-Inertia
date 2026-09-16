@@ -1,19 +1,35 @@
-# demo.gorilladash.com is served straight from Google's load balancer, with no CDN in
-# front. gorilladash.com's DNS lives in Cloud DNS (zone `gorilladash`, project
-# gorilla-dash-178800), where an A record points the host at the reserved static IP.
+# demo.gorilladash.com sits behind Fastly (service "Gorilla Dash Demo Site"), which
+# terminates TLS and reaches this load balancer over plain http on :80. Cloud DNS
+# (zone `gorilladash`, project gorilla-dash-178800) holds the host as a CNAME to
+# j.sni.global.fastly.net, so the reserved static IP below is Fastly's backend — not
+# an address any visitor resolves.
 #
-# TLS terminates at the load balancer with a Google-managed certificate
-# (managedcertificate.yaml). Google only issues it once the host resolves to this
-# Ingress's IP, so a fresh certificate sits in Provisioning for 15-60 minutes after
-# the DNS record appears; that is expected, not a fault. The FrontendConfig
-# redirects http to https.
+# This overlay therefore carries NEITHER a ManagedCertificate NOR a FrontendConfig.
+# Both are deliberate absences, and both were present until 2026-09-16:
 #
-# Because there is no Cloudflare edge, the template's Cloudflare-only Cloud Armor
-# policy is detached in kustomization.yaml. Left attached, it would refuse every
-# visitor, since none of them arrive from a Cloudflare IP.
+#   * A FrontendConfig `redirectToHttps` in front of a CDN is an infinite redirect.
+#     Fastly arrives on :80, the LB answers `301 https://demo.gorilladash.com:443/`,
+#     Fastly hands that back to the browser unchanged, and the browser starts over —
+#     ERR_TOO_MANY_REDIRECTS, with the origin itself perfectly healthy. Fastly already
+#     redirects http to https on its own (query string preserved, HSTS attached), so
+#     removing it costs nothing.
+#   * A Google-managed certificate cannot RENEW once the host stops resolving to this
+#     Ingress, because Google validates by reaching the domain at this load balancer.
+#     It keeps serving until it expires and only then fails, which is where
+#     `greatgreek-cert` has been stuck. With TLS at the edge the origin needs no
+#     certificate at all, so there is nothing to renew.
 #
-# APP_FORCE_HTTPS=true stays set in config.env: the load balancer talks to the pods
-# over plain http, and without it the app would emit http:// asset URLs.
+# A plain-http origin is the template's normal CDN shape (deploy/CHECKLIST.md, "TLS
+# lives at Cloudflare now"). Two things follow from it:
+#
+#   * APP_FORCE_HTTPS=true stays set in config.env — the LB->pod leg is http, and
+#     without it the app would emit http:// asset URLs.
+#   * Something must stop a direct hit on the static IP from bypassing Fastly's cache,
+#     WAF and TLS. kustomization.yaml attaches the `fastly-only` Cloud Armor policy.
+#
+# To put this host back on the load balancer directly (no CDN), restore the A record
+# to the static IP, re-add managedcertificate.yaml + frontendconfig.yaml, and detach
+# the policy — budget 15-60 minutes for the managed certificate to provision.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -21,8 +37,6 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: 'gce'
     kubernetes.io/ingress.global-static-ip-name: 'hungry-gorilla-usa-ip'
-    networking.gke.io/managed-certificates: 'hungry-gorilla-cert'
-    networking.gke.io/v1beta1.FrontendConfig: 'hungry-gorilla-frontend'
 spec:
   rules:
     - host: demo.gorilladash.com

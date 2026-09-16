@@ -76,6 +76,16 @@ jobs:
 
       - name: Refresh Cloud Armor allowlist from the edge providers
         if: steps.targets.outputs.skip != 'true'
+        # demo.gorilladash.com is behind Fastly, so this deployment converges
+        # `fastly-only` — the policy the overlay attaches — rather than the script's
+        # `cloudflare-only` default. EDGE_PROVIDERS must stay `fastly,cloudflare` in
+        # THAT ORDER: TheGreatGreek shares this policy and converges it with the same
+        # list, and the allow rules are chunked across the concatenated CIDRs, so a
+        # different order would rewrite every rule on alternate weeks. A clone of this
+        # starter that sits behind Cloudflare alone deletes both vars.
+        env:
+          POLICY: fastly-only
+          EDGE_PROVIDERS: fastly,cloudflare
         run: ./deploy/setup-cloud-armor.sh
 
       - name: Verify origin still denies non-edge traffic (403)
