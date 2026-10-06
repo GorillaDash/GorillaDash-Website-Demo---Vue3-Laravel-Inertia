@@ -18,9 +18,13 @@ name: refresh-edge-ips
 #     --role="roles/compute.networkViewer" --condition=None
 
 on:
-  # No weekly schedule here: demo.gorilladash.com has no CDN in front and its
-  # BackendConfig detaches the edge-only policy, so the lockdown check below would
-  # fail every week. The shared policy is kept fresh by the client repos that use it.
+  schedule:
+    # Weekly, Mondays 08:00 UTC. demo.gorilladash.com is behind Fastly with
+    # `fastly-only` attached (see the overlay's kustomization.yaml), and since
+    # 2026-10-06 this repo is the only one keeping that policy fresh: TheGreatGreek,
+    # which used to refresh it, moved to `cloudflare-only` when it retired Fastly.
+    # Delete the policy, and this schedule, once this site moves to Cloudflare.
+    - cron: '0 8 * * 1'
   workflow_dispatch: {} # allow manual refresh on demand
 
 # Never let two refreshes edit the policy at once.
@@ -78,10 +82,9 @@ jobs:
         if: steps.targets.outputs.skip != 'true'
         # demo.gorilladash.com is behind Fastly, so this deployment converges
         # `fastly-only` — the policy the overlay attaches — rather than the script's
-        # `cloudflare-only` default. EDGE_PROVIDERS must stay `fastly,cloudflare` in
-        # THAT ORDER: TheGreatGreek shares this policy and converges it with the same
-        # list, and the allow rules are chunked across the concatenated CIDRs, so a
-        # different order would rewrite every rule on alternate weeks. A clone of this
+        # `cloudflare-only` default. This site is the policy's only user now (TheGreatGreek
+        # left it on 2026-10-06), so EDGE_PROVIDERS just has to keep `fastly`; Cloudflare
+        # stays listed so the site can move edges without a lockout. A clone of this
         # starter that sits behind Cloudflare alone deletes both vars.
         env:
           POLICY: fastly-only

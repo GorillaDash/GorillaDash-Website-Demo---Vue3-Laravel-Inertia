@@ -12,11 +12,12 @@ resources:
 # anyone who is not Fastly — the base's `cloudflare-only` policy would refuse every
 # visitor instead, since none of them arrive from a Cloudflare IP.
 #
-# `fastly-only` is PROJECT-WIDE and already exists: TheGreatGreek created it and its
-# weekly refresh converges it over the fastly + cloudflare ranges. This site is a
-# second consumer of that one policy, not a second copy — a per-client fork is the one
-# that silently goes stale when an edge rotates its ranges. Keep the two repos'
-# EDGE_PROVIDERS lists identical (see .github/workflows/refresh-edge-ips.yml).
+# `fastly-only` is PROJECT-WIDE and already exists: TheGreatGreek created it, and this
+# site attached to it as a second consumer. TheGreatGreek retired Fastly on 2026-10-06
+# and moved to `cloudflare-only`, so this site is now the policy's only user and this
+# repo's weekly refresh (.github/workflows/refresh-edge-ips.yml) is what keeps it
+# current. Once this site moves to Cloudflare, drop this patch (the base's
+# `cloudflare-only` applies) and delete the `fastly-only` policy.
 patches:
   - target:
       kind: BackendConfig
