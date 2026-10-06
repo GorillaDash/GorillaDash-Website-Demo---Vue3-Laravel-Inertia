@@ -49,7 +49,10 @@ spec:
         role: web # the Service selects only these pods (not scheduler/worker)
     spec:
       serviceAccountName: hungry-gorilla # Workload Identity -> Cloud SQL client GSA
-      terminationGracePeriodSeconds: 30
+      # 40s of preStop drain (below) plus room for the longest in-flight request to
+      # finish after it. A pod that is still terminating does not hold up the
+      # rollout: `maxSurge: 100%` has already put its replacement in service.
+      terminationGracePeriodSeconds: 75
       initContainers:
         # --- Cloud SQL Auth Proxy as a NATIVE sidecar (restartPolicy: Always):
         #     k8s waits for its startup probe before starting web/ssr, so they
@@ -89,6 +92,22 @@ spec:
         # --- Web: FrankenPHP serving the Laravel/Inertia app ---
         - name: web
           image: app-web # replaced at deploy time (kustomize: app-web)
+          # Keep serving after Kubernetes decides to remove this pod. The GKE Ingress
+          # load balancer reaches pods directly (container-native NEG, see
+          # service.yaml), and removing an endpoint from a NEG is not instant: the
+          # balancer keeps sending requests for tens of seconds after the pod is
+          # marked Terminating. Exiting straight away is what returned 502 for a
+          # stretch of every deploy, with no error in the app's own logs. Sleeping
+          # here leaves the container serving traffic while the balancer catches up;
+          # SIGTERM only reaches Octane once the sleep finishes.
+          #
+          # The deploy that introduces this still shows the old 502 window: the pods
+          # being retired are the ones without the drain. Judge it on the deploy
+          # after that one.
+          lifecycle:
+            preStop:
+              exec:
+                command: ['sleep', '40']
           ports:
             - name: http
               containerPort: 8080
@@ -160,6 +179,13 @@ spec:
         #     127.0.0.1:13714. Same image tag as web → no version skew. ---
         - name: ssr
           image: app-ssr # replaced at deploy time (kustomize: app-ssr)
+          # Outlive the web container's own drain by 5s: Kubernetes sends SIGTERM to
+          # every container at once, and a renderer that exits first would fail the
+          # requests the web container is still finishing on 127.0.0.1:13714.
+          lifecycle:
+            preStop:
+              exec:
+                command: ['sleep', '45']
           # SSR intentionally uses the PUBLIC GraphQL URL (page.props.graphqlURL):
           # its APQ GETs ride the Cloud CDN on the public LB (~23ms hot hits, and
           # the CDN is the AlloyDB shield under load). Setting GD_GRAPHQL_SSR_URL
