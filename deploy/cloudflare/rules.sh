@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 #
-# The cache rules this repo owns, as JSON, for one host.
+# The GorillaDash cache rules, as JSON, for every GD host on one zone.
 #
-# Sourced by apply-rules.sh and verify-rules.sh so that the rules being applied and
-# the rules being verified can never be two different opinions. Prints a JSON array
-# on stdout: gd_cache_rules <host>
+# Sourced by apply-rules.sh so the rules being applied have one definition. Prints a
+# JSON array on stdout: gd_cache_rules <host> [<host> ...]
 #
 # ORDER IS THE WHOLE DESIGN. Cache Rules STACK — every matching rule contributes its
 # settings and, where two rules set the same one, THE LAST MATCH WINS. That is the
@@ -20,22 +19,40 @@
 # after the bypasses so an engaged visitor does not lose asset caching for a whole
 # session over a cookie that has nothing to do with /build/.
 #
-# Every rule is scoped to one host. The entrypoint ruleset is ZONE-wide and this zone
-# carries other GorillaDash sites, so an unscoped rule would silently change caching
-# for somebody else's site.
+# ONE SET OF FOUR FOR THE WHOLE ZONE, NOT FOUR PER HOST. Every GD site on a zone gets
+# byte-identical rules, so the only thing that differs is the host — and a zone's plan
+# caps how many cache rules it may hold (10 on gorilladashstaging.com). Four per host hit
+# that cap at the third client. So each rule matches a SET of hosts,
+# `http.host in {"a" "b"}`, and adding a client adds a host to the set, not rules to
+# the zone. apply-rules.sh owns that set: it reads it back, adds to it, and never drops
+# a host it was not asked to (see its header for the lock that keeps two repos from
+# overwriting each other).
+#
+# Every rule is still scoped to the hosts in the set, never the bare zone: the
+# entrypoint ruleset is ZONE-wide and the zone carries sites that are not GD's, so an
+# unscoped rule would silently change caching for somebody else's site.
 
-# Emit the rule array for $1 (the public hostname).
+# The ref prefix of the shared rules. Anything else on the zone belongs to something
+# else and must survive untouched.
+GD_SHARED_PREFIX="gd_shared_"
+
+# The suffixes of the four rules. Before the rules were shared, each host had its own
+# four, refs "gd_<host with . and - as _>_<suffix>"; apply-rules.sh folds a host that
+# still carries all four into the set and deletes them.
+GD_RULE_SUFFIXES=(cache_html bypass_personalized bypass_debug cache_build_assets)
+
+# Emit the rule array for the hosts given (public hostnames).
 gd_cache_rules() {
-  local host="$1"
-  local ref_prefix
-  ref_prefix="gd_$(printf '%s' "${host}" | tr '.-' '__')"
+  local hosts
+  hosts=$(printf '%s\n' "$@" | sort -u | jq -R . | jq -sc .)
 
-  jq -n --arg host "${host}" --arg p "${ref_prefix}" '
+  jq -n --argjson hosts "${hosts}" --arg p "${GD_SHARED_PREFIX}" '
+    ("http.host in {" + ($hosts | map("\"" + . + "\"") | join(" ")) + "}") as $in |
     [
       {
-        ref: ($p + "_cache_html"),
+        ref: ($p + "cache_html"),
         description: "GD: HTML is eligible for cache; the origin decides per response",
-        expression: ("http.host eq \"" + $host + "\""),
+        expression: $in,
         action: "set_cache_settings",
         action_parameters: {
           cache: true,
@@ -48,7 +65,7 @@ gd_cache_rules() {
         }
       },
       {
-        ref: ($p + "_bypass_personalized"),
+        ref: ($p + "bypass_personalized"),
         description: "GD: never cache a render that is not anonymous (session cookie / Inertia XHR)",
         # A Laravel session cookie is "<app-slug>-session"; DropEmptyGuestSession makes
         # sure an ordinary guest never receives one, so its presence means auth or
@@ -59,28 +76,28 @@ gd_cache_rules() {
         # cache: Cloudflare ignores Vary outside Accept-Encoding, so unlike on a VCL
         # edge there is no second gate behind it. Withholding the origin grant
         # (EdgeCacheGuestPage) does NOT on its own keep these out of the cache.
-        expression: ("http.host eq \"" + $host + "\" and (http.cookie contains \"-session=\" or len(http.request.headers[\"x-inertia\"][0]) > 0)"),
+        expression: ($in + " and (http.cookie contains \"-session=\" or len(http.request.headers[\"x-inertia\"][0]) > 0)"),
         action: "set_cache_settings",
         action_parameters: { cache: false }
       },
       {
-        ref: ($p + "_bypass_debug"),
+        ref: ($p + "bypass_debug"),
         description: "GD: ?debug=1 is the uncached view; ?__fresh= is version-skew recovery",
         # ?debug=1 must reach origin or it is not a debugging view. ?__fresh=<version> is
         # the reload HandleInertiaRequests sends a stale client to; serving it from cache
         # would hand back the same stale HTML and re-trigger the 409 it is escaping.
-        expression: ("http.host eq \"" + $host + "\" and (http.request.uri.query contains \"debug=1\" or http.request.uri.query contains \"__fresh=\")"),
+        expression: ($in + " and (http.request.uri.query contains \"debug=1\" or http.request.uri.query contains \"__fresh=\")"),
         action: "set_cache_settings",
         action_parameters: { cache: false }
       },
       {
-        ref: ($p + "_cache_build_assets"),
+        ref: ($p + "cache_build_assets"),
         description: "GD: /build/ is fingerprinted by Vite — cache a year, whoever is asking",
         # Last, so it wins over the bypasses above: the bytes behind a hashed filename
         # never change, and there is no reason a visitor holding a session cookie should
         # re-fetch every asset. Anything outside /build/ is not fingerprinted and gets no
         # such grant.
-        expression: ("http.host eq \"" + $host + "\" and starts_with(http.request.uri.path, \"/build/\")"),
+        expression: ($in + " and starts_with(http.request.uri.path, \"/build/\")"),
         action: "set_cache_settings",
         action_parameters: {
           cache: true,
@@ -91,8 +108,12 @@ gd_cache_rules() {
     ]'
 }
 
-# The ref prefix identifying the rules this repo manages for $1. Anything else on the
-# zone belongs to another site and must survive untouched.
-gd_ref_prefix() {
-  printf 'gd_%s' "$(printf '%s' "$1" | tr '.-' '__')"
+# The hosts a stored shared rule matches, one per line: the inverse of the
+# `http.host in {...}` this file writes. Reads the cache_html rule, whose expression is
+# the set and nothing else.
+gd_shared_hosts() {
+  jq -r --arg ref "${GD_SHARED_PREFIX}cache_html" '
+    .[] | select(.ref == $ref) | .expression
+    | capture("^http\\.host in \\{(?<set>[^}]*)\\}$").set
+    | scan("\"([^\"]+)\"") | .[0]'
 }
