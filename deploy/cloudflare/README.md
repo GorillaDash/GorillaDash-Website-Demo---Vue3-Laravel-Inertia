@@ -21,13 +21,14 @@ CLOUDFLARE_API_TOKEN=... ./deploy/cloudflare/apply-rules.sh --dry-run <host>   #
 ./deploy/cloudflare/verify-rules.sh <host>                                     # probes only, no token
 ```
 
-The token needs **Cache Settings Write** on the zone. The zone id is discovered from the
+The token needs **Cache Settings Write** on the zone, and writing needs `gcloud` with
+write access to the lock bucket (see below) — `--dry-run` needs neither. The zone id is discovered from the
 host, so there is nothing per-country to configure.
 
 ## The rules, and why they are in that order
 
-`rules.sh` is the single definition, read by both the apply and the verify script so the
-rules being written and the rules being checked can never be two different opinions.
+`rules.sh` is the single definition of the rules; `verify-rules.sh` checks their
+behaviour from outside rather than re-reading them.
 
 **Cache Rules stack — the LAST matching rule wins**, which is the opposite of the
 first-match-wins intuition and the single easiest thing to get wrong here:
@@ -52,18 +53,47 @@ keep a personalized page out of the cache, so that expression is load-bearing in
 VCL counterpart would not be. Never treat `EdgeCacheGuestPage` as sufficient by itself.
 
 **The entrypoint ruleset is zone-wide.** There is no per-hostname ruleset, and a shared
-zone like `gorilladashstaging.com` carries other GorillaDash sites, so a plain `PUT` of
-our rules would delete theirs. `apply-rules.sh` merges: rules whose `ref` starts with this
-host's prefix are ours to replace, everything else is read back and rewritten untouched.
-It also warns if a foreign rule's expression mentions our host, since a rule sitting after
-ours could override us.
+zone like `gorilladashstaging.com` carries sites that are not GD's, so a plain `PUT` of
+our rules would delete theirs. `apply-rules.sh` merges: rules whose `ref` starts with
+`gd_shared_` are ours to replace, everything else is read back and rewritten untouched.
+It also warns if a foreign rule's expression mentions one of our hosts, since a rule
+sitting after ours could override us.
+
+## One set of rules per zone, shared by every GD host
+
+Every GD client gets byte-identical rules — only the host differs — and the zone's plan
+caps its cache rules (10 on `gorilladashstaging.com`). With four rules per host that cap
+was hit at the third client (`exceeded the maximum number of rules … 13 out of 10`). So
+the four rules (`gd_shared_cache_html`, `…_bypass_personalized`, `…_bypass_debug`,
+`…_cache_build_assets`) each match a host SET, `http.host in {"a" "b" …}`, and a new
+client adds its host to the set instead of four rules to the zone.
+
+- **Adding is the default; removing is explicit.** `apply-rules.sh <host>` reads the set
+  back from the zone and adds to it, so it never drops another client's host.
+  Decommission a host with `apply-rules.sh --remove <host>`.
+- **Migration is automatic.** A host still carrying the old per-host rules (all four
+  `gd_<host>_*` refs) is folded into the set and those rules deleted, by whichever repo's
+  run gets there first. A host with only some of them is not a shape this script wrote,
+  so it is left alone as somebody else's.
+- **One writer at a time.** The write is read-modify-write of the whole ruleset, and every
+  GD client repo runs it against the same zone — GitHub's `concurrency` cannot serialize
+  that, it is per repo. Two overlapping runs would each write back the set they read and
+  the later would silently drop the earlier's host. So each run first takes a lock: an
+  object at `gs://gorilla-dash-178800_cloudbuild/locks/cloudflare-cache-rules/<zone>.lock`
+  created with `--if-generation-match=0`, which only one of two simultaneous creators can
+  win. Others wait (up to `CLOUDFLARE_LOCK_WAIT_SECONDS`, 300); a lock older than
+  `CLOUDFLARE_LOCK_STALE_SECONDS` (600) is a run that died holding it and is broken.
+  `CLOUDFLARE_LOCK_BUCKET` overrides the bucket. Locally that is your `gcloud` login; in
+  CI it is `github-deployer` (`roles/storage.admin`), which is why the workflow
+  authenticates to Google Cloud.
+- **The expression has a ceiling** — 4096 characters, roughly a hundred hosts per zone.
 
 ## Verification is part of applying
 
 A bypass expression that never matches fails **silently**: the API accepts it, the
 dashboard renders it, and the only symptom is a logged-in or flash-carrying render quietly
 becoming the copy every visitor gets. So `apply-rules.sh` runs `verify-rules.sh` against
-the live host after writing and **rolls back to the previous ruleset** if any probe fails.
+every host whose rules it changed after writing and **rolls back to the previous ruleset** if any probe fails.
 
 ```
 anonymous page   -> HIT / MISS / EXPIRED / REVALIDATED    (cacheable at all)

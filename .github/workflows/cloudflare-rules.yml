@@ -39,6 +39,7 @@ concurrency:
 
 permissions:
   contents: read
+  id-token: write # Workload Identity Federation: apply-rules.sh takes a lock in GCS
 
 jobs:
   apply:
@@ -70,6 +71,19 @@ jobs:
             exit 0
           fi
           echo "hosts=${HOSTS}" >> "$GITHUB_OUTPUT"
+
+      # apply-rules.sh serializes writers across ALL client repos with a lock object in
+      # GCS, so it needs Google credentials as well as the Cloudflare token.
+      - name: Authenticate to Google Cloud
+        if: steps.targets.outputs.skip != 'true'
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_EMAIL }}
+
+      - name: Set up gcloud
+        if: steps.targets.outputs.skip != 'true'
+        uses: google-github-actions/setup-gcloud@v3
 
       - name: Converge Cloudflare zones onto the repo rules
         if: steps.targets.outputs.skip != 'true'
