@@ -36,13 +36,13 @@ Two things had to move for that to be true:
 
 ## The origin's half
 
-| Piece                                        | Role                                                                                   |
-| -------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `App\Http\Middleware\EdgeCacheGuestPage`      | Decides per response whether a render is shareable, and stamps the grant + purge keys  |
-| `App\Http\EdgeCacheGrant`                     | The one place that spells that grant in the edge's header vocabulary                   |
-| `App\Http\Middleware\DropEmptyGuestSession`   | Keeps an ordinary guest cookie-free so the edge's bypass rule never matches them        |
+| Piece                                         | Role                                                                                       |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `App\Http\Middleware\EdgeCacheGuestPage`      | Decides per response whether a render is shareable, and stamps the grant + purge keys      |
+| `App\Http\EdgeCacheGrant`                     | The one place that spells that grant in the edge's header vocabulary                       |
+| `App\Http\Middleware\DropEmptyGuestSession`   | Keeps an ordinary guest cookie-free so the edge's bypass rule never matches them           |
 | `App\Http\Middleware\RedirectToDefaultLocale` | Grants the `/` → `/{locale}` hop its own (longer) TTL — it is a 302, so the above skips it |
-| `App\Http\Controllers\RobotsController`       | `robots.txt`, granted an hour rather than a page's two minutes                          |
+| `App\Http\Controllers\RobotsController`       | `robots.txt`, granted an hour rather than a page's two minutes                             |
 
 A response is granted a shared copy only when it is a full-document `200` `GET`, for a
 visitor with no auth and no flashed session state, without `X-Inertia` and without
@@ -89,3 +89,54 @@ The GD content webhook (`/gorilla-dash/clear-cache`) flushes the app's SWR cache
 When a CMS publish should also drop the edge's copy, it should purge the NARROW per-page
 tag rather than `html`: Cloudflare has no soft purge, so a broad purge evicts and sends
 the next request for every affected page back to origin as a full SSR render at once.
+
+## Request headers the cache key does not carry
+
+A cached page is only as shared as its cache key. Anything the origin reads off the
+request and renders into the HTML, but which is NOT in the key, is a way for one
+visitor to choose the page every later visitor gets.
+
+**Found 2026-10-10 on GrazeCraze-inertiajs: the forwarded headers.** `bootstrap/app.php`
+trusted every proxy (`trustProxies(at: '*')`) with Laravel's default list of trusted
+headers, which includes `X-Forwarded-Host`, `-Port` and `-Prefix`. Cloudflare and the GCE
+load balancer pass a visitor's own copies of those through untouched, and all three feed
+the root URL that every absolute URL is built from — the `<link>`/`<script>` tags for
+`/build/assets/*` included. Probed on GrazeCraze staging (Cloudflare), each on a random
+`?xfprobe=` URL nobody else visits:
+
+| Header sent once            | Asset URLs in that response                          | Next request, no header  |
+| --------------------------- | ---------------------------------------------------- | ------------------------ |
+| `X-Forwarded-Port: 4443`    | `https://gc-usa.gorilladashstaging.com:4443/build/…` | **`HIT`, still `:4443`** |
+| `X-Forwarded-Host: <other>` | `https://<other>/build/…`                            | `MISS`, clean            |
+| `X-Forwarded-Prefix: /<x>`  | `https://…/<x>/build/…`                              | `MISS`, clean            |
+
+So the port was a working cache poisoning there: one request per URL per TTL (120s) and
+that page loads with no CSS or JS for everyone. This repo carried the same line.
+
+**demo.gorilladash.com was not probed** — it is a production host. What can be said from
+the repo alone: it sits behind Fastly, not the Cloudflare rules (see
+`deploy/k8s/overlays/usa/ingress.yaml`; `CLOUDFLARE_HOSTS` is empty), and
+`EdgeCacheGrant` only speaks Cloudflare's header vocabulary while `Cache-Control` stays
+private, so unless the Fastly service sets its own TTLs (its config is not in this repo)
+Fastly holds no HTML here and the cross-visitor half was likely not reachable. The
+origin half was there regardless: handed those headers, the origin built every asset
+URL on the host, port or prefix they named (the new test fails exactly that way without
+the fix). Whether Fastly passes a visitor's copies through is not verified.
+The fix does not depend on which edge is in front, and it has to be in place before this
+host moves onto the Cloudflare rules.
+
+**Fix:** trust only `X-Forwarded-For` (the client IP) and `X-Forwarded-Proto` (which the
+LB overwrites anyway — https is forced by `APP_FORCE_HTTPS`). The app serves its pages at
+the host the edge asked for, so the other three have no legitimate value to carry.
+`tests/Feature/TrustedProxyHeadersTest.php` pins both halves.
+
+Re-check after a deploy (neither line should print anything). The random query string
+means only a URL nobody else visits could ever be stored:
+
+```bash
+u="https://demo.gorilladash.com/?xfprobe=$RANDOM$RANDOM"
+curl -s -H 'X-Forwarded-Port: 4443' "$u" | grep -o ':4443/build' | head -1
+curl -s -H 'X-Forwarded-Host: probe.invalid' "$u" | grep -o 'probe.invalid' | head -1
+```
+
+- [ ] Run the re-check above once this is deployed.

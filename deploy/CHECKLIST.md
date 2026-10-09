@@ -197,9 +197,14 @@ onboarding a new environment.
   what Cloudflare sent), so `trustProxies` alone can't recover the scheme — Laravel
   would emit `http://` asset URLs that get blocked as mixed content on the https
   page. Fixed by `APP_FORCE_HTTPS=true` (→ `URL::forceScheme('https')` in
-  `AppServiceProvider`). `trustProxies(at: '*')` stays on for `X-Forwarded-For`
-  (real client IP). Secure cookies still work because `SESSION_SECURE_COOKIE=true`
-  is set explicitly (independent of the request scheme).
+  `AppServiceProvider`). The proxies stay trusted for `X-Forwarded-For` (real client
+  IP) and `-Proto` ONLY —
+  `trustProxies(at: '*', headers: Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PROTO)`,
+  never the bare `trustProxies(at: '*')`, whose default list also trusts
+  `X-Forwarded-Host`/`-Port`/`-Prefix`: a visitor sets those, they move every asset
+  URL, and the edge cache key does not carry them (`docs/edge-html-cache.md` →
+  "Request headers the cache key does not carry"). Secure cookies still work because
+  `SESSION_SECURE_COOKIE=true` is set explicitly (independent of the request scheme).
 
 - **"TLS is at the edge" does not mean the origin can be plain http.** Cloudflare's
   SSL mode decides that, it is set per ZONE, and the shared staging zone is on
