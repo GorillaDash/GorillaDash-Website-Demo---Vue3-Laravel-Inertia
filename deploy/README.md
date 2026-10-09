@@ -255,7 +255,12 @@ and no Ingress edit.
 
 ## Hardening checklist
 
-- Trust the proxies for the real client IP: `->trustProxies(at: '*')` in `bootstrap/app.php`.
+- Trust the proxies for the real client IP, and for nothing else:
+  `->trustProxies(at: '*', headers: Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PROTO)`
+  in `bootstrap/app.php`. Never the bare `trustProxies(at: '*')`: Laravel's default list
+  also trusts `X-Forwarded-Host`/`-Port`/`-Prefix`, which a visitor can set and an edge
+  cache key does not carry (`docs/edge-html-cache.md` → "Request headers the cache key
+  does not carry").
 - Force https so asset/URL generation stays off `http://` (TLS is at Cloudflare, the
   LB resets `X-Forwarded-Proto` to http): `APP_FORCE_HTTPS=true` in each `config.env`.
 - Lock the http origin to the edge only: `deploy/setup-cloud-armor.sh` builds an

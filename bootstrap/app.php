@@ -60,12 +60,26 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         // Requests arrive Fastly (TLS terminated there) -> GKE Ingress -> pod,
-        // all over HTTP internally. Trust the proxies' X-Forwarded-* headers so
-        // the real client IP (X-Forwarded-For) survives the hops. Note the
-        // scheme is NOT recoverable from X-Forwarded-Proto here: the GCE L7 LB
-        // overwrites it with "http" for the Fastly->origin HTTP leg, so https is
-        // forced separately via APP_FORCE_HTTPS (see AppServiceProvider).
-        $middleware->trustProxies(at: '*');
+        // all over HTTP internally. Trust X-Forwarded-For so the real client IP
+        // survives the hops. Note the scheme is NOT recoverable from
+        // X-Forwarded-Proto here: the GCE L7 LB overwrites it with "http" for the
+        // Fastly->origin HTTP leg, so https is forced separately via
+        // APP_FORCE_HTTPS (see AppServiceProvider).
+        //
+        // ONLY those two. Laravel's default also trusts X-Forwarded-Host, -Port and
+        // -Prefix, and an edge and the LB pass a visitor's own copies of those through
+        // untouched — a visitor can set them. They feed the root URL that every
+        // absolute URL is built from, the Vite asset tags included. On GrazeCraze
+        // staging (Cloudflare, whose cache key does not carry X-Forwarded-Port,
+        // 2026-10-10) one request with `X-Forwarded-Port: 4443` was stored at the edge
+        // and served to the next plain visitor with every stylesheet and script
+        // pointing at :4443. This app serves its pages at the host the edge asked for,
+        // so none of the three has a legitimate value to carry. See
+        // docs/edge-html-cache.md.
+        $middleware->trustProxies(
+            at: '*',
+            headers: Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PROTO,
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
