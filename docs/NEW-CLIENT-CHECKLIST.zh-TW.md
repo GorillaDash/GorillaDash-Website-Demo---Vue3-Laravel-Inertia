@@ -111,7 +111,7 @@ default,所以在翻譯者問「字串在哪」之前,看起來完全正常。
       (每國家/namespace 一次)。
 - [ ] 每個國家一個 global static IP(`gcloud compute addresses create <slug>-usa-ip --global`)。
 - [ ] Cloud Armor origin 鎖定:`deploy/setup-cloud-armor.sh`
-      (`refresh-edge-ips` workflow 會持續同步;檢查它的 env 區塊)。
+      (GorillaDash/GorillaDash 的 `Refresh cloudflare-only` workflow 每週同步)。
 - [ ] GitHub 部署憑證(WIF,無金鑰):repo secrets `GCP_WIF_PROVIDER` +
       `GCP_SA_EMAIL` — 一次性設定見 `deploy/README.md`(CI 章節)。
 

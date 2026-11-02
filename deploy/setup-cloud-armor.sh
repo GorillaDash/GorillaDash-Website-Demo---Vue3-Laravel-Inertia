@@ -3,7 +3,7 @@
 #
 # POLICY defaults to the project-wide `cloudflare-only` policy that the other
 # client sites already attach — converging it refreshes THEIR allowlist too,
-# which is the point: one policy, one weekly refresh, no stale duplicate.
+# which is the point: one policy, no stale duplicate.
 #
 # Why: TLS is terminated at the CDN and the CDN->origin leg is plain HTTP, so the
 # GCE L7 load balancer serves http to anyone who hits the static IP directly,
@@ -11,7 +11,7 @@
 # 403 to everyone EXCEPT the published edge ranges of the CDNs in EDGE_PROVIDERS.
 #
 # It is IDEMPOTENT — safe to re-run. First run creates the policy + rules; later
-# runs (incl. the weekly GitHub Action) just refresh the allowed CIDRs, because
+# runs just refresh the allowed CIDRs, because
 # every CDN rotates its ranges over time.
 #
 # ORDER MATTERS on first setup: run THIS first (so the allow rules exist), THEN
@@ -19,11 +19,10 @@
 # backendconfig.yaml -> spec.securityPolicy.name). Otherwise the default-deny
 # rule blocks real traffic until the allow rules land.
 #
-# One-time IAM (grant the actor running this the rights to edit the policy):
-#   # for the GitHub Actions deployer SA used by the refresh workflow:
-#   gcloud projects add-iam-policy-binding gorilla-dash-178800 \
-#     --member="serviceAccount:github-deployer@gorilla-dash-178800.iam.gserviceaccount.com" \
-#     --role="roles/compute.securityAdmin"
+# The weekly refresh of the shared policy runs in GorillaDash/GorillaDash (workflow
+# `Refresh cloudflare-only`, docs/cloud-armor-cloudflare-only.md there), not here.
+# Run this by hand only to create the policy or to refresh it on demand; whoever
+# runs it needs roles/compute.securityAdmin on gorilla-dash-178800.
 #
 # Requires: gcloud (authenticated), curl, jq.
 set -euo pipefail

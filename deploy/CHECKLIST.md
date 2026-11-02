@@ -238,9 +238,8 @@ server has gone away` / `Error while reading greeting packet` and succeed on a
   security policy (default deny-403, allow the CDN's published edge IPs) and
   `backendconfig.yaml` attaches it. **Order:** run the script FIRST (so the allow
   rules exist), then deploy the BackendConfig — otherwise default-deny blocks
-  everything. Every CDN rotates its ranges, so
-  `.github/workflows/refresh-edge-ips.yml` re-runs the (idempotent) script weekly. One-time: grant `github-deployer` the
-  `roles/compute.securityAdmin` role (see the script header).
+  everything. Every CDN rotates its ranges; GorillaDash/GorillaDash's
+  weekly `Refresh cloudflare-only` workflow keeps the shared policy current.
 
 - **Service selector must be `role: web`.** A bare `app: hungry-gorilla` selector also
   grabs scheduler/worker pods (same `app` label) → they get a NEG readiness gate

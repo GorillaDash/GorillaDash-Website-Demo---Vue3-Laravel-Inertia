@@ -266,9 +266,8 @@ and no Ingress edit.
 - Lock the http origin to the edge only: `deploy/setup-cloud-armor.sh` builds an
   `edge-only` Cloud Armor policy (default deny, allow the published edge IPs of
   everything in `EDGE_PROVIDERS`), attached via `backendconfig.yaml`. Run it BEFORE
-  attaching the policy; it's re-run weekly by
-  `.github/workflows/refresh-edge-ips.yml`. One-time: grant `github-deployer`
-  `roles/compute.securityAdmin`.
+  attaching the policy; GorillaDash/GorillaDash's
+  weekly `Refresh cloudflare-only` workflow keeps its allow rules current.
 - Run containers as non-root; add `PodDisruptionBudget` + per-namespace `ResourceQuota`.
 - Manage Secrets via Google Secret Manager + External Secrets Operator instead of `kubectl create secret`.
 
