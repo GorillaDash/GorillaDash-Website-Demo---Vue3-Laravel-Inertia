@@ -130,7 +130,7 @@ version. Summary:
       (per country/namespace).
 - [ ] Global static IP per country (`gcloud compute addresses create <slug>-usa-ip --global`).
 - [ ] Cloud Armor origin lockdown: `deploy/setup-cloud-armor.sh` (the
-      `refresh-edge-ips` workflow keeps it current; check its env block).
+      weekly `Refresh cloudflare-only` workflow in GorillaDash/GorillaDash keeps it current).
 - [ ] GitHub deploy credentials (WIF, no keys): `make ci-sa` (once per GCP
       project) + `make ci-bind` (once per **repo** — `make bootstrap` runs it).
       `ci-bind` admits this repo to the shared OIDC provider, binds it to the

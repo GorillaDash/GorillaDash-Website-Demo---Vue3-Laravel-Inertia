@@ -13,7 +13,7 @@ spec:
   # Cloud Armor: only the CDN edge's IPs may reach this origin (TLS is terminated
   # at the edge; the origin serves plain http, so without this anyone hitting the
   # static IP bypasses the edge). The policy + its allow rules are managed OUT OF
-  # BAND by deploy/setup-cloud-armor.sh (and refreshed weekly by the GitHub Action)
+  # BAND by deploy/setup-cloud-armor.sh (and refreshed weekly from GorillaDash/GorillaDash)
   # — it must exist BEFORE this attaches, or the default-deny rule blocks all
   # traffic. Renaming the policy means running that script with the new POLICY
   # FIRST, then changing the name here and deploying.
