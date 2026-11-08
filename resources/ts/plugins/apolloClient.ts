@@ -5,6 +5,8 @@ import { ErrorLink } from '@apollo/client/link/error'
 import { PersistedQueryLink } from '@apollo/client/link/persisted-queries'
 import { print } from '@apollo/client/utilities'
 import { sha256 } from 'crypto-hash'
+import { currentBrowserPage } from '@/composables/useSharedProps'
+import { fetchFreshGraphqlToken } from '@/lib/graphqlTokenRefresh'
 import { runtimeConfig } from '@/runtimeConfig'
 
 if (import.meta.env.DEV) {
@@ -20,32 +22,17 @@ export function setGraphqlToken(token: string) {
 }
 
 /**
- * Fetch a fresh graphqlToken from origin via an Inertia partial-reload request.
+ * Fetch a fresh graphqlToken from origin via an Inertia partial-reload request
+ * (lib/graphqlTokenRefresh.ts), for the page Inertia has on screen now.
  * Concurrent auth failures coalesce into a single fetch.
  */
 function refreshToken(): Promise<string> {
   if (tokenRefreshPromise) return tokenRefreshPromise
 
-  tokenRefreshPromise = fetch(window.location.href, {
-    headers: {
-      'X-Inertia': 'true',
-      'X-Inertia-Version': (document.querySelector('div[data-page]') as HTMLElement | null)?.dataset
-        .page
-        ? JSON.parse((document.querySelector('div[data-page]') as HTMLElement).dataset.page!)
-            .version
-        : '',
-      'X-Inertia-Partial-Data': 'graphqlToken',
-      'X-Inertia-Partial-Component': JSON.parse(
-        (document.querySelector('div[data-page]') as HTMLElement).dataset.page!
-      ).component
-    }
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error(`Token refresh failed: ${res.status}`)
-      return res.json()
-    })
-    .then((data: { props?: { graphqlToken?: string } }) => {
-      const fresh = data.props?.graphqlToken ?? ''
+  const { component, version } = currentBrowserPage()
+
+  tokenRefreshPromise = fetchFreshGraphqlToken(window.location.href, { component, version })
+    .then((fresh) => {
       currentToken = fresh
       return fresh
     })

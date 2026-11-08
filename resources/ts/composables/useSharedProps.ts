@@ -44,3 +44,22 @@ export function useSharedProps() {
 
   return { props, url }
 }
+
+/**
+ * The page Inertia has on screen now, for browser code that runs outside any component —
+ * the Apollo client's token refresh (plugins/apolloClient.ts), which needs the current
+ * component and version for its partial reload.
+ *
+ * It reads the live `usePage()`, which under SSR may hold a concurrent request's page (see
+ * useSharedProps above), so it refuses to run there. Kept in this file so `usePage()` is
+ * still imported in one place only (tests/Unit/SharedPropsUsageTest.php).
+ */
+export function currentBrowserPage(): Pick<Page, 'component' | 'version'> {
+  if (import.meta.env.SSR) {
+    throw new Error('currentBrowserPage() is browser-only; under SSR use useSharedProps().')
+  }
+
+  const { component, version } = usePage()
+
+  return { component, version }
+}
