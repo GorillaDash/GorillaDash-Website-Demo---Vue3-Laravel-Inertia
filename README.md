@@ -89,7 +89,7 @@ Browser ──► Laravel 13 (Octane/FrankenPHP) ──► Inertia page props �
                     │                                                    │
                     │  gorilladash/laravel-website-sdk                    │ Apollo
                     └──────────► Gorilla Dash GraphQL API ◄───────────────┘
-                                 (server-side OAuth, same-origin /graphql proxy)
+                                 (server-side OAuth; the browser calls it directly)
 ```
 
 - **Server-driven SPA.** Inertia v3. Pages live in `resources/ts/pages/`; a controller's
@@ -97,10 +97,12 @@ Browser ──► Laravel 13 (Octane/FrankenPHP) ──► Inertia page props �
   own.
 - **Two ways to reach GraphQL.** The server fetches through
   `gorilladash/laravel-website-sdk`, which holds the OAuth client-credentials grant and
-  caches responses stale-while-revalidate. The browser fetches through a same-origin
-  `/graphql` proxy on this app, so the website's client secret never reaches the
-  browser. Server-side rendering serialises the Apollo cache into `<head>` so the first
-  paint needs no round trip.
+  caches responses stale-while-revalidate. The browser's Apollo client calls the
+  Gorilla Dash GraphQL API directly, queries and mutations alike, with the website token
+  the server mints and shares as the `graphqlToken` page prop. The client secret stays on
+  the server.
+  Server-side rendering serialises the Apollo cache into `<head>` so the first paint
+  needs no round trip.
 - **Typed GraphQL documents.** `pnpm run codegen` introspects the live schema and writes
   `resources/ts/graphql/__generated__`. Queries are typed end to end; `vue-tsc` fails the
   build if a component reads a field the query does not select.
