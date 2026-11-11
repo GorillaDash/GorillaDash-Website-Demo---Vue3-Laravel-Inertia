@@ -16,6 +16,29 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Base URI for mutations
+    |--------------------------------------------------------------------------
+    |
+    | Where mutate() sends (form submissions, anything with side effects). Null
+    | sends them to base_uri.
+    |
+    | Set it to https://api.gorilladash.com whenever base_uri is the default,
+    | graphql.gorilladash.com. That host is GorillaDash's website API on Cloud
+    | Run, fronted by a CDN GorillaDash purges on publish, which suits reads. It
+    | accepts a mutation and cannot finish it: submitEnquiry saves the enquiry,
+    | then times out reaching the queue its follow-up jobs (the notification
+    | emails) go to. The caller sees a timeout and nobody is told about the lead.
+    |
+    | It defaults to null rather than to the production write host, so a site or
+    | test suite that points base_uri somewhere else (a sandbox, a dead address)
+    | never has its writes sent to production. The same OAuth client is valid on
+    | both hosts; each is sent a token it issued.
+    |
+    */
+    'write_base_uri' => env('GD_WEBSITE_WRITE_BASE_URI'),
+
+    /*
+    |--------------------------------------------------------------------------
     | OAuth client credentials
     |--------------------------------------------------------------------------
     |
@@ -48,6 +71,10 @@ return [
     | cached value is served with no API call. Past it, the cached value is
     | still served immediately and a background refresh is scheduled.
     |
+    | This site keeps 60 where the package defaults to 300. The server's own
+    | reads (the page map, the checks behind sub-routes) are refreshed once
+    | they are a minute old, cache-clear webhook or not.
+    |
     */
     'cache_ttl' => (int) env('GD_WEBSITE_CACHE_TTL', 60),
 
@@ -56,8 +83,21 @@ return [
     | Cache store + key prefix
     |--------------------------------------------------------------------------
     |
-    | Which Laravel cache store to use (null = the app default) and the prefix
-    | applied to every cache key written by this package.
+    | Which Laravel cache store to use, and the prefix applied to every cache
+    | key written by this package.
+    |
+    | Null follows the application's default store, which is what most sites
+    | want. Worth overriding in two cases:
+    |
+    |   - The app caches to the database (Laravel's own default). That puts a
+    |     query — often over the network — in front of every cached read,
+    |     including the bearer token. "file" reads from local disk instead and
+    |     needs nothing provisioned.
+    |   - The site runs on more than one server or pod and you want them to
+    |     share one warm cache: use redis/memcached.
+    |
+    | Reads repeated within a process are answered from memory either way, so
+    | the store is only consulted once per key per freshness window.
     |
     */
     'cache_store' => env('GD_WEBSITE_CACHE_STORE'),
@@ -103,16 +143,44 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | GraphQL endpoint
+    | GraphQL proxy endpoint
     |--------------------------------------------------------------------------
     |
     | When enabled, the package exposes a POST endpoint that proxies a
     | { query, variables } body through the SWR cache and returns the full
-    | envelope (data + cache metadata). Handy for client-side / SSR fetching.
+    | envelope (data + cache metadata).
+    |
+    | Off by default. It answers anyone who can reach it, so it runs queries
+    | only (mutations and subscriptions get a 403), sends them with the
+    | read-only browser token, caches them apart from server reads, and is rate
+    | limited per IP address (requests a minute; 0 turns the limit off).
+    | Browser code that queries Gorilla Dash is better served by a browser
+    | token (GorillaDash::browserToken()) sent straight to base_uri.
     |
     */
-    'register_graphql_route' => (bool) env('GD_WEBSITE_GRAPHQL_ROUTE', true),
+    'register_graphql_route' => (bool) env('GD_WEBSITE_GRAPHQL_ROUTE', false),
     'graphql_path' => env('GD_WEBSITE_GRAPHQL_PATH', 'graphql'),
+    'graphql_rate_limit' => (int) env('GD_WEBSITE_GRAPHQL_RATE_LIMIT', 60),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Browser token endpoint
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, the package exposes a GET endpoint that answers
+    | { access_token, expires_in } with a read-only browser token, for browser
+    | code that needs a new one without a page load. ?refresh=1 asks for a new
+    | token after Gorilla Dash refused the last one; it is honoured at most once
+    | a minute per site. Rate limited per IP address (requests a minute; 0
+    | turns the limit off).
+    |
+    | An Inertia site does not need it: share GorillaDash::browserToken() as a
+    | prop and reload that prop instead.
+    |
+    */
+    'register_browser_token_route' => (bool) env('GD_WEBSITE_BROWSER_TOKEN_ROUTE', false),
+    'browser_token_path' => env('GD_WEBSITE_BROWSER_TOKEN_PATH', 'gorilla-dash/browser-token'),
+    'browser_token_rate_limit' => (int) env('GD_WEBSITE_BROWSER_TOKEN_RATE_LIMIT', 30),
 
     /*
     |--------------------------------------------------------------------------
