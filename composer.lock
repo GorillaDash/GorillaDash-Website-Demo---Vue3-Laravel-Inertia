@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "55d3f08052f48b4e609e3565868d8a0a",
+    "content-hash": "c2d20ac9c468d03de0e144063f33908c",
     "packages": [
         {
             "name": "brick/math",
@@ -697,16 +697,16 @@
         },
         {
             "name": "gorilladash/laravel-website-sdk",
-            "version": "v0.2.0",
+            "version": "v0.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GorillaDash/laravel-website-sdk.git",
-                "reference": "1d695807355be0649fe9899135bbc5b7466e6805"
+                "reference": "b013c5f8a07ef1b1eb1147ab1bef37aaf27457ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GorillaDash/laravel-website-sdk/zipball/1d695807355be0649fe9899135bbc5b7466e6805",
-                "reference": "1d695807355be0649fe9899135bbc5b7466e6805",
+                "url": "https://api.github.com/repos/GorillaDash/laravel-website-sdk/zipball/b013c5f8a07ef1b1eb1147ab1bef37aaf27457ae",
+                "reference": "b013c5f8a07ef1b1eb1147ab1bef37aaf27457ae",
                 "shasum": ""
             },
             "require": {
@@ -760,9 +760,10 @@
             ],
             "support": {
                 "issues": "https://github.com/GorillaDash/laravel-website-sdk/issues",
-                "source": "https://github.com/GorillaDash/laravel-website-sdk/tree/v0.2.0"
+                "source": "https://github.com/GorillaDash/laravel-website-sdk/tree/v0.6.1"
             },
-            "time": "2026-06-19T13:35:34+00:00"
+            "time": "2026-11-10T23:49:07+00:00",
+            "published-time": "2026-11-10T23:49:32+00:00"
         },
         {
             "name": "graham-campbell/result-type",
@@ -11381,5 +11382,5 @@
         "php": "^8.3"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }

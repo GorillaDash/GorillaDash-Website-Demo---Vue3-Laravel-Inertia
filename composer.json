@@ -11,7 +11,7 @@
   "require": {
     "php": "^8.3",
     "google/recaptcha": "^1.3",
-    "gorilladash/laravel-website-sdk": "^0.2.0",
+    "gorilladash/laravel-website-sdk": "^0.6.1",
     "inertiajs/inertia-laravel": "^3.0",
     "laravel/framework": "^13.7",
     "laravel/octane": "^2.17",
